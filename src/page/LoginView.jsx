@@ -1,4 +1,3 @@
-
 import {
     GoogleAuthProvider,
     onAuthStateChanged,
@@ -10,38 +9,9 @@ import AuthProvider from "../components/AuthProvider";
 import { auth, userExistes } from "../firebase/firebase";
 
 function LoginView() {
-    const [currentUser, setCurrentUser] = useState(null);
+    /* const [currentUser, setCurrentUser] = useState(null); */
     const [state, setCurrentState] = useState(0);
-
     const navigate = useNavigate();
-
-    console.log(currentUser);
-    console.log(state);
-
-    useEffect(() => {
-        setCurrentState(1);
-        onAuthStateChanged(auth, handleUserStateChaned);
-
-        async function handleUserStateChaned(user) {
-            if (user) {
-                const isRegister = await userExistes(user.uid);
-                if (isRegister) {
-                    //TODO : redirigir a Dashboard
-                    navigate("/dashboard");
-                    setCurrentState(2);
-                } else {
-                    // TODO : redigiir a choose username
-                    navigate("/choose-username");
-                    setCurrentState(3);
-                }
-
-                console.log(user.displayName);
-            } else {
-                setCurrentState(4);
-                console.log("No hay nadie autenticado ...");
-            }
-        }
-    }, [navigate]);
 
     const handleOnClick = async () => {
         const g_provider = new GoogleAuthProvider();
@@ -61,22 +31,41 @@ function LoginView() {
         return <div>...Loading</div>;
     } */
 
-    if (state === 2) {
+    function handleUserLoggedIn(user) {
+        navigate("/dashboard");
+        setCurrentState(2);
+    }
+
+    function handleUserNotRegister() {
+        navigate("/choose-username");
+        setCurrentState(3);
+    }
+
+    function handleUserNotLoggedIn(user) {
+        setCurrentState(4);
+    }
+
+    /*  if (state === 2) {
         return <div> Estas autenticado y registrado </div>;
     }
     if (state === 3) {
         return <div> Estas autenticado pero no registrado en la db</div>;
-    }
+    } */
 
     if (state === 4) {
         return <button onClick={handleOnClick}>Login with Google</button>;
     }
 
+   
+
     return (
-        <AuthProvider>
+        <AuthProvider
+            onUserLoggedIn={handleUserLoggedIn}
+            onUserNotRegister={handleUserNotRegister}
+            onUserNotLoggedIn={handleUserNotLoggedIn}
+        >
             <div>
                 <div>...Loading</div>
-                <div>{state}</div>
             </div>
         </AuthProvider>
     );

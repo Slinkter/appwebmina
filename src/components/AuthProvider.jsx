@@ -5,45 +5,62 @@ import {
 } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+    auth,
+    getUserInfo,
+    registerNewUser,
+    userExistes,
+} from "../firebase/firebase";
 
-import { auth, userExistes } from "../firebase/firebase";
-
-export default function AuthProvider({
-    children,
-    onUserLoggedIn,
-    onUserNotLoggedIn,
-    onUserNotRegister,
-}) {
+export default function AuthProvider(props) {
+    const { onUserLoggedIn, onUserNotLoggedIn, onUserNotRegister } = props;
+    const { children } = props;
     const navigate = useNavigate();
 
     useEffect(() => {
-        /*   setCurrentState(1); */
         onAuthStateChanged(auth, handleUserStateChaned);
 
         async function handleUserStateChaned(user) {
+            console.log("user 1 : ", user);
             if (user) {
+                console.log(user.displayName);
+                console.log(user.email);
+                console.log(user.uid);
                 const isRegister = await userExistes(user.uid);
+                console.log("isRegister", isRegister);
                 if (isRegister) {
-                    //TODO : redirigir a Dashboard
-                    /*   navigate("/dashboard");
-                    setCurrentState(2); */
-                    onUserLoggedIn(user);
+                    const userInfo = await getUserInfo(user.uid);
+                    if (userInfo.processCompleted) {
+                        /* navigate("/dashboard"); */
+                        onUserLoggedIn(userInfo);
+                    } else {
+                        /* navigate("/choose-username"); */
+                        onUserNotRegister(userInfo);
+                    }
+                    console.log("onUserLoggedIn  1: ");
+                    console.log(userInfo);
                 } else {
-                    // TODO : redigiir a choose username
-                    /* navigate("/choose-username");
-                    setCurrentState(3); */
+                    console.log("onUserNotRegister  : ");
+                    /* navigate("/choose-username"); */
+                    const newUser = {
+                        uid: user.uid,
+                        displayName: user.displayName,
+                        profilePicture: "",
+                        username: "",
+                        processCompleted: false,
+                    };
+                    await registerNewUser(newUser);
                     onUserNotRegister(user);
                 }
-
-                console.log(user.displayName);
             } else {
-                /*         setCurrentState(4);
-                console.log("No hay nadie autenticado ..."); */
-
+                /*         
+                navigate("/login")
+                 */
+                console.log("onUserNotLoggedIn  : ");
                 onUserNotLoggedIn();
             }
         }
     }, [navigate, onUserLoggedIn, onUserNotLoggedIn, onUserNotRegister]);
 
-    return <div>{children} </div>;
+    return <div>{children}</div>;
 }
