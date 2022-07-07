@@ -96,3 +96,18 @@ export async function getUserInfo(uid) {
         console.log(error);
     }
 }
+
+export async function insertNewLink (link){
+    try {
+        // usamos addDoc para generar automaticamente una id ,
+        const docRef = collection(db,"links")
+        const res = await addDoc(docRef,link)
+        console.log(docRef); 
+        console.log(res); 
+        return res;
+
+    } catch (error) {
+        console.log(error); 
+        
+    }
+}
