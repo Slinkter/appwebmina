@@ -55,10 +55,6 @@ function LoginView() {
         }
     }
 
-    /*  if (state === 1) {
-        return <div>...Loading</div>;
-    } */
-
     function handleUserLoggedIn(user) {
         navigate("/dashboard");
         setCurrentState(2);
@@ -72,13 +68,6 @@ function LoginView() {
     function handleUserNotLoggedIn(user) {
         setCurrentState(4);
     }
-
-    /*  if (state === 2) {
-        return <div> Estas autenticado y registrado </div>;
-    }
-    if (state === 3) {
-        return <div> Estas autenticado pero no registrado en la db</div>;
-    } */
 
     if (state === 4) {
         return (
