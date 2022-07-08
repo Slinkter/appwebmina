@@ -14,26 +14,12 @@ import Grid from "@mui/material/Grid";
 import StarIcon from "@mui/icons-material/StarBorder";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
+
 import GlobalStyles from "@mui/material/GlobalStyles";
 import Container from "@mui/material/Container";
+import { Link } from "react-router-dom";
 
 // end MUI
-function Copyright(props) {
-    return (
-        <Typography
-            variant="body2"
-            color="text.secondary"
-            align="center"
-            {...props}
-        >
-            {"Copyright © "}
-            <Link color="inherit" href="https://youtube.com/"></Link>{" "}
-            {new Date().getFullYear()}
-            {"."}
-        </Typography>
-    );
-}
 
 function App() {
     return (
@@ -58,27 +44,8 @@ function App() {
                         noWrap
                         sx={{ flexGrow: 1 }}
                     ></Typography>
-                    <nav>
-                        <Link
-                            variant="button"
-                            color="text.primary"
-                            href="#"
-                            sx={{ my: 1, mx: 1.5 }}
-                        ></Link>
-                        <Link
-                            variant="button"
-                            color="text.primary"
-                            href="#"
-                            sx={{ my: 1, mx: 1.5 }}
-                        ></Link>
-                        <Link
-                            variant="button"
-                            color="text.primary"
-                            href="#"
-                            sx={{ my: 1, mx: 1.5 }}
-                        ></Link>
-                    </nav>
-                    <Link variant="button"  href="/login"> Login</Link>
+
+                    <Link to="/login">Login</Link>
                 </Toolbar>
             </AppBar>
             {/* Hero unit */}
@@ -117,9 +84,7 @@ function App() {
                     mt: 8,
                     py: [3, 6],
                 }}
-            >
-                <Copyright sx={{ mt: 5 }} />
-            </Container>
+            ></Container>
             {/* End footer */}
         </React.Fragment>
     );
