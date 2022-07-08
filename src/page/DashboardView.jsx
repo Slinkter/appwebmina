@@ -3,7 +3,13 @@ import { useNavigate } from "react-router-dom";
 import AuthProvider from "../components/AuthProvider";
 import DashboardWrapper from "../components/DashboardWrapper";
 import { v4 as uuidv4 } from "uuid";
-import { insertNewLink } from "../firebase/firebase";
+import {
+    delenteLink,
+    getLinks,
+    insertNewLink,
+    updateLink,
+} from "../firebase/firebase";
+import Link from "../components/Link";
 
 function DashboardView() {
     const navigate = useNavigate();
@@ -14,9 +20,12 @@ function DashboardView() {
     const [url, setURL] = useState("");
     const [links, setLinks] = useState([]);
 
-    function handleUserLoggedIn(user) {
+    async function handleUserLoggedIn(user) {
         setCurrentUser(user);
         setState(2);
+        // obtener la lista de links del usuarios
+        const resLinks = await getLinks(user.uid);
+        setLinks([...resLinks]);
     }
 
     function handleUserNotRegister(user) {
@@ -57,8 +66,6 @@ function DashboardView() {
     };
 
     function addLink() {
-        console.log(title);
-        console.log(url);
         if (title !== "" && url !== "") {
             const newLink = {
                 id: uuidv4(),
@@ -72,6 +79,22 @@ function DashboardView() {
             setURL("");
             setLinks([...links, newLink]); // de la lista links que tengo le add newLink
         }
+    }
+
+    async function handleUpdateLink(docId, currentTitle, currentUrl) {
+        const link = links.find((item) => item.docId === docId);
+        console.log(docId, currentTitle, currentUrl);
+        link.title = currentTitle;
+        link.url = currentUrl;
+        // al crear el link ya tenia el docID pero no estaba en su campo y ahora del local se va a actualizar
+        await updateLink(docId, link);
+    }
+    async function handleDeleteLink(docId) {
+        // eliminar un link al nivel firebase
+        await delenteLink(docId);
+        // eliminar un link al nivel local
+        const tmp = links.filter((link) => link.docId !== docId);
+        setLinks([...tmp]);
     }
 
     return (
@@ -90,9 +113,14 @@ function DashboardView() {
 
             <div>
                 {links.map((link) => (
-                    <div key={link.id}>
-                        <a href={link.url}> {link.title}</a>
-                    </div>
+                    <Link
+                        key={link.docId}
+                        docId={link.docId}
+                        title={link.title}
+                        url={link.url}
+                        onUpdate={handleUpdateLink}
+                        onDelete={handleDeleteLink}
+                    />
                 ))}
             </div>
         </DashboardWrapper>

@@ -19,7 +19,7 @@ import {
     getDownloadURL,
     getBytes,
 } from "firebase/storage";
-
+// seguridad
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_APIKEY,
     authDomain: process.env.REACT_APP_AUTHDOMAIN,
@@ -33,8 +33,8 @@ const firebaseConfig = {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+export const db = getFirestore(app); // texto
+export const storage = getStorage(app); // archivos -imagenes
 
 // funciones a exportar de manera asincrona
 
@@ -97,17 +97,60 @@ export async function getUserInfo(uid) {
     }
 }
 
-export async function insertNewLink (link){
+export async function insertNewLink(link) {
     try {
         // usamos addDoc para generar automaticamente una id ,
-        const docRef = collection(db,"links")
-        const res = await addDoc(docRef,link)
-        console.log(docRef); 
-        console.log(res); 
+        const docRef = collection(db, "links");
+        const res = await addDoc(docRef, link);
+        console.log(docRef);
+        console.log(res);
         return res;
-
     } catch (error) {
-        console.log(error); 
-        
+        console.log(error);
+    }
+}
+
+export async function getLinks(uid) {
+    const links = [];
+
+    try {
+        // bloque que buscar en la collecion de links todo que
+        // pertenescan al usuario con su uid
+        // se obtiene los documentos y se traen al nivel local
+        // a los documentos se agrega/setea el nuevo campo docId
+        // se carga a la web con useState
+        const collectionRef = collection(db, "links");
+        const q = query(collectionRef, where("uid", "==", uid));
+        const querySnapShot = await getDocs(q);
+        // se inserto/agrego un campo mas al docID
+        querySnapShot.forEach((doc) => {
+            const link = { ...doc.data() };
+            link.docId = doc.id;
+            links.push(link);
+        });
+
+        return links;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export async function updateLink(docId, link) {
+    try {
+        const docRef = doc(db, "links", docId);
+        const res = await setDoc(docRef, link);
+        return res;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export async function delenteLink(docId) {
+    try {
+        const docRef = doc(db, "links", docId);
+        const res = await deleteDoc(docRef);
+        return res;
+    } catch (error) {
+        console.log(error);
     }
 }
