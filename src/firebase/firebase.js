@@ -151,6 +151,19 @@ export async function delenteLink(docId) {
         const res = await deleteDoc(docRef);
         return res;
     } catch (error) {
-        console.log(error);
+        console.error(error);
+    }
+}
+
+export async function setUserProfilePhoto(uid, file) {
+    try {
+        // db_storage
+        // funciona como un link
+        // el archivo(imagen,audio,video)
+        const imageRef = ref(storage, `images/${uid}`);
+        const resUpload = await uploadBytes(imageRef, file);
+        return resUpload;
+    } catch (error) {
+        console.error(error);
     }
 }
