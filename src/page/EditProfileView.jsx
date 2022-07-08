@@ -3,7 +3,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthProvider from "../components/AuthProvider";
 import DashboardWrapper from "../components/DashboardWrapper";
-import { setUserProfilePhoto } from "../firebase/firebase";
+import {
+    getProfilePhotoUrl,
+    setUserProfilePhoto,
+    updateUser,
+} from "../firebase/firebase";
 
 function EditProfileView() {
     const navigate = useNavigate();
@@ -12,10 +16,11 @@ function EditProfileView() {
     const [profileUrl, setProfileUrl] = useState(null);
     const fileRef = useRef(null);
 
-    useEffect(() => {}, [state, currentUser]);
-
-    function handleUserLoggedIn(user) {
-         setCurrentUser(user);
+    async function handleUserLoggedIn(user) {
+        setCurrentUser(user);
+        // cuando carga por primera vez la pagina obtener el url-imagen de la usuariop
+        const url = await getProfilePhotoUrl(user.profilePicture);
+        setProfileUrl(url);
         setState(2);
     }
 
@@ -47,6 +52,16 @@ function EditProfileView() {
                     imageData
                 );
                 console.log(res);
+                if (res) {
+                    const tmpUser = { ...currentUser };
+                    tmpUser.profilePicture = res.metadata.fullPath;
+                    await updateUser(tmpUser);
+                    const url = await getProfilePhotoUrl(
+                        currentUser.profilePicture
+                    );
+                    setProfileUrl(url);
+                    setCurrentUser(tmpUser);
+                }
             };
         }
     }
@@ -72,7 +87,6 @@ function EditProfileView() {
                 </div>
                 <div>
                     <button onClick={handleOpenFilePicket}>
-                        {" "}
                         Choose new profile
                     </button>
                     <input

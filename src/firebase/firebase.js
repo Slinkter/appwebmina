@@ -52,12 +52,11 @@ export async function existsUsername(StringUsername) {
         const users = [];
         const docsRef = collection(db, "users");
         const q = query(docsRef, where("username", "==", StringUsername));
-        const querySnapShot = await getDocs();
+        const querySnapShot = await getDocs(q);
         querySnapShot.forEach((doc) => {
             users.push(doc.data());
         });
 
-        // retorna un booleando
         return users.length > 0 ? users[0].uid : null;
     } catch (error) {
         console.log(error);
@@ -165,5 +164,26 @@ export async function setUserProfilePhoto(uid, file) {
         return resUpload;
     } catch (error) {
         console.error(error);
+    }
+}
+
+export async function getProfilePhotoUrl(path) {
+    //
+    try {
+        const imageRef = ref(storage, path);
+        const url = await getDownloadURL(imageRef);
+        return url;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export async function getUserPublicProfileInfo(uid) {
+    try {
+        const profileInfo = await getUserInfo(uid);
+        const linksInfo = await getLinks(uid);
+        return { profileInfo: profileInfo, linksInfo: linksInfo };
+    } catch (error) {
+        console.log(error);
     }
 }
