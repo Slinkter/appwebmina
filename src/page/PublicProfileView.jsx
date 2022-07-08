@@ -7,6 +7,8 @@ import {
     getUserPublicProfileInfo,
 } from "../firebase/firebase";
 
+import "../App.css";
+
 function PublicProfileView() {
     const params = useParams();
     const [profile, setProfile] = useState(null);
@@ -42,7 +44,7 @@ function PublicProfileView() {
     }
 
     return (
-        <div>
+        <div className="App">
             <div>
                 <img src={url} alt="" width={100} />
             </div>
@@ -52,7 +54,7 @@ function PublicProfileView() {
                 {profile?.linksInfo.map((link) => (
                     <PublicLink
                         key={link.docId}
-                        url={link.ulr}
+                        url={link.url}
                         title={link.title}
                     />
                 ))}
