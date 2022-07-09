@@ -11,6 +11,11 @@ import SingOutView from "./page/SingOutView";
 import PublicProfileView from "./page/PublicProfileView";
 import ChooseUsernameView from "./page/ChooseUsernameView";
 import ErrorView from "./page/ErrorView";
+import NewEmployer from "./pagedashboard/NewEmployer";
+import NewProduct from "./pagedashboard/NewProduct";
+import UpdateStock from "./pagedashboard/UpdateStock";
+import CreateReport from "./pagedashboard/CreateReport";
+import CreatePedido from "./pagedashboard/CreatePedido";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -24,6 +29,12 @@ root.render(
             <Route path="u/:username" element={<PublicProfileView />} />
             <Route path="choose-username" element={<ChooseUsernameView />} />
             <Route path="*" element={<ErrorView />}></Route>
+
+            <Route path="createemploye" element={<NewEmployer />}></Route>
+            <Route path="createproduct" element={<NewProduct />}></Route>
+            <Route path="updateproduct" element={<UpdateStock />}></Route>
+            <Route path="createreport" element={<CreateReport />}></Route>
+            <Route path="createorder" element={<CreatePedido />}></Route>
         </Routes>
     </BrowserRouter>
 );

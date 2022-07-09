@@ -13,20 +13,6 @@ import Link from "../components/Link";
 //css
 import "../style/Dashboard.css";
 
-// MUI
-
-import {
-    Container,
-    Avatar,
-    Box,
-    Card,
-    CardContent,
-    Grid,
-    Typography,
-} from "@mui/material";
-
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import MoneyIcon from "@mui/icons-material/Money";
 import CardDashboard from "../components/CardDashboard";
 import CDCreateProduct from "../components/CDCreateProduct";
 import CDUpdateProduct from "../components/CDUpdateProduct";
@@ -120,12 +106,31 @@ function DashboardView() {
     }
 
     function btn_NewEmployer() {
-        alert("ahora crear empleado");
+        navigate("/createemploye");
+    }
+
+    function btn_NewProduct() {
+        navigate("/createproduct");
+    }
+
+    //
+    function btn_UpdateProductt() {
+        navigate("/updateproduct");
+    }
+
+    function btn_CreateReport() {
+        navigate("/createreport");
+    }
+
+    function btn_CreateOrder() {
+        navigate("/createorder");
     }
 
     return (
         <DashboardWrapper>
-            <h1 className="text-center">Bienvenido {currentUser.displayName} </h1>
+            <h1 className="text-center">
+                Bienvenido {currentUser.displayName}{" "}
+            </h1>
             <div className="container">
                 <CardDashboard
                     btn_NewEmployer={btn_NewEmployer}
@@ -134,22 +139,22 @@ function DashboardView() {
                 />
 
                 <CDCreateProduct
-                    btn_NewEmployer={btn_NewEmployer}
+                    btn_NewEmployer={btn_NewProduct}
                     label={"crear"}
                     metodo={"producto"}
                 />
                 <CDUpdateProduct
-                    btn_NewEmployer={btn_NewEmployer}
+                    btn_NewEmployer={btn_UpdateProductt}
                     label={"actualizar"}
                     metodo={"Stock"}
                 />
                 <CDCreateReport
-                    btn_NewEmployer={btn_NewEmployer}
+                    btn_NewEmployer={btn_CreateReport}
                     label={"Crear"}
                     metodo={"Reporte"}
                 />
                 <CDCreateOrder
-                    btn_NewEmployer={btn_NewEmployer}
+                    btn_NewEmployer={btn_CreateOrder}
                     label={"Crear"}
                     metodo={"Pedido"}
                 />
