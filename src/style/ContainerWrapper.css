@@ -1,0 +1,25 @@
+.containerWrapper {
+    margin-left: 120px;
+    margin-right: 120px;
+}
+
+@media screen and (max-width: 420px) {
+    .containerWrapper {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .containerWrapper {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .containerWrapper {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}

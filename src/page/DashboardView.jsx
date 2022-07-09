@@ -10,6 +10,28 @@ import {
     updateLink,
 } from "../firebase/firebase";
 import Link from "../components/Link";
+//css
+import "../style/Dashboard.css";
+
+// MUI
+
+import {
+    Container,
+    Avatar,
+    Box,
+    Card,
+    CardContent,
+    Grid,
+    Typography,
+} from "@mui/material";
+
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import MoneyIcon from "@mui/icons-material/Money";
+import CardDashboard from "../components/CardDashboard";
+import CDCreateProduct from "../components/CDCreateProduct";
+import CDUpdateProduct from "../components/CDUpdateProduct";
+import CDCreateReport from "../components/CDCreateReport";
+import CDCreateOrder from "../components/CDCreateOrder";
 
 function DashboardView() {
     const navigate = useNavigate();
@@ -97,31 +119,40 @@ function DashboardView() {
         setLinks([...tmp]);
     }
 
+    function btn_NewEmployer() {
+        alert("ahora crear empleado");
+    }
+
     return (
         <DashboardWrapper>
-            <h1>Dashboard... </h1>
+            <h1 className="text-center">Bienvenido {currentUser.displayName} </h1>
+            <div className="container">
+                <CardDashboard
+                    btn_NewEmployer={btn_NewEmployer}
+                    label={"crear"}
+                    metodo={"empleado"}
+                />
 
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="title">Title</label>
-                <input type="" name="title" onChange={handleOnChange} />
-
-                <label htmlFor="url">URL</label>
-                <input type="" name="url" onChange={handleOnChange} />
-
-                <input type="submit" value="Create new Link" />
-            </form>
-
-            <div>
-                {links.map((link) => (
-                    <Link
-                        key={link.docId}
-                        docId={link.docId}
-                        title={link.title}
-                        url={link.url}
-                        onUpdate={handleUpdateLink}
-                        onDelete={handleDeleteLink}
-                    />
-                ))}
+                <CDCreateProduct
+                    btn_NewEmployer={btn_NewEmployer}
+                    label={"crear"}
+                    metodo={"producto"}
+                />
+                <CDUpdateProduct
+                    btn_NewEmployer={btn_NewEmployer}
+                    label={"actualizar"}
+                    metodo={"Stock"}
+                />
+                <CDCreateReport
+                    btn_NewEmployer={btn_NewEmployer}
+                    label={"Crear"}
+                    metodo={"Reporte"}
+                />
+                <CDCreateOrder
+                    btn_NewEmployer={btn_NewEmployer}
+                    label={"Crear"}
+                    metodo={"Pedido"}
+                />
             </div>
         </DashboardWrapper>
     );

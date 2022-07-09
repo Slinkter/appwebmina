@@ -24,10 +24,8 @@ import { Link } from "react-router-dom";
 function App() {
     return (
         <React.Fragment>
-            <GlobalStyles
-                styles={{ ul: { margin: 0, padding: 0, listStyle: "none" } }}
-            />
-            <CssBaseline />
+         
+
             <AppBar
                 position="static"
                 color="default"
@@ -45,7 +43,14 @@ function App() {
                         sx={{ flexGrow: 1 }}
                     ></Typography>
 
-                    <Link to="/login">Login</Link>
+                    <Button
+                        component={Link}
+                        to="/login"
+                        variant="contained"
+                        color="primary"
+                    >
+                        Login 2
+                    </Button>
                 </Toolbar>
             </AppBar>
             {/* Hero unit */}
@@ -71,6 +76,8 @@ function App() {
                     component="p"
                 >
                     demo de inventario
+                    <br></br>
+                    <Link to="/login">Continuar</Link>
                 </Typography>
             </Container>
             {/* End hero unit */}
