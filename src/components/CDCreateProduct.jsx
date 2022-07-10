@@ -1,15 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 // MUI
-import { Container } from "@mui/material";
-import {
-    Avatar,
-    Box,
-    Card,
-    CardContent,
-    Grid,
-    Typography,
-} from "@mui/material";
-
+import { Avatar, Card, CardContent, Grid, Typography } from "@mui/material";
 // icon-crear producto
 import InventoryIcon from "@mui/icons-material/Inventory";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 
-import "../style/ContainerWrapper.css"
+import "../style/ContainerWrapper.css";
 
 //MUI
 import AppBar from "@mui/material/AppBar";
@@ -13,7 +13,7 @@ import { Grid } from "@mui/material";
 export default function DashboardWrapper(props) {
     const { children } = props;
     return (
-        <React.Fragment>
+        <React.Fragment >
             <AppBar
                 position="static"
                 color="default"

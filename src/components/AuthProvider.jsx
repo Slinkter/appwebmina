@@ -12,6 +12,8 @@ import {
     userExistes,
 } from "../firebase/firebase";
 
+
+
 export default function AuthProvider(props) {
     const { onUserLoggedIn, onUserNotLoggedIn, onUserNotRegister } = props;
     const { children } = props;
@@ -62,5 +64,5 @@ export default function AuthProvider(props) {
         }
     }, [navigate, onUserLoggedIn, onUserNotLoggedIn, onUserNotRegister]);
 
-    return <div>{children}</div>;
+    return <div >{children}</div>;
 }
