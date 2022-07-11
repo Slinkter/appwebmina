@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import DashboardWrapper from "../components/DashboardWrapper";
 
 import NextLink from "next/link";
@@ -16,6 +16,7 @@ import {
     Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Style } from "@mui/icons-material";
 
 function NewProduct() {
     const navigate = useNavigate();
@@ -41,6 +42,37 @@ function NewProduct() {
         },
     });
 
+    const states = [
+        {
+            value: "C1",
+            label: "Categoria 1",
+        },
+        {
+            value: "C2",
+            label: "Categoria 2",
+        },
+        {
+            value: "C3",
+            label: "Categoria 3",
+        },
+    ];
+
+    const [values, setValues] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        state: "",
+        country: "",
+    });
+
+    const handleChange = (event) => {
+        setValues({
+            ...values,
+            [event.target.name]: event.target.value,
+        });
+    };
+
     return (
         <DashboardWrapper>
             <Box
@@ -55,7 +87,7 @@ function NewProduct() {
                 <Container maxWidth="sm">
                     <form onSubmit={formik.handleSubmit}>
                         <Box sx={{ my: 3 }}>
-                            <Typography color="textPrimary" variant="h4">
+                            <Typography color="textPrimary" variant="h3">
                                 Crear un Producto
                             </Typography>
                         </Box>
@@ -69,7 +101,7 @@ function NewProduct() {
                                 formik.touched.nameproduct &&
                                 formik.errors.nameproduct
                             }
-                            label="Nombre Producto"
+                            label="Codigo Producto"
                             margin="normal"
                             name="nameproduct"
                             onBlur={formik.handleBlur}
@@ -96,6 +128,25 @@ function NewProduct() {
                         />
 
                         <TextField
+                            margin="normal"
+                            fullWidth
+                            label="Categoria"
+                            name="state"
+                            onChange={handleChange}
+                            required
+                            select
+                            SelectProps={{ native: true }}
+                            value={values.state}
+                            variant="outlined"
+                        >
+                            {states.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </TextField>
+
+                        <TextField
                             error={Boolean(
                                 formik.touched.category &&
                                     formik.errors.category
@@ -113,6 +164,7 @@ function NewProduct() {
                             type="text"
                             value={formik.values.category}
                             variant="outlined"
+                            hidden={true}
                         />
 
                         <TextField
