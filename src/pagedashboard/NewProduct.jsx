@@ -33,7 +33,10 @@ function NewProduct() {
             category: Yup.string().max(150).required("campo faltante"),
             codigo: Yup.string().max(150).required("campo faltante"),
         }),
-        onSubmit: () => {
+        onSubmit: (values) => {
+            // agregar uid
+            // agregar fecha
+            console.log(JSON.stringify(values, null, 2));
             navigate("/dashboard");
         },
     });
