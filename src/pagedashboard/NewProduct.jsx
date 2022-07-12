@@ -1,45 +1,65 @@
-import React from "react";
+import React, { useState } from "react";
 import DashboardWrapper from "../components/DashboardWrapper";
-
-import NextLink from "next/link";
-import { useRouter } from "next/router";
+import AuthProvider from "../components/AuthProvider";
+import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {
-    Box,
-    Button,
-    Checkbox,
-    Container,
-    FormHelperText,
-    Link,
-    TextField,
-    Typography,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 
 function NewProduct() {
+    //
     const navigate = useNavigate();
-
+    const [state, setState] = useState(0);
+    const [currentUser, setCurrentUser] = useState({});
+    const initvalue = {
+        nameproduct: "",
+        detail: "",
+        category: "",
+        codigo: "",
+    };
+    const inityup = {
+        nameproduct: Yup.string().max(150).required("campo faltante "),
+        detail: Yup.string().max(150).required("campo faltante "),
+        category: Yup.string().max(150).required("campo faltante"),
+        codigo: Yup.string().max(150).required("campo faltante"),
+    };
+    //
     const formik = useFormik({
-        initialValues: {
-            nameproduct: "",
-            detail: "",
-            category: "",
-            codigo: "",
-        },
-        validationSchema: Yup.object({
-            nameproduct: Yup.string().max(150).required("campo faltante "),
-            detail: Yup.string().max(150).required("campo faltante "),
-            category: Yup.string().max(150).required("campo faltante"),
-            codigo: Yup.string().max(150).required("campo faltante"),
-        }),
+        initialValues: initvalue,
+        validationSchema: Yup.object(inityup),
         onSubmit: (values) => {
-            // agregar uid
-            // agregar fecha
+            values.userUid = currentUser.uid;
+            values.date = new Date();
             console.log(JSON.stringify(values, null, 2));
             navigate("/dashboard");
         },
     });
+    //
+
+    function handleUserLoggedIn(user) {
+        setCurrentUser(user);
+        setState(2);
+    }
+
+    function handleUserNotRegister(user) {
+        navigate("/login");
+    }
+
+    function handleUserNotLoggedIn() {
+        navigate("/login");
+    }
+
+    if (state === 0) {
+        return (
+            <AuthProvider
+                onUserLoggedIn={handleUserLoggedIn}
+                onUserNotRegister={handleUserNotRegister}
+                onUserNotLoggedIn={handleUserNotLoggedIn}
+            >
+                <div>Loading... </div>
+            </AuthProvider>
+        );
+    }
 
     return (
         <DashboardWrapper>
@@ -54,11 +74,12 @@ function NewProduct() {
             >
                 <Container maxWidth="sm">
                     <form onSubmit={formik.handleSubmit}>
-                        <Box sx={{ my: 3 }}>
-                            <Typography color="textPrimary" variant="h4">
+                        <Box sx={{  pt: 2 }}>
+                            <Typography color="textPrimary" variant="h5">
                                 Crear un Producto
                             </Typography>
                         </Box>
+
                         <TextField
                             error={Boolean(
                                 formik.touched.nameproduct &&
@@ -144,7 +165,7 @@ function NewProduct() {
                                 type="submit"
                                 variant="contained"
                             >
-                                Sign Up Now
+                                Guardar
                             </Button>
                         </Box>
                     </form>

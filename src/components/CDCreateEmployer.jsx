@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 // MUI
-import { Container } from "@mui/material";
 import {
     Avatar,
+    Container,
     Box,
     Card,
     CardContent,
@@ -12,16 +12,8 @@ import {
 
 // crear empleado
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
-// icon-crear producto
-import InventoryIcon from "@mui/icons-material/Inventory";
-// icon-update producto
-import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
-// icon-generar reporte
-import AssessmentIcon from "@mui/icons-material/Assessment";
-// icon-Crear pedido
-import NoteAddIcon from "@mui/icons-material/NoteAdd";
 
-function CardDashboard(props) {
+function CDCreateEmployer(props) {
     const { btn_NewEmployer, label, metodo } = props;
 
     function handleNewEmployer() {
@@ -69,4 +61,4 @@ function CardDashboard(props) {
     );
 }
 
-export default CardDashboard;
+export default CDCreateEmployer;

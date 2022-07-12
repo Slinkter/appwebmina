@@ -13,7 +13,7 @@ import Link from "../components/Link";
 //css
 import "../style/Dashboard.css";
 
-import CardDashboard from "../components/CardDashboard";
+import CDCreateEmployer from "../components/CDCreateEmployer";
 import CDCreateProduct from "../components/CDCreateProduct";
 import CDUpdateProduct from "../components/CDUpdateProduct";
 import CDCreateReport from "../components/CDCreateReport";
@@ -128,10 +128,10 @@ function DashboardView() {
     return (
         <DashboardWrapper>
             <h1 className="text-center">
-                Bienvenido {currentUser.displayName}{" "}
+                Bienvenido {currentUser.displayName}
             </h1>
             <div className="container">
-                <CardDashboard
+                <CDCreateEmployer
                     btn_NewEmployer={btn_NewEmployer}
                     label={"crear"}
                     metodo={"empleado"}
