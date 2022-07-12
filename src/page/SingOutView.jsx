@@ -8,7 +8,7 @@ function SingOutView() {
 
     async function handleUserLoggedIn(user) {
         await logout();
-        navigate("/login");
+        navigate("/");
     }
 
     function handleUserNotRegister() {

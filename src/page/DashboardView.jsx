@@ -23,7 +23,6 @@ function DashboardView() {
     const navigate = useNavigate();
     const [state, setState] = useState(0);
     const [currentUser, setCurrentUser] = useState({});
-
     const [title, setTitle] = useState("");
     const [url, setURL] = useState("");
     const [links, setLinks] = useState([]);
