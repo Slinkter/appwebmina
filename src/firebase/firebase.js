@@ -221,3 +221,55 @@ export async function addNewProduct(product) {
         console.log(error);
     }
 }
+
+export async function getNewOrden() {
+    try {
+        console.group("addNewOrden");
+        const ref1 = await getEmployers();
+        const ref2 = await getProducts();
+        console.log(ref1);
+        console.log(ref2);
+        console.groupEnd();
+        return {ref1: ref1, ref2: ref2};
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function getEmployers() {
+    const employers = [];
+
+    try {
+        const querySnapshot = await getDocs(collection(db, "employers"));
+        querySnapshot.forEach((doc) => {
+            const employer = { ...doc.data() };
+            employer.docId = doc.id;
+            employers.push(employer);
+            console.log(doc.id, " => ", doc.data());
+            console.log(employers);
+        });
+
+        return employers;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export async function getProducts() {
+    const products = [];
+
+    try {
+        const querySnapshot = await getDocs(collection(db, "products"));
+        querySnapshot.forEach((doc) => {
+            const product = { ...doc.data() };
+            product.docId = doc.id;
+            products.push(product);
+            console.log(doc.id, " => ", doc.data());
+            console.log(products);
+        });
+
+        return products;
+    } catch (error) {
+        console.error(error);
+    }
+}

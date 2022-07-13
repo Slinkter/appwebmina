@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DashboardWrapper from "../components/DashboardWrapper";
 import { v4 as uuidv4 } from "uuid";
 
@@ -31,9 +31,13 @@ import {
 } from "@mui/material";
 
 import DeleteIcon from "@mui/icons-material/Delete";
+import { getNewOrden } from "../firebase/firebase";
 
 function CreatePedido() {
     const navigate = useNavigate();
+    const [products, setProducts] = useState([]);
+    const [employers, setEmployers] = useState([]);
+    const [state, setState] = useState(0);
 
     const formik = useFormik({
         initialValues: {
@@ -43,10 +47,18 @@ function CreatePedido() {
             codigo: "",
         },
         validationSchema: Yup.object({
-            nameproduct: Yup.string().max(150).required("campo faltante "),
-            detail: Yup.string().max(150).required("campo faltante "),
-            category: Yup.string().max(150).required("campo faltante"),
-            codigo: Yup.string().max(150).required("campo faltante"),
+            nameproduct: Yup.string()
+                .max(150)
+                .required("campo faltante "),
+            detail: Yup.string()
+                .max(150)
+                .required("campo faltante "),
+            category: Yup.string()
+                .max(150)
+                .required("campo faltante"),
+            codigo: Yup.string()
+                .max(150)
+                .required("campo faltante"),
         }),
         onSubmit: (values) => {
             // agregar uid
@@ -96,6 +108,19 @@ function CreatePedido() {
     const handlePageChange = (event, newPage) => {
         setPage(newPage);
     };
+
+    useEffect(() => {
+        getAll();
+
+        async function getAll() {
+            try {
+                const getallemployersproduct = await getNewOrden();
+                console.log(getallemployersproduct);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    }, []);
 
     return (
         <DashboardWrapper>

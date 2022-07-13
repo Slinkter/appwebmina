@@ -48,7 +48,14 @@ function PublicProfileView() {
             <div>
                 <img src={url} alt="" width={100} />
             </div>
-            <h2>{profile?.profileInfo.username}</h2>
+        </div>
+    );
+}
+
+export default PublicProfileView;
+
+/* 
+ <h2>{profile?.profileInfo.username}</h2>
             <h3>{profile?.profileInfo.displayName}</h3>
             <div>
                 {profile?.linksInfo.map((link) => (
@@ -59,11 +66,6 @@ function PublicProfileView() {
                     />
                 ))}
             </div>
-        </div>
-    );
-}
 
-export default PublicProfileView;
-/* 
 
- */
+*/
