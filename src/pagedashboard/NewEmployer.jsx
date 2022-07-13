@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import DashboardWrapper from "../components/DashboardWrapper";
+import AuthProvider from "../components/AuthProvider";
+import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
-import { useState } from "react";
 
 import {
     Box,
@@ -14,18 +15,13 @@ import {
     Divider,
     Grid,
     TextField,
-} from "@mui/material";
-
-import {
-   
-  
     Container,
     FormHelperText,
-  
     Typography,
 } from "@mui/material";
+import { addNewEmployer } from "../firebase/firebase";
 
-const states = [
+const areainput = [
     {
         value: "a1",
         label: "Area 1",
@@ -41,130 +37,245 @@ const states = [
 ];
 
 function NewEmployer() {
-    const [values, setValues] = useState({
+    //
+    const navigate = useNavigate();
+    const [state, setState] = useState(0);
+    const [currentUser, setCurrentUser] = useState({});
+
+    const initvalue = {
         firstName: "",
         lastName: "",
-        email: "",
+        dni: "",
         phone: "",
-        state: "",
-        country: "",
+        email: "",
+        area: "",
+    };
+
+    const inityup = {
+        firstName: Yup.string()
+            .max(25, " el limite es de 25 caracteres")
+            .required("campo faltante "),
+        lastName: Yup.string()
+            .max(25, " el limite es de 25 caracteres")
+            .required("campo faltante "),
+        dni: Yup.string()
+            .max(8, "el limite es 8 digitos ")
+            .required("campo faltante"),
+        phone: Yup.string()
+            .max(12, " el limite es de 12 caracteres")
+            .required("campo faltante"),
+        email: Yup.string()
+            .max(40, " el limite es de 40 caracteres")
+            .required("campo faltante"),
+        area: Yup.string()
+            .max(20, " el limite es de 20 caracteres")
+            .required("campo faltante"),
+    };
+
+    const formik = useFormik({
+        initialValues: initvalue,
+        validationSchema: Yup.object(inityup),
+        onSubmit: (values) => {
+            values.adminUid = currentUser.uid;
+            values.createdAt = new Date().toISOString();
+            console.log(JSON.stringify(values, null, 2));
+            saveEmployer(values);
+
+            navigate("/dashboard");
+        },
     });
 
-    const handleChange = (event) => {
-        setValues({
-            ...values,
-            [event.target.name]: event.target.value,
-        });
-    };
+    async function saveEmployer(values) {
+        const rpta = await addNewEmployer(values);
+        console.log(rpta);
+    }
+
+    function handleUserLoggedIn(user) {
+        setCurrentUser(user);
+        setState(2);
+    }
+
+    function handleUserNotRegister(user) {
+        navigate("/login");
+    }
+
+    function handleUserNotLoggedIn() {
+        navigate("/login");
+    }
+
+    if (state === 0) {
+        return (
+            <AuthProvider
+                onUserLoggedIn={handleUserLoggedIn}
+                onUserNotRegister={handleUserNotRegister}
+                onUserNotLoggedIn={handleUserNotLoggedIn}
+            >
+                <div>Loading... </div>
+            </AuthProvider>
+        );
+    }
 
     return (
         <DashboardWrapper>
-            <h1>Creando nuevo empleado</h1>
+            <Box
+                component="main"
+                sx={{
+                    alignItems: "center",
+                    display: "flex",
+                    flexGrow: 1,
+                    minHeight: "100%",
+                }}
+            >
+                <Container maxWidth="sm">
+                    <form onSubmit={formik.handleSubmit}>
+                        <Box sx={{ pt: 2 }}>
+                            <Typography color="textPrimary" variant="h5">
+                                Crear empleado
+                            </Typography>
+                        </Box>
 
-            <CardContent>
-                <Grid container spacing={3}>
-                    <Grid item md={6} xs={12}>
                         <TextField
+                            error={Boolean(
+                                formik.touched.firstName &&
+                                    formik.errors.firstName
+                            )}
+                            helperText={
+                                formik.touched.firstName &&
+                                formik.errors.firstName
+                            }
+                            margin="normal"
                             fullWidth
                             label="Nombres"
                             name="firstName"
-                            onChange={handleChange}
                             required
-                            value={values.firstName}
+                            type="text"
                             variant="outlined"
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            value={formik.values.firstName}
                         />
-                    </Grid>
-                    <Grid item md={6} xs={12}>
                         <TextField
+                            margin="normal"
                             fullWidth
                             label="Apellidos"
                             name="lastName"
-                            onChange={handleChange}
                             required
-                            value={values.lastName}
                             variant="outlined"
+                            value={formik.values.lastName}
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            error={Boolean(
+                                formik.touched.lastName &&
+                                    formik.errors.lastName
+                            )}
+                            helperText={
+                                formik.touched.lastName &&
+                                formik.errors.lastName
+                            }
                         />
-                    </Grid>
-                    <Grid item md={6} xs={12}>
+
                         <TextField
+                            margin="normal"
                             fullWidth
                             label="DNI"
-                            name="email"
-                            onChange={handleChange}
+                            name="dni"
+                            type="number"
                             required
-                            value={values.email}
                             variant="outlined"
+                            value={formik.values.dni}
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            error={Boolean(
+                                formik.touched.dni && formik.errors.dni
+                            )}
+                            helperText={formik.touched.dni && formik.errors.dni}
                         />
-                    </Grid>
-                    <Grid item md={6} xs={12}>
+
                         <TextField
+                            margin="normal"
                             fullWidth
                             label="Telefono"
                             name="phone"
-                            onChange={handleChange}
                             type="number"
-                            value={values.phone}
                             variant="outlined"
+                            value={formik.values.phone}
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            error={Boolean(
+                                formik.touched.phone && formik.errors.phone
+                            )}
+                            helperText={
+                                formik.touched.phone && formik.errors.phone
+                            }
                         />
-                    </Grid>
-                    <Grid item md={6} xs={12}>
                         <TextField
+                            margin="normal"
                             fullWidth
                             label="Correo"
                             type="email"
-                            name="country"
-                            onChange={handleChange}
+                            name="email"
                             required
-                            value={values.country}
                             variant="outlined"
+                            value={formik.values.email}
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                            error={Boolean(
+                                formik.touched.email && formik.errors.email
+                            )}
+                            helperText={
+                                formik.touched.email && formik.errors.email
+                            }
                         />
-                    </Grid>
-                    <Grid item md={6} xs={12}>
+
                         <TextField
+                            margin="normal"
                             fullWidth
                             label="Area de Trabajo"
-                            name="state"
-                            onChange={handleChange}
-                            required
+                            name="area"
+                            onChange={formik.handleChange}
+                            value={formik.values.area}
                             select
                             SelectProps={{ native: true }}
-                            value={values.state}
                             variant="outlined"
                         >
-                            {states.map((option) => (
+                            {areainput.map((option) => (
                                 <option key={option.value} value={option.value}>
                                     {option.label}
                                 </option>
                             ))}
                         </TextField>
-                    </Grid>
 
-                    <Grid item md={3} xs={12}>
-                        <Button
-                            fullWidth
-                            component={Link}
-                            to="/dashboard"
-                            variant="contained"
-                            color="primary"
-                        >
-                            Crear
-                        </Button>
-                    </Grid>
+                        <Box sx={{ py: 2 }}>
+                            <Button
+                                margin="normal"
+                                color="primary"
+                                fullWidth
+                                disabled={formik.isSubmitting}
+                                size="large"
+                                type="submit"
+                                variant="contained"
+                            >
+                                Crear
+                            </Button>
+                        </Box>
 
-                    <Grid item md={3} xs={12}>
-                        <Button
-                            color="error"
-                            fullWidth
-                            component={Link}
-                            to="/dashboard"
-                            variant="contained"
-                            ariant="outlined"
-                        >
-                            Regresar
-                        </Button>
-                    </Grid>
-                </Grid>
-            </CardContent>
+                        <Box sx={{ py: 2 }}>
+                            <Button
+                                color="error"
+                                fullWidth
+                                margin="normal"
+                                component={Link}
+                                to="/dashboard"
+                                variant="contained"
+                                ariant="outlined"
+                                size="large"
+                            >
+                                Regresar
+                            </Button>
+                        </Box>
+                    </form>
+                </Container>
+            </Box>
         </DashboardWrapper>
     );
 }

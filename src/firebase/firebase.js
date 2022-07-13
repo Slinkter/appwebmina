@@ -188,6 +188,36 @@ export async function getUserPublicProfileInfo(uid) {
     }
 }
 
-export async function logout(){
-    await auth.signOut()
+export async function logout() {
+    await auth.signOut();
+}
+
+////////////////////////////////////////////////////////////////////////
+export async function addNewEmployer(employer) {
+    try {
+        console.group("addNewEmployer");
+        const colleRef = collection(db, "employers");
+        const res = await addDoc(colleRef, employer);
+        //
+        console.log(colleRef);
+        console.log(res);
+        console.groupEnd();
+        return res;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export async function addNewProduct(product) {
+    try {
+        console.group("addNewProduct");
+        const docRef = collection(db, "products");
+        const res = await addDoc(docRef, product);
+        console.log(docRef);
+        console.log(res);
+        console.groupEnd();
+        return res;
+    } catch (error) {
+        console.log(error);
+    }
 }

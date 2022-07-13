@@ -5,12 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import { addNewProduct } from "../firebase/firebase";
+import { v4 as uuidv4 } from "uuid";
 
 function NewProduct() {
     //
     const navigate = useNavigate();
     const [state, setState] = useState(0);
     const [currentUser, setCurrentUser] = useState({});
+    //
     const initvalue = {
         nameproduct: "",
         detail: "",
@@ -29,12 +32,18 @@ function NewProduct() {
         validationSchema: Yup.object(inityup),
         onSubmit: (values) => {
             values.userUid = currentUser.uid;
-            values.date = new Date();
+            values.id = uuidv4();
+            values.createdAt = new Date().toISOString();
             console.log(JSON.stringify(values, null, 2));
+            saveProduct(values);
             navigate("/dashboard");
         },
     });
     //
+
+    async function saveProduct(values) {
+        await addNewProduct(values);
+    }
 
     function handleUserLoggedIn(user) {
         setCurrentUser(user);
@@ -74,9 +83,9 @@ function NewProduct() {
             >
                 <Container maxWidth="sm">
                     <form onSubmit={formik.handleSubmit}>
-                        <Box sx={{  pt: 2 }}>
+                        <Box sx={{ pt: 2 }}>
                             <Typography color="textPrimary" variant="h5">
-                                Crear un Producto
+                                Crear producto
                             </Typography>
                         </Box>
 
@@ -85,11 +94,11 @@ function NewProduct() {
                                 formik.touched.nameproduct &&
                                     formik.errors.nameproduct
                             )}
-                            fullWidth
                             helperText={
                                 formik.touched.nameproduct &&
                                 formik.errors.nameproduct
                             }
+                            fullWidth
                             label="Nombre Producto"
                             margin="normal"
                             name="nameproduct"
@@ -158,6 +167,7 @@ function NewProduct() {
 
                         <Box sx={{ py: 2 }}>
                             <Button
+                                margin="normal"
                                 color="primary"
                                 disabled={formik.isSubmitting}
                                 fullWidth
