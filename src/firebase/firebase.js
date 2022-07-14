@@ -230,7 +230,7 @@ export async function getNewOrden() {
         console.log(ref1);
         console.log(ref2);
         console.groupEnd();
-        return {ref1: ref1, ref2: ref2};
+        return { ref1: ref1, ref2: ref2 };
     } catch (error) {
         console.log(error);
     }
@@ -246,7 +246,6 @@ export async function getEmployers() {
             employer.docId = doc.id;
             employers.push(employer);
             console.log(doc.id, " => ", doc.data());
-            console.log(employers);
         });
 
         return employers;
@@ -265,7 +264,6 @@ export async function getProducts() {
             product.docId = doc.id;
             products.push(product);
             console.log(doc.id, " => ", doc.data());
-            console.log(products);
         });
 
         return products;
