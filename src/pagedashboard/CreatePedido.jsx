@@ -39,35 +39,8 @@ function CreatePedido() {
     const [employers, setEmployers] = useState({});
     const [state, setState] = useState(0);
     const [currentUser, setCurrentUser] = useState({});
-
-    const formik = useFormik({
-        initialValues: {
-            nameproduct: "",
-            detail: "",
-            category: "",
-            codigo: "",
-        },
-        validationSchema: Yup.object({
-            nameproduct: Yup.string()
-                .max(150)
-                .required("campo faltante "),
-            detail: Yup.string()
-                .max(150)
-                .required("campo faltante "),
-            category: Yup.string()
-                .max(150)
-                .required("campo faltante"),
-            codigo: Yup.string()
-                .max(150)
-                .required("campo faltante"),
-        }),
-        onSubmit: (values) => {
-            // agregar uid
-            // agregar fecha
-            console.log(JSON.stringify(values, null, 2));
-            navigate("/dashboard");
-        },
-    });
+    const [currentEmployer, setCurrentEmployer] = useState({});
+    const [dniEmployer, setDniEmployer] = useState({});
 
     //
 
@@ -106,6 +79,23 @@ function CreatePedido() {
         );
     }
 
+    function handleDni() {}
+
+    function handleName() {}
+
+    const handleSubmit = () => {};
+
+    const handleChangeEmployer = (e) => {
+        const dni = parseInt(e.target.value);
+        setDniEmployer(dni);
+        const obj = employers.filter((item) => {
+            if (item.dni === dni) {
+                setCurrentEmployer(item);
+                return item;
+            }
+        });
+    };
+
     return (
         <DashboardWrapper>
             <Box
@@ -118,7 +108,7 @@ function CreatePedido() {
                 }}
             >
                 <Container maxWidth="sm">
-                    <form onSubmit={formik.handleSubmit}>
+                    <form>
                         <Box sx={{ my: 3 }}>
                             <Typography color="textPrimary" variant="h3">
                                 Crear Orden
@@ -146,24 +136,13 @@ function CreatePedido() {
                             </Box>
                         </Box>
 
-                        {/* products.length > 0
-                            ? products.map((product) => {
-                                  console.log(product);
-                                  return (
-                                      <h1 key={product.id}>
-                                          {product.nameproduct}
-                                      </h1>
-                                  );
-                              })
-                            : null */}
-
                         <TextField
                             margin="normal"
                             fullWidth
-                            name="area"
                             select
                             SelectProps={{ native: true }}
                             variant="outlined"
+                            onChange={handleChangeEmployer}
                         >
                             {employers.length > 0
                                 ? employers.map((option) => (
@@ -171,46 +150,27 @@ function CreatePedido() {
                                           key={option.docId}
                                           value={option.dni}
                                       >
-                                          dni:{option.dni} [ {option.firstName}]
+                                          [ DNI:{option.dni}] - [
+                                          {option.firstName} {option.lastName}]
                                       </option>
                                   ))
                                 : null}
                         </TextField>
 
                         <TextField
-                            error={Boolean(
-                                formik.touched.nameproduct &&
-                                    formik.errors.nameproduct
-                            )}
                             fullWidth
-                            helperText={
-                                formik.touched.nameproduct &&
-                                formik.errors.nameproduct
-                            }
-                            label="Codigo de empleado"
+                            disabled
                             margin="normal"
                             name="nameproduct"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            value={formik.values.nameproduct}
+                            value={currentEmployer.dni}
                             variant="outlined"
                         />
                         <TextField
-                            error={Boolean(
-                                formik.touched.detail && formik.errors.detail
-                            )}
                             fullWidth
-                            helperText={
-                                formik.touched.detail && formik.errors.detail
-                            }
-                            label="Nombre del empleado"
                             disabled
                             margin="normal"
                             name="detail"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            type="text"
-                            value={formik.values.detail}
+                            value={currentEmployer.firstName}
                             variant="outlined"
                         />
 
@@ -256,64 +216,22 @@ function CreatePedido() {
                         </TextField>
 
                         <TextField
-                            error={Boolean(
-                                formik.touched.category &&
-                                    formik.errors.category
-                            )}
                             fullWidth
-                            helperText={
-                                formik.touched.category &&
-                                formik.errors.category
-                            }
-                            label="Codigo de producto"
-                            margin="normal"
-                            name="category"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            type="text"
-                            value={formik.values.category}
-                            variant="outlined"
-                        />
-
-                        <TextField
-                            error={Boolean(
-                                formik.touched.lastName &&
-                                    formik.errors.lastName
-                            )}
-                            fullWidth
-                            helperText={
-                                formik.touched.lastName &&
-                                formik.errors.lastName
-                            }
-                            label="nombre del producto"
+                            label="Stock actual"
                             disabled
                             margin="normal"
                             name="codigo"
                             type="number"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            value={formik.values.lastName}
                             variant="outlined"
                         />
 
                         <TextField
-                            error={Boolean(
-                                formik.touched.lastName &&
-                                    formik.errors.lastName
-                            )}
                             fullWidth
-                            helperText={
-                                formik.touched.lastName &&
-                                formik.errors.lastName
-                            }
                             label="Cantidad"
                             disabled
                             margin="normal"
                             name="codigo"
                             type="number"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            value={formik.values.lastName}
                             variant="outlined"
                         />
                     </form>
@@ -423,7 +341,6 @@ function CreatePedido() {
                     <Box sx={{ py: 2 }}>
                         <Button
                             color="primary"
-                            disabled={formik.isSubmitting}
                             fullWidth
                             size="large"
                             type="submit"
