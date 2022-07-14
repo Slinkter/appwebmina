@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DashboardWrapper from "../components/DashboardWrapper";
 import { v4 as uuidv4 } from "uuid";
-
+import AuthProvider from "../components/AuthProvider";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useFormik } from "formik";
@@ -35,9 +35,10 @@ import { getNewOrden } from "../firebase/firebase";
 
 function CreatePedido() {
     const navigate = useNavigate();
-    const [products, setProducts] = useState([]);
-    const [employers, setEmployers] = useState([]);
+    const [products, setProducts] = useState({});
+    const [employers, setEmployers] = useState({});
     const [state, setState] = useState(0);
+    const [currentUser, setCurrentUser] = useState({});
 
     const formik = useFormik({
         initialValues: {
@@ -71,8 +72,6 @@ function CreatePedido() {
     //
 
     const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
-    const [limit, setLimit] = useState(10);
-    const [page, setPage] = useState(0);
 
     const handleSelectOne = (event, id) => {
         const selectedIndex = selectedCustomerIds.indexOf(id);
@@ -101,26 +100,40 @@ function CreatePedido() {
         setSelectedCustomerIds(newSelectedCustomerIds);
     };
 
-    const handleLimitChange = (event) => {
-        setLimit(event.target.value);
-    };
-
-    const handlePageChange = (event, newPage) => {
-        setPage(newPage);
-    };
-
     useEffect(() => {
         getAll();
 
         async function getAll() {
             try {
-                const getallemployersproduct = await getNewOrden();
-                console.log(getallemployersproduct);
+                const { ref1, ref2 } = await getNewOrden();
+                setEmployers(ref1);
+                setProducts(ref2);
             } catch (error) {
                 console.error(error);
             }
         }
     }, []);
+
+    async function handleUserLoggedIn(user) {
+        setCurrentUser(user);
+        setState(1);
+    }
+
+    function handleUserNotRegister(user) {}
+
+    function handleUserNotLoggedIn() {}
+
+    if (state === 1) {
+        return (
+            <AuthProvider
+                onUserLoggedIn={handleUserLoggedIn}
+                onUserNotRegister={handleUserNotRegister}
+                onUserNotLoggedIn={handleUserNotLoggedIn}
+            >
+                <div>Loading... </div>
+            </AuthProvider>
+        );
+    }
 
     return (
         <DashboardWrapper>
@@ -161,6 +174,38 @@ function CreatePedido() {
                                 </Box>
                             </Box>
                         </Box>
+
+                        {/* products.length > 0
+                            ? products.map((product) => {
+                                  console.log(product);
+                                  return (
+                                      <h1 key={product.id}>
+                                          {product.nameproduct}
+                                      </h1>
+                                  );
+                              })
+                            : null */}
+
+                        <TextField
+                            margin="normal"
+                            fullWidth
+                            name="area"
+                            select
+                            SelectProps={{ native: true }}
+                            variant="outlined"
+                        >
+                            {employers.length > 0
+                                ? employers.map((option) => (
+                                      <option
+                                          key={option.docId}
+                                          value={option.dni}
+                                      >
+                                          dni:{option.dni} [ {option.firstName}]
+                                      </option>
+                                  ))
+                                : null}
+                        </TextField>
+
                         <TextField
                             error={Boolean(
                                 formik.touched.nameproduct &&
@@ -218,6 +263,26 @@ function CreatePedido() {
                                 </Box>
                             </Box>
                         </Box>
+
+                        <TextField
+                            margin="normal"
+                            fullWidth
+                            name="area"
+                            select
+                            SelectProps={{ native: true }}
+                            variant="outlined"
+                        >
+                            {products.length > 0
+                                ? products.map((option) => (
+                                      <option
+                                          key={option.docId}
+                                          value={option.nameproduct}
+                                      >
+                                          {option.nameproduct}
+                                      </option>
+                                  ))
+                                : null}
+                        </TextField>
 
                         <TextField
                             error={Boolean(

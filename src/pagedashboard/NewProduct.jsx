@@ -21,10 +21,18 @@ function NewProduct() {
         codigo: "",
     };
     const inityup = {
-        nameproduct: Yup.string().max(150).required("campo faltante "),
-        detail: Yup.string().max(150).required("campo faltante "),
-        category: Yup.string().max(150).required("campo faltante"),
-        codigo: Yup.string().max(150).required("campo faltante"),
+        nameproduct: Yup.string()
+            .max(150)
+            .required("campo faltante "),
+        detail: Yup.string()
+            .max(150)
+            .required("campo faltante "),
+        category: Yup.string()
+            .max(150)
+            .required("campo faltante"),
+        codigo: Yup.string()
+            .max(150)
+            .required("campo faltante"),
     };
     //
     const formik = useFormik({
@@ -43,31 +51,6 @@ function NewProduct() {
 
     async function saveProduct(values) {
         await addNewProduct(values);
-    }
-
-    function handleUserLoggedIn(user) {
-        setCurrentUser(user);
-        setState(2);
-    }
-
-    function handleUserNotRegister(user) {
-        navigate("/login");
-    }
-
-    function handleUserNotLoggedIn() {
-        navigate("/login");
-    }
-
-    if (state === 0) {
-        return (
-            <AuthProvider
-                onUserLoggedIn={handleUserLoggedIn}
-                onUserNotRegister={handleUserNotRegister}
-                onUserNotLoggedIn={handleUserNotLoggedIn}
-            >
-                <div>Loading... </div>
-            </AuthProvider>
-        );
     }
 
     return (
