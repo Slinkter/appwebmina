@@ -55,55 +55,6 @@ function DashboardView() {
         );
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        addLink();
-    };
-
-    const handleOnChange = (e) => {
-        const value = e.target.value;
-        const e_name = e.target.name;
-
-        if (e_name === "title") {
-            setTitle(value);
-        }
-        if (e_name === "url") {
-            setURL(value);
-        }
-    };
-
-    function addLink() {
-        if (title !== "" && url !== "") {
-            const newLink = {
-                id: uuidv4(),
-                title: title,
-                url: url,
-                uid: currentUser.uid,
-            };
-            const res = insertNewLink(newLink);
-            newLink.docId = res.id;
-            setTitle("");
-            setURL("");
-            setLinks([...links, newLink]); // de la lista links que tengo le add newLink
-        }
-    }
-
-    async function handleUpdateLink(docId, currentTitle, currentUrl) {
-        const link = links.find((item) => item.docId === docId);
-        console.log(docId, currentTitle, currentUrl);
-        link.title = currentTitle;
-        link.url = currentUrl;
-        // al crear el link ya tenia el docID pero no estaba en su campo y ahora del local se va a actualizar
-        await updateLink(docId, link);
-    }
-    async function handleDeleteLink(docId) {
-        // eliminar un link al nivel firebase
-        await delenteLink(docId);
-        // eliminar un link al nivel local
-        const tmp = links.filter((link) => link.docId !== docId);
-        setLinks([...tmp]);
-    }
-
     function btn_NewEmployer() {
         navigate("/createemploye");
     }
@@ -163,3 +114,53 @@ function DashboardView() {
 }
 
 export default DashboardView;
+
+/* 
+const handleSubmit = (e) => {
+    e.preventDefault();
+    addLink();
+};
+
+const handleOnChange = (e) => {
+    const value = e.target.value;
+    const e_name = e.target.name;
+
+    if (e_name === "title") {
+        setTitle(value);
+    }
+    if (e_name === "url") {
+        setURL(value);
+    }
+};
+
+function addLink() {
+    if (title !== "" && url !== "") {
+        const newLink = {
+            id: uuidv4(),
+            title: title,
+            url: url,
+            uid: currentUser.uid,
+        };
+        const res = insertNewLink(newLink);
+        newLink.docId = res.id;
+        setTitle("");
+        setURL("");
+        setLinks([...links, newLink]); // de la lista links que tengo le add newLink
+    }
+}
+
+async function handleUpdateLink(docId, currentTitle, currentUrl) {
+    const link = links.find((item) => item.docId === docId);
+    console.log(docId, currentTitle, currentUrl);
+    link.title = currentTitle;
+    link.url = currentUrl;
+    // al crear el link ya tenia el docID pero no estaba en su campo y ahora del local se va a actualizar
+    await updateLink(docId, link);
+}
+async function handleDeleteLink(docId) {
+    // eliminar un link al nivel firebase
+    await delenteLink(docId);
+    // eliminar un link al nivel local
+    const tmp = links.filter((link) => link.docId !== docId);
+    setLinks([...tmp]);
+} */

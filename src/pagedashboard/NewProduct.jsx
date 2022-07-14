@@ -18,7 +18,7 @@ function NewProduct() {
         nameproduct: "",
         detail: "",
         category: "",
-        codigo: "",
+        cantidad: "",
     };
     const inityup = {
         nameproduct: Yup.string()
@@ -30,7 +30,7 @@ function NewProduct() {
         category: Yup.string()
             .max(150)
             .required("campo faltante"),
-        codigo: Yup.string()
+        cantidad: Yup.string()
             .max(150)
             .required("campo faltante"),
     };
@@ -51,6 +51,31 @@ function NewProduct() {
 
     async function saveProduct(values) {
         await addNewProduct(values);
+    }
+
+    function handleUserLoggedIn(user) {
+        setCurrentUser(user);
+        setState(2);
+    }
+
+    function handleUserNotRegister(user) {
+        navigate("/login");
+    }
+
+    function handleUserNotLoggedIn() {
+        navigate("/login");
+    }
+
+    if (state === 0) {
+        return (
+            <AuthProvider
+                onUserLoggedIn={handleUserLoggedIn}
+                onUserNotRegister={handleUserNotRegister}
+                onUserNotLoggedIn={handleUserNotLoggedIn}
+            >
+                <div>Loading... </div>
+            </AuthProvider>
+        );
     }
 
     return (
@@ -140,7 +165,7 @@ function NewProduct() {
                             }
                             label="Cantidad"
                             margin="normal"
-                            name="codigo"
+                            name="cantidad"
                             type="number"
                             onBlur={formik.handleBlur}
                             onChange={formik.handleChange}

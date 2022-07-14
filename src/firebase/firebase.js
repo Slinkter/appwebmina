@@ -209,8 +209,8 @@ export async function addNewEmployer(employer) {
 }
 
 export async function addNewProduct(product) {
+    console.group("addNewProduct");
     try {
-        console.group("addNewProduct");
         const docRef = collection(db, "products");
         const res = await addDoc(docRef, product);
         console.log(docRef);
@@ -220,6 +220,7 @@ export async function addNewProduct(product) {
     } catch (error) {
         console.log(error);
     }
+    console.groupEnd();
 }
 
 export async function getNewOrden() {
