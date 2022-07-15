@@ -42,6 +42,7 @@ function CreatePedido() {
     const [state, setState] = useState(0);
     const [currentUser, setCurrentUser] = useState(null);
     const [currentEmployer, setCurrentEmployer] = useState(null);
+    const [currentProduct, setCurrentProduct] = useState(null);
 
     //
 
@@ -96,6 +97,18 @@ function CreatePedido() {
             if (item.dni === dni) {
                 setCurrentEmployer(item);
                 return item;
+            }
+        });
+    };
+
+    const handleChangeProducto = (e) => {
+        console.log("handleChangeProducto", e.target.value);
+        const docIdProducto = e.target.value;
+        products.filter((item) => {
+            if (item.docId === docIdProducto) {
+                console.log("item.docId : ", item.docId);
+                console.log("docIdProducto : ", docIdProducto);
+                setCurrentProduct(item);
             }
         });
     };
@@ -171,7 +184,13 @@ function CreatePedido() {
                                 variant="outlined"
                             />
                         ) : (
-                            ""
+                            <TextField
+                                fullWidth
+                                disabled
+                                margin="normal"
+                                name="detail"
+                                variant="outlined"
+                            />
                         )}
 
                         {currentEmployer !== null ? (
@@ -184,7 +203,13 @@ function CreatePedido() {
                                 variant="outlined"
                             />
                         ) : (
-                            ""
+                            <TextField
+                                fullWidth
+                                disabled
+                                margin="normal"
+                                name="detail"
+                                variant="outlined"
+                            />
                         )}
 
                         <Box sx={{ py: 2 }}>
@@ -215,12 +240,13 @@ function CreatePedido() {
                             select
                             SelectProps={{ native: true }}
                             variant="outlined"
+                            onChange={handleChangeProducto}
                         >
                             {products.length > 0
                                 ? products.map((option) => (
                                       <option
                                           key={option.docId}
-                                          value={option.nameproduct}
+                                          value={option.docId}
                                       >
                                           {option.nameproduct}
                                       </option>
@@ -228,25 +254,47 @@ function CreatePedido() {
                                 : null}
                         </TextField>
 
-                        <TextField
-                            fullWidth
-                            label="Stock actual"
-                            disabled
-                            margin="normal"
-                            name="codigo"
-                            type="number"
-                            variant="outlined"
-                        />
+                        {currentProduct !== null ? (
+                            <TextField
+                                fullWidth
+                                disabled
+                                margin="normal"
+                                name="codigo"
+                                type="number"
+                                value={currentProduct.cantidad}
+                                variant="outlined"
+                            />
+                        ) : (
+                            <TextField
+                                fullWidth
+                                label="Stock actual"
+                                disabled
+                                margin="normal"
+                                type="number"
+                                variant="outlined"
+                            />
+                        )}
 
-                        <TextField
-                            fullWidth
-                            label="Cantidad"
-                            disabled
-                            margin="normal"
-                            name="codigo"
-                            type="number"
-                            variant="outlined"
-                        />
+                        {currentProduct !== null ? (
+                            <TextField
+                                fullWidth
+                                margin="normal"
+                                name="codigo"
+                                type="number"
+                                variant="outlined"
+                                label="Escribir cantidad"
+                            />
+                        ) : (
+                            <TextField
+                                label="Escribir cantidad"
+                                fullWidth
+                                disabled
+                                margin="normal"
+                                name="codigo"
+                                type="number"
+                                variant="outlined"
+                            />
+                        )}
                     </form>
                 </Container>
             </Box>
