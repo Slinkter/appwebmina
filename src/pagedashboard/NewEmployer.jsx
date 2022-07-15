@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardWrapper from "../components/DashboardWrapper";
 import AuthProvider from "../components/AuthProvider";
 import { useNavigate } from "react-router-dom";
@@ -75,7 +75,6 @@ function NewEmployer() {
             values.createdAt = new Date().toISOString();
             console.log(JSON.stringify(values, null, 2));
             saveEmployer(values);
-
             navigate("/dashboard");
         },
     });
@@ -97,6 +96,10 @@ function NewEmployer() {
     function handleUserNotLoggedIn() {
         navigate("/login");
     }
+
+    useEffect(() => {
+        console.log("areainput", areainput);
+    }, []);
 
     if (state === 0) {
         return (

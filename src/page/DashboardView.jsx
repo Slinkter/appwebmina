@@ -29,8 +29,7 @@ function DashboardView() {
 
     async function handleUserLoggedIn(user) {
         setCurrentUser(user);
-        setState(2);
-        // obtener la lista de links del usuarios
+        setState(2);      
         const resLinks = await getLinks(user.uid);
         setLinks([...resLinks]);
     }

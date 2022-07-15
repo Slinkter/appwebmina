@@ -35,12 +35,13 @@ import { getNewOrden } from "../firebase/firebase";
 
 function CreatePedido() {
     const navigate = useNavigate();
+    //
     const [products, setProducts] = useState({});
     const [employers, setEmployers] = useState({});
+    //
     const [state, setState] = useState(0);
-    const [currentUser, setCurrentUser] = useState({});
-    const [currentEmployer, setCurrentEmployer] = useState({});
-    const [dniEmployer, setDniEmployer] = useState({});
+    const [currentUser, setCurrentUser] = useState(null);
+    const [currentEmployer, setCurrentEmployer] = useState(null);
 
     //
 
@@ -61,6 +62,9 @@ function CreatePedido() {
     async function handleUserLoggedIn(user) {
         setCurrentUser(user);
         setState(1);
+        const { ref1, ref2 } = await getNewOrden();
+        setEmployers(ref1);
+        setProducts(ref2);
     }
 
     function handleUserNotRegister(user) {}
@@ -87,8 +91,8 @@ function CreatePedido() {
 
     const handleChangeEmployer = (e) => {
         const dni = parseInt(e.target.value);
-        setDniEmployer(dni);
-        const obj = employers.filter((item) => {
+
+        employers.filter((item) => {
             if (item.dni === dni) {
                 setCurrentEmployer(item);
                 return item;
@@ -157,22 +161,31 @@ function CreatePedido() {
                                 : null}
                         </TextField>
 
-                        <TextField
-                            fullWidth
-                            disabled
-                            margin="normal"
-                            name="nameproduct"
-                            value={currentEmployer.dni}
-                            variant="outlined"
-                        />
-                        <TextField
-                            fullWidth
-                            disabled
-                            margin="normal"
-                            name="detail"
-                            value={currentEmployer.firstName}
-                            variant="outlined"
-                        />
+                        {currentEmployer !== null ? (
+                            <TextField
+                                fullWidth
+                                disabled
+                                margin="normal"
+                                name="nameproduct"
+                                value={currentEmployer.dni}
+                                variant="outlined"
+                            />
+                        ) : (
+                            ""
+                        )}
+
+                        {currentEmployer !== null ? (
+                            <TextField
+                                fullWidth
+                                disabled
+                                margin="normal"
+                                name="detail"
+                                value={currentEmployer.firstName}
+                                variant="outlined"
+                            />
+                        ) : (
+                            ""
+                        )}
 
                         <Box sx={{ py: 2 }}>
                             <Box
@@ -257,71 +270,6 @@ function CreatePedido() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <TableRow>
-                                <TableCell>123</TableCell>
-                                <TableCell>Seguro</TableCell>
-                                <TableCell>5 </TableCell>
-                                <TableCell>
-                                    <Button
-                                        startIcon={
-                                            <DeleteIcon fontSize="small" />
-                                        }
-                                        sx={{ mr: 1 }}
-                                    ></Button>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>123</TableCell>
-                                <TableCell>Seguro</TableCell>
-                                <TableCell>5 </TableCell>
-                                <TableCell>
-                                    <Button
-                                        startIcon={
-                                            <DeleteIcon fontSize="small" />
-                                        }
-                                        sx={{ mr: 1 }}
-                                    ></Button>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>123</TableCell>
-                                <TableCell>Seguro</TableCell>
-                                <TableCell>5 </TableCell>
-                                <TableCell>
-                                    <Button
-                                        startIcon={
-                                            <DeleteIcon fontSize="small" />
-                                        }
-                                        sx={{ mr: 1 }}
-                                    ></Button>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>123</TableCell>
-                                <TableCell>Seguro</TableCell>
-                                <TableCell>5 </TableCell>
-                                <TableCell>
-                                    <Button
-                                        startIcon={
-                                            <DeleteIcon fontSize="small" />
-                                        }
-                                        sx={{ mr: 1 }}
-                                    ></Button>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>123</TableCell>
-                                <TableCell>Seguro</TableCell>
-                                <TableCell>5 </TableCell>
-                                <TableCell>
-                                    <Button
-                                        startIcon={
-                                            <DeleteIcon fontSize="small" />
-                                        }
-                                        sx={{ mr: 1 }}
-                                    ></Button>
-                                </TableCell>
-                            </TableRow>
                             <TableRow>
                                 <TableCell>123</TableCell>
                                 <TableCell>Seguro</TableCell>
