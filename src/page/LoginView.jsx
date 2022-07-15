@@ -23,28 +23,28 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import UILoading from "../components/UILoading";
+
+
 
 const theme = createTheme();
 
 function LoginView() {
-    //MUI
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get("email"),
-            password: data.get("password"),
-        });
-    };
-
-    /* const [currentUser, setCurrentUser] = useState(null); */
-    const [state, setCurrentState] = useState(0);
+  //
+    const [state, setState] = useState(0);
     const navigate = useNavigate();
-
+    //
     const handleOnClick = async () => {
         const g_provider = new GoogleAuthProvider();
         await signInWithGoogle(g_provider);
     };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        console.log({  email: data.get("email"),  password: data.get("password")});
+    };
+
 
     async function signInWithGoogle(g_provider) {
         try {
@@ -57,16 +57,16 @@ function LoginView() {
 
     function handleUserLoggedIn(user) {
         navigate("/dashboard");
-        setCurrentState(2);
+        setState(2);
     }
 
     function handleUserNotRegister() {
         navigate("/choose-username");
-        setCurrentState(3);
+        setState(3);
     }
 
     function handleUserNotLoggedIn(user) {
-        setCurrentState(4);
+        setState(4);
     }
 
     if (state === 4) {
@@ -116,9 +116,14 @@ function LoginView() {
             onUserNotRegister={handleUserNotRegister}
             onUserNotLoggedIn={handleUserNotLoggedIn}
         >
-            <div>
-                <div>...Loading</div>
-            </div>
+        <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            minHeight="100vh"
+        >
+            <UILoading />
+        </Box>
         </AuthProvider>
     );
 }
