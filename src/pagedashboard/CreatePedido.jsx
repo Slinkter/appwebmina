@@ -32,6 +32,7 @@ import {
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getNewOrden } from "../firebase/firebase";
+import UILoading from "../components/UILoading";
 
 function CreatePedido() {
     const navigate = useNavigate();
@@ -43,7 +44,6 @@ function CreatePedido() {
     const [currentUser, setCurrentUser] = useState(null);
     const [currentEmployer, setCurrentEmployer] = useState(null);
     const [currentProduct, setCurrentProduct] = useState(null);
-
     //
 
     useEffect(() => {
@@ -72,14 +72,21 @@ function CreatePedido() {
 
     function handleUserNotLoggedIn() {}
 
-    if (state === 1) {
+    if (state === 0) {
         return (
             <AuthProvider
                 onUserLoggedIn={handleUserLoggedIn}
                 onUserNotRegister={handleUserNotRegister}
                 onUserNotLoggedIn={handleUserNotLoggedIn}
             >
-                <div>Loading... </div>
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    minHeight="100vh"
+                >
+                    <UILoading />
+                </Box>
             </AuthProvider>
         );
     }

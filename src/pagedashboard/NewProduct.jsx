@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { addNewProduct } from "../firebase/firebase";
 import { v4 as uuidv4 } from "uuid";
+import UILoading from "../components/UILoading";
 
 function NewProduct() {
     //
@@ -73,7 +74,14 @@ function NewProduct() {
                 onUserNotRegister={handleUserNotRegister}
                 onUserNotLoggedIn={handleUserNotLoggedIn}
             >
-                <div>Loading... </div>
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    minHeight="100vh"
+                >
+                    <UILoading />
+                </Box>
             </AuthProvider>
         );
     }

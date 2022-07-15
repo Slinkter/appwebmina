@@ -18,6 +18,9 @@ import CDCreateProduct from "../components/CDCreateProduct";
 import CDUpdateProduct from "../components/CDUpdateProduct";
 import CDCreateReport from "../components/CDCreateReport";
 import CDCreateOrder from "../components/CDCreateOrder";
+import UILoading from "../components/UILoading";
+
+import { Box } from "@mui/material";
 
 function DashboardView() {
     const navigate = useNavigate();
@@ -29,7 +32,7 @@ function DashboardView() {
 
     async function handleUserLoggedIn(user) {
         setCurrentUser(user);
-        setState(2);      
+        setState(2);
         const resLinks = await getLinks(user.uid);
         setLinks([...resLinks]);
     }
@@ -49,7 +52,14 @@ function DashboardView() {
                 onUserNotRegister={handleUserNotRegister}
                 onUserNotLoggedIn={handleUserNotLoggedIn}
             >
-                <div>Loading... </div>
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    minHeight="100vh"
+                >
+                    <UILoading />
+                </Box>
             </AuthProvider>
         );
     }

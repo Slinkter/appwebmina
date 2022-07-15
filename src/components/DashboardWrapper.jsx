@@ -6,14 +6,13 @@ import "../style/ContainerWrapper.css";
 //MUI
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
-import { Grid } from "@mui/material";
+import { Grid, Button } from "@mui/material";
 
 export default function DashboardWrapper(props) {
     const { children } = props;
     return (
-        <React.Fragment >
+        <React.Fragment>
             <AppBar
                 position="static"
                 color="default"
@@ -31,34 +30,31 @@ export default function DashboardWrapper(props) {
                         alignItems="center"
                         justifyContent="center"
                     >
-                        <Link
+                        <Button
+                            variant="text"
                             component={RouterLink}
                             to="/dashboard"
-                            variant="contained"
-                            color="primary"
                             sx={{ my: 1, mx: 2 }}
                         >
-                            Dashboard
-                        </Link>
+                            Menu
+                        </Button>
 
-                        <Link
+                        <Button
                             component={RouterLink}
                             to="/dashboard/profile"
-                            variant="contained"
-                            color="primary"
+                            variant="text"
                             sx={{ my: 1, mx: 2 }}
                         >
-                            Profile
-                        </Link>
-                        <Link
+                            Perfil
+                        </Button>
+                        <Button
                             component={RouterLink}
                             to="/signout"
-                            variant="contained"
-                            color="primary"
+                            variant="text"
                             sx={{ my: 1, mx: 2 }}
                         >
-                            Signout
-                        </Link>
+                            Salir
+                        </Button>
                     </Grid>
                 </Toolbar>
             </AppBar>

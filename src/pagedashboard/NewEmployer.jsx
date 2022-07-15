@@ -15,6 +15,7 @@ import {
     Typography,
 } from "@mui/material";
 import { addNewEmployer } from "../firebase/firebase";
+import UILoading from "../components/UILoading";
 
 const areainput = [
     {
@@ -108,7 +109,14 @@ function NewEmployer() {
                 onUserNotRegister={handleUserNotRegister}
                 onUserNotLoggedIn={handleUserNotLoggedIn}
             >
-                <div>Loading... </div>
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    minHeight="100vh"
+                >
+                    <UILoading />
+                </Box>
             </AuthProvider>
         );
     }
