@@ -25,46 +25,11 @@ import { Box } from "@mui/material";
 function DashboardView() {
     const navigate = useNavigate();
     const [state, setState] = useState(0);
-    const [currentUser, setCurrentUser] = useState({});
+    const [currentUser, setCurrentUser] = useState(null);
     const [title, setTitle] = useState("");
     const [url, setURL] = useState("");
     const [links, setLinks] = useState([]);
-
-    async function handleUserLoggedIn(user) {
-        setCurrentUser(user);
-        setState(2);
-        const resLinks = await getLinks(user.uid);
-        setLinks([...resLinks]);
-    }
-
-    function handleUserNotRegister(user) {
-        navigate("/login");
-    }
-
-    function handleUserNotLoggedIn() {
-        navigate("/login");
-    }
-
-    if (state === 0) {
-        return (
-            <AuthProvider
-                onUserLoggedIn={handleUserLoggedIn}
-                onUserNotRegister={handleUserNotRegister}
-                onUserNotLoggedIn={handleUserNotLoggedIn}
-            >
-                <Box
-                    display="flex"
-                    
-                    justifyContent="center"
-                    alignItems="center"
-                    minHeight="100vh"
-                >
-                    <UILoading />
-                </Box>
-            </AuthProvider>
-        );
-    }
-
+    //-->
     function btn_NewEmployer() {
         navigate("/createemploye");
     }
@@ -73,7 +38,7 @@ function DashboardView() {
         navigate("/createproduct");
     }
 
-    //
+
     function btn_UpdateProductt() {
         navigate("/updateproduct");
     }
@@ -84,6 +49,42 @@ function DashboardView() {
 
     function btn_CreateOrder() {
         navigate("/createorder");
+    }
+
+    // -->
+    function handleUserLoggedIn(user) {
+        setCurrentUser(user);
+        setState(2);
+
+    }
+
+    function handleUserNotRegister() {
+        navigate("/");
+    }
+
+    function handleUserNotLoggedIn() {
+        navigate("/");
+    }
+
+    if (state === 0) {
+        return (
+            <AuthProvider
+                currentPage={"DashboardView.js"}
+                onUserLoggedIn={handleUserLoggedIn}
+                onUserNotRegister={handleUserNotRegister}
+                onUserNotLoggedIn={handleUserNotLoggedIn}
+            >
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    minHeight="100vh"
+                >
+                    <UILoading />DashboardView
+                </Box>
+
+            </AuthProvider>
+        );
     }
 
     return (

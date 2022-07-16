@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import {
     getFirestore,
     collection,
@@ -42,7 +43,7 @@ export async function userExistes(uid) {
     //buscar un documento
     const docRef = doc(db, "users", uid);
     const res = await getDoc(docRef);
-    console.log("res", res);
+    console.log("userExistes : ", res);
     return res.exists();
 }
 
@@ -189,7 +190,14 @@ export async function getUserPublicProfileInfo(uid) {
 }
 
 export async function logout() {
-    await auth.signOut();
+
+    await auth.signOut().then(() => {
+        window.location.reload(false);
+    }
+
+    );
+
+
 }
 
 ////////////////////////////////////////////////////////////////////////

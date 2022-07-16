@@ -16,10 +16,10 @@ import { onAuthStateChanged } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
 
 function App() {
-
+    // -->
     const [state, setState] = useState(0);
     const navigate = useNavigate();
-
+    // --->
     const handleOnClick = async () => {
         const g_provider = new GoogleAuthProvider();
         await signInWithGoogle(g_provider);
@@ -33,20 +33,20 @@ function App() {
             console.error(error);
         }
     }
-
-
+    //-->
     function handleUserLoggedIn(user) {
+        console.log("handleUserLoggedIn  : ");
         navigate("/dashboard");
         setState(2);
     }
 
     function handleUserNotRegister() {
-        navigate("/choose-username");
-        setState(3);
+        console.log("handleUserNotRegister  : ");
     }
 
     function handleUserNotLoggedIn(user) {
         setState(4);
+        console.log("handleUserNotLoggedIn  : ");
     }
 
     if (state === 4) {
@@ -101,8 +101,8 @@ function App() {
 
     return (
         <React.Fragment>
-
             <AuthProvider
+                currentPage={"App.js"}
                 onUserLoggedIn={handleUserLoggedIn}
                 onUserNotRegister={handleUserNotRegister}
                 onUserNotLoggedIn={handleUserNotLoggedIn}
@@ -113,7 +113,7 @@ function App() {
                     alignItems="center"
                     minHeight="100vh"
                 >
-                    <UILoading />
+                    <UILoading /> App
                 </Box>
             </AuthProvider>
 
