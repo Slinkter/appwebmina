@@ -47,7 +47,7 @@ export default function AuthProvider(props) {
                 onUserNotLoggedIn();
             }
         }
-    }, [currentPage, onUserLoggedIn, onUserNotLoggedIn]);
+    }, [currentPage, onUserLoggedIn, onUserNotLoggedIn,onUserNotRegister]);
 
     return <div >{children}</div>;
 }

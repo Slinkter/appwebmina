@@ -50,7 +50,7 @@ function CDCreateOrder(props) {
                                         width: 80,
                                     }}
                                 >
-                                    <NoteAddIcon />
+                                    <NoteAddIcon   sx={{ fontSize: 40 }}/>
                                 </Avatar>
                             </Grid>
                         </Grid>

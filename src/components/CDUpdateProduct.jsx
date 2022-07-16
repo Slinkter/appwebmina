@@ -50,7 +50,7 @@ function CDUpdateProduct(props) {
                                         width: 80,
                                     }}
                                 >
-                                    <SystemUpdateAltIcon />
+                                    <SystemUpdateAltIcon  sx={{ fontSize: 40 }} />
                                 </Avatar>
                             </Grid>
                         </Grid>

@@ -49,7 +49,7 @@ function CDCreateReport(props) {
                                         width: 80,
                                     }}
                                 >
-                                    <AssessmentIcon />
+                                    <AssessmentIcon  sx={{ fontSize: 40 }} />
                                 </Avatar>
                             </Grid>
                         </Grid>

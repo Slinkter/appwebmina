@@ -12,6 +12,7 @@ import {
 import Link from "../components/Link";
 //css
 import "../style/Dashboard.css";
+import { Typography } from "@mui/material";
 
 import CDCreateEmployer from "../components/CDCreateEmployer";
 import CDCreateProduct from "../components/CDCreateProduct";
@@ -55,7 +56,6 @@ function DashboardView() {
     function handleUserLoggedIn(user) {
         setCurrentUser(user);
         setState(2);
-
     }
 
     function handleUserNotRegister() {
@@ -66,62 +66,71 @@ function DashboardView() {
         navigate("/");
     }
 
-    if (state === 0) {
+    if (state === 2) {
         return (
-            <AuthProvider
-                currentPage={"DashboardView.js"}
-                onUserLoggedIn={handleUserLoggedIn}
-                onUserNotRegister={handleUserNotRegister}
-                onUserNotLoggedIn={handleUserNotLoggedIn}
-            >
-                <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    minHeight="100vh"
-                >
-                    <UILoading />DashboardView
-                </Box>
+            <DashboardWrapper>
 
-            </AuthProvider>
+                <h1 className="h2_title">
+                    Bienvenido {currentUser.displayName}
+
+                </h1>
+
+                <div className="container">
+                    <CDCreateEmployer
+                        btn_NewEmployer={btn_NewEmployer}
+                        label={"crear"}
+                        metodo={"Empleado"}
+                    />
+
+                    <CDCreateProduct
+                        btn_NewEmployer={btn_NewProduct}
+                        label={"crear"}
+                        metodo={"Producto"}
+                    />
+
+                    <CDCreateOrder
+                        btn_NewEmployer={btn_CreateOrder}
+                        label={"Crear"}
+                        metodo={"Pedido"}
+                    />
+                    <CDUpdateProduct
+                        btn_NewEmployer={btn_UpdateProductt}
+                        label={"actualizar"}
+                        metodo={"Stock"}
+                    />
+                    <CDCreateReport
+                        btn_NewEmployer={btn_CreateReport}
+                        label={"Crear"}
+                        metodo={"Reporte"}
+                    />
+
+                </div>
+            </DashboardWrapper>
         );
     }
 
-    return (
-        <DashboardWrapper>
-            <h1 className="text-center">
-                Bienvenido {currentUser.displayName}
-            </h1>
-            <div className="container">
-                <CDCreateEmployer
-                    btn_NewEmployer={btn_NewEmployer}
-                    label={"crear"}
-                    metodo={"empleado"}
-                />
 
-                <CDCreateProduct
-                    btn_NewEmployer={btn_NewProduct}
-                    label={"crear"}
-                    metodo={"producto"}
-                />
-                <CDUpdateProduct
-                    btn_NewEmployer={btn_UpdateProductt}
-                    label={"actualizar"}
-                    metodo={"Stock"}
-                />
-                <CDCreateReport
-                    btn_NewEmployer={btn_CreateReport}
-                    label={"Crear"}
-                    metodo={"Reporte"}
-                />
-                <CDCreateOrder
-                    btn_NewEmployer={btn_CreateOrder}
-                    label={"Crear"}
-                    metodo={"Pedido"}
-                />
-            </div>
-        </DashboardWrapper>
+    return (
+        <AuthProvider
+            currentPage={"DashboardView.js"}
+            onUserLoggedIn={handleUserLoggedIn}
+            onUserNotRegister={handleUserNotRegister}
+            onUserNotLoggedIn={handleUserNotLoggedIn}
+        >
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                minHeight="100vh"
+            >
+                <UILoading />DashboardView
+            </Box>
+
+        </AuthProvider>
     );
+
+
+
 }
 
 export default DashboardView;
