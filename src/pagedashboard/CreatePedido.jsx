@@ -395,13 +395,7 @@ function CreatePedido() {
                                             sx={{ mr: 1 }}
                                         ></Button>
                                     </TableCell>
-
-
-
                                 </TableRow>
-
-
-
                             ))}
 
                         </TableBody>
