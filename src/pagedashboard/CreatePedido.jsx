@@ -43,8 +43,11 @@ function CreatePedido() {
     const [state, setState] = useState(0);
     const [currentUser, setCurrentUser] = useState(null);
     const [currentEmployer, setCurrentEmployer] = useState(null);
-    const [currentProduct, setCurrentProduct] = useState(null);
-    //
+    const [currentSelectProduct, setCurrentSelectProduct] = useState(null);
+    const [listItem, setListItem] = useState([]);
+    const [item, setItem] = useState(null);
+    const [count, setCount] = useState(0)
+
 
     useEffect(() => {
         getAll();
@@ -58,44 +61,54 @@ function CreatePedido() {
                 console.error(error);
             }
         }
-    }, []);
+    }, [setListItem, item, count, setItem]);
 
-    async function handleUserLoggedIn(user) {
-        setCurrentUser(user);
-        setState(1);
-        const { ref1, ref2 } = await getNewOrden();
-        setEmployers(ref1);
-        setProducts(ref2);
+
+    useEffect(() => {
+
+    }, [setListItem, item, count, setItem]);
+
+
+    function handleAddItem() {
+
+
+        console.log("currentSelectProduct - 1 ", currentSelectProduct);
+        if (count > currentSelectProduct.cantidad) {
+            console.log(" no puede ser mayor al stock");
+        } else {
+            console.log(" hay stock");
+            // actualizar el stock (decontar )
+            console.log("Array products ", products);
+
+            const uptatecount = currentSelectProduct.cantidad - count
+            products.map(item => {
+                if (item.docId === currentSelectProduct.docId) {
+                    item.cantidad = uptatecount
+                }
+            })
+            console.log("products ", products);
+            currentSelectProduct.cantidad = uptatecount
+            console.log("currentSelectProduct -2 ", currentSelectProduct);
+            ///
+            const newItem = {}
+            newItem.docId = currentSelectProduct.docId
+            newItem.nameproduct = currentSelectProduct.nameproduct
+            newItem.cantidad = parseInt(count)
+            console.log("newItem", newItem);
+            listItem.push(newItem)
+            setListItem(listItem)
+            console.log(listItem);
+            setCount(0)
+        }
+
+
+
+
     }
 
-    function handleUserNotRegister(user) {}
 
-    function handleUserNotLoggedIn() {}
 
-    if (state === 0) {
-        return (
-            <AuthProvider
-                onUserLoggedIn={handleUserLoggedIn}
-                onUserNotRegister={handleUserNotRegister}
-                onUserNotLoggedIn={handleUserNotLoggedIn}
-            >
-                <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    minHeight="100vh"
-                >
-                    <UILoading />
-                </Box>
-            </AuthProvider>
-        );
-    }
-
-    function handleDni() {}
-
-    function handleName() {}
-
-    const handleSubmit = () => {};
+    const handleSubmit = () => { };
 
     const handleChangeEmployer = (e) => {
         const dni = parseInt(e.target.value);
@@ -115,10 +128,43 @@ function CreatePedido() {
             if (item.docId === docIdProducto) {
                 console.log("item.docId : ", item.docId);
                 console.log("docIdProducto : ", docIdProducto);
-                setCurrentProduct(item);
+                setCurrentSelectProduct(item);
             }
         });
     };
+
+
+
+    async function handleUserLoggedIn(user) {
+        setCurrentUser(user);
+        setState(1);
+        const { ref1, ref2 } = await getNewOrden();
+        setEmployers(ref1);
+        setProducts(ref2);
+    }
+
+    function handleUserNotRegister(user) { }
+
+    function handleUserNotLoggedIn() { }
+
+    if (state === 0) {
+        return (
+            <AuthProvider
+                onUserLoggedIn={handleUserLoggedIn}
+                onUserNotRegister={handleUserNotRegister}
+                onUserNotLoggedIn={handleUserNotLoggedIn}
+            >
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    minHeight="100vh"
+                >
+                    <UILoading />
+                </Box>
+            </AuthProvider>
+        );
+    }
 
     return (
         <DashboardWrapper>
@@ -170,14 +216,14 @@ function CreatePedido() {
                         >
                             {employers.length > 0
                                 ? employers.map((option) => (
-                                      <option
-                                          key={option.docId}
-                                          value={option.dni}
-                                      >
-                                          [ DNI:{option.dni}] - [
-                                          {option.firstName} {option.lastName}]
-                                      </option>
-                                  ))
+                                    <option
+                                        key={option.docId}
+                                        value={option.dni}
+                                    >
+                                        [ DNI:{option.dni}] - [
+                                        {option.firstName} {option.lastName}]
+                                    </option>
+                                ))
                                 : null}
                         </TextField>
 
@@ -233,7 +279,10 @@ function CreatePedido() {
                                     Producto
                                 </Typography>
                                 <Box sx={{ m: 1 }}>
-                                    <Button color="primary" variant="contained">
+                                    <Button color="primary" variant="contained" onClick={() => {
+
+                                        handleAddItem()
+                                    }}>
                                         Agregar
                                     </Button>
                                 </Box>
@@ -244,6 +293,7 @@ function CreatePedido() {
                             margin="normal"
                             fullWidth
                             name="area"
+
                             select
                             SelectProps={{ native: true }}
                             variant="outlined"
@@ -251,24 +301,24 @@ function CreatePedido() {
                         >
                             {products.length > 0
                                 ? products.map((option) => (
-                                      <option
-                                          key={option.docId}
-                                          value={option.docId}
-                                      >
-                                          {option.nameproduct}
-                                      </option>
-                                  ))
+                                    <option
+                                        key={option.docId}
+                                        value={option.docId}
+                                    >
+                                        {option.nameproduct}
+                                    </option>
+                                ))
                                 : null}
                         </TextField>
 
-                        {currentProduct !== null ? (
+                        {currentSelectProduct !== null ? (
                             <TextField
                                 fullWidth
                                 disabled
                                 margin="normal"
                                 name="codigo"
                                 type="number"
-                                value={currentProduct.cantidad}
+                                value={currentSelectProduct.cantidad}
                                 variant="outlined"
                             />
                         ) : (
@@ -282,7 +332,7 @@ function CreatePedido() {
                             />
                         )}
 
-                        {currentProduct !== null ? (
+                        {currentSelectProduct !== null ? (
                             <TextField
                                 fullWidth
                                 margin="normal"
@@ -290,6 +340,10 @@ function CreatePedido() {
                                 type="number"
                                 variant="outlined"
                                 label="Escribir cantidad"
+                                value={count}
+                                onChange={e => setCount(e.target.value)}
+
+
                             />
                         ) : (
                             <TextField
@@ -305,7 +359,7 @@ function CreatePedido() {
                     </form>
                 </Container>
             </Box>
-
+            {/* - - */}
             <Box
                 sx={{
                     alignItems: "center",
@@ -324,20 +378,32 @@ function CreatePedido() {
                                 <TableCell>Eliminar</TableCell>
                             </TableRow>
                         </TableHead>
+
                         <TableBody>
-                            <TableRow>
-                                <TableCell>123</TableCell>
-                                <TableCell>Seguro</TableCell>
-                                <TableCell>5 </TableCell>
-                                <TableCell>
-                                    <Button
-                                        startIcon={
-                                            <DeleteIcon fontSize="small" />
-                                        }
-                                        sx={{ mr: 1 }}
-                                    ></Button>
-                                </TableCell>
-                            </TableRow>
+
+                            {listItem.map((item) => (
+                                <TableRow>
+
+                                    <TableCell>{item.docId.substring(1, 4)}</TableCell>
+                                    <TableCell>{item.nameproduct}</TableCell>
+                                    <TableCell>{item.cantidad} </TableCell>
+                                    <TableCell>
+                                        <Button
+                                            startIcon={
+                                                <DeleteIcon fontSize="small" />
+                                            }
+                                            sx={{ mr: 1 }}
+                                        ></Button>
+                                    </TableCell>
+
+
+
+                                </TableRow>
+
+
+
+                            ))}
+
                         </TableBody>
                     </Table>
 

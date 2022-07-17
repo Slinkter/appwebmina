@@ -23,7 +23,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <BrowserRouter>
         <Routes>
-            <Route path="/" element={<App />} />          
+            <Route path="/" element={<App />} />
             <Route path="dashboard" element={<DashboardView />} />
             <Route path="dashboard/profile" element={<EditProfileView />} />
             <Route path="signout" element={<SingOutView />} />
@@ -31,11 +31,12 @@ root.render(
             <Route path="choose-username" element={<ChooseUsernameView />} />
             <Route path="*" element={<ErrorView />}></Route>
 
-            <Route path="createemploye" element={<NewEmployer />}></Route>
-            <Route path="createproduct" element={<NewProduct />}></Route>
-            <Route path="updateproduct" element={<UpdateStock />}></Route>
-            <Route path="createreport" element={<CreateReport />}></Route>
-            <Route path="createorder" element={<CreatePedido />}></Route>
+            <Route path="createemploye" element={<NewEmployer />} />
+            <Route path="createproduct" element={<NewProduct />} />
+            <Route path="createorder" element={<CreatePedido />} />
+            <Route path="updateproduct" element={<UpdateStock />} />
+            <Route path="createreport" element={<CreateReport />} />
+
         </Routes>
     </BrowserRouter>
 );
