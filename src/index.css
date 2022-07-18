@@ -1,5 +1,8 @@
 * {
     font-family: "Roboto", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -10,8 +13,12 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-family: "Roboto", sans-serif;
+<<<<<<< HEAD
     background-color: #32353a;
     color: white;
+=======
+    background-color: #fff;
+>>>>>>> 21670a8b3ea93a104ad0fe8f2589d8104a1cb572
 }
 
 code {

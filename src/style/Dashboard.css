@@ -2,15 +2,14 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     margin: 1rem 0;
-    gap: 2rem;
-   
+    gap: 1.5rem;
 }
 
-.h2_title{
+.h2_title {
     text-align: center;
     color: white;
+    padding-top: 1.5rem;
 }
-
 
 @media screen and (max-width: 420px) {
     .container {

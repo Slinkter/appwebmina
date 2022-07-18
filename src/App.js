@@ -1,10 +1,9 @@
 import "./App.css";
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-//
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AuthProvider from "./components/AuthProvider";
-import { auth } from "./firebase/firebase";
 import UILoading from "./components/UILoading";
+import { auth } from "./firebase/firebase";
 //MUI
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -12,7 +11,6 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 // 
 import { GoogleAuthProvider } from "firebase/auth";
-
 import { signInWithPopup } from "firebase/auth";
 
 function App() {
