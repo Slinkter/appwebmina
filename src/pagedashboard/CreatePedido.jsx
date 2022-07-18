@@ -38,16 +38,16 @@ import UILoading from "../components/UILoading";
 function CreatePedido() {
     const navigate = useNavigate();
     //
-    const [products, setProducts] = useState({});
     const [employers, setEmployers] = useState({});
+    const [products, setProducts] = useState({});
     //
     const [state, setState] = useState(0);
     const [currentUser, setCurrentUser] = useState(null);
-    const [currentEmployer, setCurrentEmployer] = useState(null);
+    const [currentSelectEmployer, setCurrentSelectEmployer] = useState(null);
     const [currentSelectProduct, setCurrentSelectProduct] = useState(null);
     const [listItem, setListItem] = useState([]);
     const [item, setItem] = useState(null);
-    const [count, setCount] = useState(0);
+    const [count, setCount] = useState("");
 
     useEffect(() => {
         getAll();
@@ -55,6 +55,11 @@ function CreatePedido() {
         async function getAll() {
             try {
                 const { ref1, ref2 } = await getNewOrden();
+
+                ref1.unshift("seleccione");
+                ref2.unshift("seleccione");
+                console.log("ref1 : ", ref1);
+                console.log("ref2 : ", ref2);
                 setEmployers(ref1);
                 setProducts(ref2);
             } catch (error) {
@@ -67,14 +72,16 @@ function CreatePedido() {
 
     function handleAddItem() {
         console.log("currentSelectProduct - 1 ", currentSelectProduct);
-        if (count > currentSelectProduct.cantidad) {
+        const cantidad = parseInt(count);
+
+        if (cantidad > currentSelectProduct.cantidad) {
             console.log(" no puede ser mayor al stock");
         } else {
             console.log(" hay stock");
             // actualizar el stock (decontar )
             console.log("Array products ", products);
 
-            const uptatecount = currentSelectProduct.cantidad - count;
+            const uptatecount = currentSelectProduct.cantidad - cantidad;
             products.map((item) => {
                 if (item.docId === currentSelectProduct.docId) {
                     item.cantidad = uptatecount;
@@ -87,26 +94,45 @@ function CreatePedido() {
             const newItem = {};
             newItem.docId = currentSelectProduct.docId;
             newItem.nameproduct = currentSelectProduct.nameproduct;
-            newItem.cantidad = parseInt(count);
+            newItem.cantidad = parseInt(cantidad);
             console.log("newItem", newItem);
             listItem.push(newItem);
             setListItem(listItem);
             console.log(listItem);
-            setCount(0);
+            setCount("");
         }
     }
 
-    const handleSubmit = () => {};
+    const handleSubmit = () => {
+        console.log("handleSubmit");
+        console.log("currentSelectEmployer : ", currentSelectEmployer);
+        console.log("Lista de producto seleccionado :", listItem.length);
+
+        if (currentSelectEmployer === null || listItem.length === 0) {
+            alert("falta ingresar datos");
+            console.log("currentSelectEmployer : ", currentSelectEmployer);
+            console.log("Lista de producto seleccionado :", listItem.length);
+        }
+    };
 
     const handleChangeEmployer = (e) => {
+        console.log("handleChangeEmployer");
+        console.log(e.target.value);
         const dni = parseInt(e.target.value);
 
-        employers.filter((item) => {
-            if (item.dni === dni) {
-                setCurrentEmployer(item);
-                return item;
-            }
-        });
+        if (Number.isNaN(dni)) {
+            // 👉️ this runs only if NaN and type of number
+            console.log("no hacer nada ");
+            setCurrentSelectEmployer(null);
+        } else {
+            employers.filter((item) => {
+                if (item.dni === dni) {
+                    setCurrentSelectEmployer(item);
+                    return item;
+                }
+                return null;
+            });
+        }
     };
 
     const handleChangeProducto = (e) => {
@@ -124,9 +150,9 @@ function CreatePedido() {
     async function handleUserLoggedIn(user) {
         setCurrentUser(user);
         setState(1);
-        const { ref1, ref2 } = await getNewOrden();
+        /*     const { ref1, ref2 } = await getNewOrden();
         setEmployers(ref1);
-        setProducts(ref2);
+        setProducts(ref2); */
     }
 
     function handleUserNotRegister(user) {}
@@ -154,7 +180,6 @@ function CreatePedido() {
 
     return (
         <DashboardWrapper>
-            {/* - - */}
             <Box
                 component="main"
                 sx={{
@@ -207,51 +232,21 @@ function CreatePedido() {
                                                   key={option.docId}
                                                   value={option.dni}
                                               >
-                                                  [ DNI:{option.dni}] - [
-                                                  {option.firstName}{" "}
-                                                  {option.lastName}]
+                                                  {option.dni
+                                                      ? option.dni
+                                                      : "Selecione DNI"}
+                                                  {" : "}
+                                                  {option.firstName
+                                                      ? option.firstName
+                                                      : ""}
+                                                  {"  "}
+                                                  {option.lastName
+                                                      ? option.lastName
+                                                      : ""}
                                               </option>
                                           ))
                                         : null}
                                 </TextField>
-
-                                {currentEmployer !== null ? (
-                                    <TextField
-                                        fullWidth
-                                        disabled
-                                        margin="normal"
-                                        name="nameproduct"
-                                        value={currentEmployer.dni}
-                                        variant="outlined"
-                                    />
-                                ) : (
-                                    <TextField
-                                        fullWidth
-                                        disabled
-                                        margin="normal"
-                                        name="detail"
-                                        variant="outlined"
-                                    />
-                                )}
-
-                                {currentEmployer !== null ? (
-                                    <TextField
-                                        fullWidth
-                                        disabled
-                                        margin="normal"
-                                        name="detail"
-                                        value={currentEmployer.firstName}
-                                        variant="outlined"
-                                    />
-                                ) : (
-                                    <TextField
-                                        fullWidth
-                                        disabled
-                                        margin="normal"
-                                        name="detail"
-                                        variant="outlined"
-                                    />
-                                )}
 
                                 <Box sx={{ py: 2 }}>
                                     <Box
@@ -415,6 +410,7 @@ function CreatePedido() {
                                     size="large"
                                     type="submit"
                                     variant="contained"
+                                    onClick={handleSubmit}
                                 >
                                     Guardar
                                 </Button>
@@ -423,10 +419,6 @@ function CreatePedido() {
                     </CardContent>
                 </Card>
             </Box>
-            {/* - - */}
-            <br></br>
-
-            {/* - - */}
         </DashboardWrapper>
     );
 }
