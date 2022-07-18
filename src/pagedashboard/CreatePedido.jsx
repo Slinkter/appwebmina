@@ -154,10 +154,12 @@ function CreatePedido() {
 
     return (
         <DashboardWrapper>
+            {/* - - */}
             <Box
                 component="main"
                 sx={{
                     alignItems: "center",
+                    justifyContent: "center",
                     display: "flex",
                     flexGrow: 1,
                 }}
@@ -346,92 +348,85 @@ function CreatePedido() {
                                 )}
                             </form>
                         </Container>
+
+                        <Container maxWidth="sm">
+                            <Box sx={{ py: 2 }}>
+                                <Box
+                                    sx={{
+                                        alignItems: "center",
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        flexWrap: "wrap",
+                                        m: -1,
+                                    }}
+                                >
+                                    <Typography sx={{ m: 1 }} variant="h4">
+                                        lista
+                                    </Typography>
+                                    <Box sx={{ m: 1 }}>
+                                        <Button
+                                            color="primary"
+                                            variant="contained"
+                                        >
+                                            Limpiar
+                                        </Button>
+                                    </Box>
+                                </Box>
+                            </Box>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>cod.</TableCell>
+                                        <TableCell>Producto</TableCell>
+                                        <TableCell>Cantidad</TableCell>
+                                        <TableCell>Eliminar</TableCell>
+                                    </TableRow>
+                                </TableHead>
+
+                                <TableBody>
+                                    {listItem.map((item) => (
+                                        <TableRow>
+                                            <TableCell>
+                                                {item.docId.substring(1, 4)}
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.nameproduct}
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.cantidad}{" "}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button
+                                                    startIcon={
+                                                        <DeleteIcon fontSize="small" />
+                                                    }
+                                                    sx={{ mr: 1 }}
+                                                ></Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+
+                            <Box sx={{ py: 2 }}>
+                                <Button
+                                    color="primary"
+                                    fullWidth
+                                    size="large"
+                                    type="submit"
+                                    variant="contained"
+                                >
+                                    Guardar
+                                </Button>
+                            </Box>
+                        </Container>
                     </CardContent>
                 </Card>
             </Box>
             {/* - - */}
+            <br></br>
 
-            <Box sx={{ py: 2 }}>
-                <Card>
-                    <CardContent>
-                        <Box
-                            sx={{
-                                alignItems: "center",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                flexWrap: "wrap",
-                                m: -1,
-                            }}
-                        >
-                            <Typography sx={{ m: 1 }} variant="h4">
-                                lista de producto
-                            </Typography>
-                            <Box sx={{ m: 1 }}>
-                                <Button color="primary" variant="contained">
-                                    Limpiar
-                                </Button>
-                            </Box>
-                        </Box>
-
-                        <Box
-                            sx={{
-                                alignItems: "center",
-                                display: "flex",
-                                flexGrow: 1,
-                            }}
-                        >
-                            <Container maxWidth="sm">
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>cod.</TableCell>
-                                            <TableCell>Producto</TableCell>
-                                            <TableCell>Cantidad</TableCell>
-                                            <TableCell>Eliminar</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-
-                                    <TableBody>
-                                        {listItem.map((item) => (
-                                            <TableRow>
-                                                <TableCell>
-                                                    {item.docId.substring(1, 4)}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {item.nameproduct}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {item.cantidad}{" "}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Button
-                                                        startIcon={
-                                                            <DeleteIcon fontSize="small" />
-                                                        }
-                                                        sx={{ mr: 1 }}
-                                                    ></Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-
-                                <Box sx={{ py: 2 }}>
-                                    <Button
-                                        color="primary"
-                                        fullWidth
-                                        size="large"
-                                        type="submit"
-                                        variant="contained"
-                                    >
-                                        Guardar
-                                    </Button>
-                                </Box>
-                            </Container>
-                        </Box>
-                    </CardContent>
-                </Card>
-            </Box>
+            {/* - - */}
         </DashboardWrapper>
     );
 }

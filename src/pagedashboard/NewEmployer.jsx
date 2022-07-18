@@ -131,6 +131,7 @@ function NewEmployer() {
                 sx={{
                     alignItems: "center",
                     display: "flex",
+                    justifyContent: "center",
                     flexGrow: 1,
                 }}
             >
