@@ -1,10 +1,7 @@
 .containerWrapper {
-    background-color: white;
-    margin: 0;
+    margin: 20px;
     padding: 0;
     height: 105vh;
-    padding-left: 100px;
-    padding-right: 100px;
 }
 
 @media screen and (max-width: 420px) {
@@ -13,8 +10,8 @@
     }
 
     .containerWrapper > div {
-        margin-left: 20px;
-        margin-right: 20px;
+        margin-left: 10px;
+        margin-right: 10px;
         padding: 0;
     }
 }
@@ -24,16 +21,16 @@
         padding: 0;
     }
     .containerWrapper > div {
-        margin-left: 20px;
-        margin-right: 20px;
+        margin-left: 10px;
+        margin-right: 10px;
         padding: 0;
     }
 }
 
 @media screen and (max-width: 992px) {
     .containerWrapper > div {
-        margin-left: 20px;
-        margin-right: 20px;
+        margin-left: 10px;
+        margin-right: 10px;
         padding: 0;
     }
 }

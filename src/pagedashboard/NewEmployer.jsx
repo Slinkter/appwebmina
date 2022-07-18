@@ -132,56 +132,60 @@ function NewEmployer() {
                     alignItems: "center",
                     display: "flex",
                     flexGrow: 1,
-
                 }}
             >
-                <Container maxWidth="sm">
-                    <form onSubmit={formik.handleSubmit}>
-                        <Box sx={{ pt: 2 }}>
-                            <Typography color="textPrimary" variant="h5">
-                                Crear empleado
-                            </Typography>
-                        </Box>
+                <Card>
+                    <CardContent>
+                        <Container maxWidth="sm">
+                            <form onSubmit={formik.handleSubmit}>
+                                <Box sx={{ pt: 2 }}>
+                                    <Typography
+                                        color="textPrimary"
+                                        variant="h4"
+                                    >
+                                        Crear empleado
+                                    </Typography>
+                                </Box>
 
-                        <TextField
-                            error={Boolean(
-                                formik.touched.firstName &&
-                                formik.errors.firstName
-                            )}
-                            helperText={
-                                formik.touched.firstName &&
-                                formik.errors.firstName
-                            }
-                            margin="normal"
-                            fullWidth
-                            label="Nombres"
-                            name="firstName"
-                            required
-                            type="text"
-                            variant="outlined"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            value={formik.values.firstName}
-                        />
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            label="Apellidos"
-                            name="lastName"
-                            required
-                            variant="outlined"
-                            value={formik.values.lastName}
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            error={Boolean(
-                                formik.touched.lastName &&
-                                formik.errors.lastName
-                            )}
-                            helperText={
-                                formik.touched.lastName &&
-                                formik.errors.lastName
-                            }
-                        />
+                                <TextField
+                                    error={Boolean(
+                                        formik.touched.firstName &&
+                                            formik.errors.firstName
+                                    )}
+                                    helperText={
+                                        formik.touched.firstName &&
+                                        formik.errors.firstName
+                                    }
+                                    margin="normal"
+                                    fullWidth
+                                    label="Nombres"
+                                    name="firstName"
+                                    required
+                                    type="text"
+                                    variant="outlined"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.firstName}
+                                />
+                                <TextField
+                                    margin="normal"
+                                    fullWidth
+                                    label="Apellidos"
+                                    name="lastName"
+                                    required
+                                    variant="outlined"
+                                    value={formik.values.lastName}
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    error={Boolean(
+                                        formik.touched.lastName &&
+                                            formik.errors.lastName
+                                    )}
+                                    helperText={
+                                        formik.touched.lastName &&
+                                        formik.errors.lastName
+                                    }
+                                />
 
                                 <TextField
                                     margin="normal"
