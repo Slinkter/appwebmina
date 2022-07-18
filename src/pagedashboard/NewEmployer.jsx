@@ -5,10 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
+// MUI
 
 import {
     Box,
     Button,
+    Card,
+    CardContent,
     TextField,
     Container,
     FormHelperText,
@@ -123,164 +126,173 @@ function NewEmployer() {
 
     return (
         <DashboardWrapper>
-            <Box
-                component="main"
-                sx={{
-                    alignItems: "center",
-                    display: "flex",
-                    flexGrow: 1,
-                    minHeight: "100%",
-                }}
-            >
-                <Container maxWidth="sm">
-                    <form onSubmit={formik.handleSubmit}>
-                        <Box sx={{ pt: 2 }}>
-                            <Typography color="textPrimary" variant="h5">
-                                Crear empleado
-                            </Typography>
-                        </Box>
+            <Box display="flex" justifyContent="center" alignItems="center">
+                <Card>
+                    <CardContent>
+                        <Container maxWidth="sm">
+                            <form onSubmit={formik.handleSubmit}>
+                                <Box sx={{ pt: 2 }}>
+                                    <Typography
+                                        color="textPrimary"
+                                        variant="h4"
+                                    >
+                                        Crear empleado
+                                    </Typography>
+                                </Box>
 
-                        <TextField
-                            error={Boolean(
-                                formik.touched.firstName &&
-                                    formik.errors.firstName
-                            )}
-                            helperText={
-                                formik.touched.firstName &&
-                                formik.errors.firstName
-                            }
-                            margin="normal"
-                            fullWidth
-                            label="Nombres"
-                            name="firstName"
-                            required
-                            type="text"
-                            variant="outlined"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            value={formik.values.firstName}
-                        />
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            label="Apellidos"
-                            name="lastName"
-                            required
-                            variant="outlined"
-                            value={formik.values.lastName}
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            error={Boolean(
-                                formik.touched.lastName &&
-                                    formik.errors.lastName
-                            )}
-                            helperText={
-                                formik.touched.lastName &&
-                                formik.errors.lastName
-                            }
-                        />
+                                <TextField
+                                    error={Boolean(
+                                        formik.touched.firstName &&
+                                            formik.errors.firstName
+                                    )}
+                                    helperText={
+                                        formik.touched.firstName &&
+                                        formik.errors.firstName
+                                    }
+                                    margin="normal"
+                                    fullWidth
+                                    label="Nombres"
+                                    name="firstName"
+                                    required
+                                    type="text"
+                                    variant="outlined"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.firstName}
+                                    sx={{ input: { color: "white" } }}
+                                />
+                                <TextField
+                                    margin="normal"
+                                    fullWidth
+                                    label="Apellidos"
+                                    name="lastName"
+                                    required
+                                    variant="outlined"
+                                    value={formik.values.lastName}
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    error={Boolean(
+                                        formik.touched.lastName &&
+                                            formik.errors.lastName
+                                    )}
+                                    helperText={
+                                        formik.touched.lastName &&
+                                        formik.errors.lastName
+                                    }
+                                />
 
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            label="DNI"
-                            name="dni"
-                            type="number"
-                            required
-                            variant="outlined"
-                            value={formik.values.dni}
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            error={Boolean(
-                                formik.touched.dni && formik.errors.dni
-                            )}
-                            helperText={formik.touched.dni && formik.errors.dni}
-                        />
+                                <TextField
+                                    margin="normal"
+                                    fullWidth
+                                    label="DNI"
+                                    name="dni"
+                                    type="number"
+                                    required
+                                    variant="outlined"
+                                    value={formik.values.dni}
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    error={Boolean(
+                                        formik.touched.dni && formik.errors.dni
+                                    )}
+                                    helperText={
+                                        formik.touched.dni && formik.errors.dni
+                                    }
+                                />
 
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            label="Telefono"
-                            name="phone"
-                            type="number"
-                            variant="outlined"
-                            value={formik.values.phone}
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            error={Boolean(
-                                formik.touched.phone && formik.errors.phone
-                            )}
-                            helperText={
-                                formik.touched.phone && formik.errors.phone
-                            }
-                        />
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            label="Correo"
-                            type="email"
-                            name="email"
-                            required
-                            variant="outlined"
-                            value={formik.values.email}
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            error={Boolean(
-                                formik.touched.email && formik.errors.email
-                            )}
-                            helperText={
-                                formik.touched.email && formik.errors.email
-                            }
-                        />
+                                <TextField
+                                    margin="normal"
+                                    fullWidth
+                                    label="Telefono"
+                                    name="phone"
+                                    type="number"
+                                    variant="outlined"
+                                    value={formik.values.phone}
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    error={Boolean(
+                                        formik.touched.phone &&
+                                            formik.errors.phone
+                                    )}
+                                    helperText={
+                                        formik.touched.phone &&
+                                        formik.errors.phone
+                                    }
+                                />
+                                <TextField
+                                    margin="normal"
+                                    fullWidth
+                                    label="Correo"
+                                    type="email"
+                                    name="email"
+                                    required
+                                    variant="outlined"
+                                    value={formik.values.email}
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    error={Boolean(
+                                        formik.touched.email &&
+                                            formik.errors.email
+                                    )}
+                                    helperText={
+                                        formik.touched.email &&
+                                        formik.errors.email
+                                    }
+                                />
 
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            label="Area de Trabajo"
-                            name="area"
-                            onChange={formik.handleChange}
-                            value={formik.values.area}
-                            select
-                            SelectProps={{ native: true }}
-                            variant="outlined"
-                        >
-                            {areainput.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </TextField>
+                                <TextField
+                                    margin="normal"
+                                    fullWidth
+                                    label="Area de Trabajo"
+                                    name="area"
+                                    onChange={formik.handleChange}
+                                    value={formik.values.area}
+                                    select
+                                    SelectProps={{ native: true }}
+                                    variant="outlined"
+                                >
+                                    {areainput.map((option) => (
+                                        <option
+                                            key={option.value}
+                                            value={option.value}
+                                        >
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </TextField>
 
-                        <Box sx={{ py: 2 }}>
-                            <Button
-                                margin="normal"
-                                color="primary"
-                                fullWidth
-                                disabled={formik.isSubmitting}
-                                size="large"
-                                type="submit"
-                                variant="contained"
-                            >
-                                Crear
-                            </Button>
-                        </Box>
+                                <Box sx={{ py: 2 }}>
+                                    <Button
+                                        margin="normal"
+                                        color="primary"
+                                        fullWidth
+                                        disabled={formik.isSubmitting}
+                                        size="large"
+                                        type="submit"
+                                        variant="contained"
+                                    >
+                                        Crear
+                                    </Button>
+                                </Box>
 
-                        <Box sx={{ py: 2 }}>
-                            <Button
-                                color="error"
-                                fullWidth
-                                margin="normal"
-                                component={Link}
-                                to="/dashboard"
-                                variant="contained"
-                                ariant="outlined"
-                                size="large"
-                            >
-                                Regresar
-                            </Button>
-                        </Box>
-                    </form>
-                </Container>
+                                <Box sx={{ py: 2 }}>
+                                    <Button
+                                        color="error"
+                                        fullWidth
+                                        margin="normal"
+                                        component={Link}
+                                        to="/dashboard"
+                                        variant="contained"
+                                        ariant="outlined"
+                                        size="large"
+                                    >
+                                        Regresar
+                                    </Button>
+                                </Box>
+                            </form>
+                        </Container>
+                    </CardContent>
+                </Card>
             </Box>
         </DashboardWrapper>
     );
