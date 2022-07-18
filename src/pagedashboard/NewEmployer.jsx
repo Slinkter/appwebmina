@@ -129,7 +129,7 @@ function NewEmployer() {
                     alignItems: "center",
                     display: "flex",
                     flexGrow: 1,
-                    minHeight: "100%",
+
                 }}
             >
                 <Container maxWidth="sm">
@@ -143,7 +143,7 @@ function NewEmployer() {
                         <TextField
                             error={Boolean(
                                 formik.touched.firstName &&
-                                    formik.errors.firstName
+                                formik.errors.firstName
                             )}
                             helperText={
                                 formik.touched.firstName &&
@@ -172,7 +172,7 @@ function NewEmployer() {
                             onChange={formik.handleChange}
                             error={Boolean(
                                 formik.touched.lastName &&
-                                    formik.errors.lastName
+                                formik.errors.lastName
                             )}
                             helperText={
                                 formik.touched.lastName &&

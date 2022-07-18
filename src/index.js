@@ -4,8 +4,6 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 
-
-
 import DashboardView from "./page/DashboardView";
 import EditProfileView from "./page/EditProfileView";
 import SingOutView from "./page/SingOutView";
@@ -36,7 +34,6 @@ root.render(
             <Route path="createorder" element={<CreatePedido />} />
             <Route path="updateproduct" element={<UpdateStock />} />
             <Route path="createreport" element={<CreateReport />} />
-
         </Routes>
     </BrowserRouter>
 );

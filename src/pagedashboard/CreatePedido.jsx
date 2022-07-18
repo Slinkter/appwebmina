@@ -174,7 +174,7 @@ function CreatePedido() {
                     alignItems: "center",
                     display: "flex",
                     flexGrow: 1,
-                    minHeight: "100%",
+
                 }}
             >
                 <Container maxWidth="sm">

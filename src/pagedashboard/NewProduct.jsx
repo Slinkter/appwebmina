@@ -94,7 +94,7 @@ function NewProduct() {
                     alignItems: "center",
                     display: "flex",
                     flexGrow: 1,
-                    minHeight: "100%",
+
                 }}
             >
                 <Container maxWidth="sm">
@@ -108,7 +108,7 @@ function NewProduct() {
                         <TextField
                             error={Boolean(
                                 formik.touched.nameproduct &&
-                                    formik.errors.nameproduct
+                                formik.errors.nameproduct
                             )}
                             helperText={
                                 formik.touched.nameproduct &&
@@ -144,7 +144,7 @@ function NewProduct() {
                         <TextField
                             error={Boolean(
                                 formik.touched.category &&
-                                    formik.errors.category
+                                formik.errors.category
                             )}
                             fullWidth
                             helperText={
@@ -164,7 +164,7 @@ function NewProduct() {
                         <TextField
                             error={Boolean(
                                 formik.touched.lastName &&
-                                    formik.errors.lastName
+                                formik.errors.lastName
                             )}
                             fullWidth
                             helperText={
