@@ -51,9 +51,6 @@ function CreatePedido() {
     const [item, setItem] = useState(null);
     const [count, setCount] = useState("");
 
-    //
-    const refInputCantidad = useRef(null);
-
     useEffect(() => {
         getAll();
 
@@ -85,9 +82,7 @@ function CreatePedido() {
                 console.error(error);
             }
         }
-    }, [setListItem, item, setItem ]);
-
-  
+    }, [setListItem, item, setItem]);
 
     function handleAddItem() {
         console.group("handleAddItem");
@@ -197,14 +192,16 @@ function CreatePedido() {
         console.groupEnd();
     };
 
+    //
+    function btnOnClean() {
+        setItem([]);
+    }
+
+    //
+
     async function handleUserLoggedIn(user) {
         setCurrentUser(user);
         setState(1);
-        /*     
-        const { ref1, ref2 } = await getNewOrden();
-        setEmployers(ref1);
-        setProducts(ref2);
-         */
     }
 
     function handleUserNotRegister(user) {}
@@ -413,12 +410,14 @@ function CreatePedido() {
                                     }}
                                 >
                                     <Typography sx={{ m: 1 }} variant="h4">
-                                        lista
+                                        Orden de Pedido
                                     </Typography>
                                     <Box sx={{ m: 1 }}>
                                         <Button
+                                            type="submit"
                                             color="primary"
                                             variant="contained"
+                                            onClick={() => setListItem([])}
                                         >
                                             Limpiar
                                         </Button>
