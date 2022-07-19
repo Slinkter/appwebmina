@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DashboardWrapper from "../components/DashboardWrapper";
 import { v4 as uuidv4 } from "uuid";
 import AuthProvider from "../components/AuthProvider";
@@ -16,7 +17,6 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 
 //
 import {
@@ -34,15 +34,17 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getNewOrden } from "../firebase/firebase";
 import UILoading from "../components/UILoading";
+import { connectStorageEmulator } from "firebase/storage";
 
 function CreatePedido() {
     const navigate = useNavigate();
+    const [state, setState] = useState(0);
     //
     const [employers, setEmployers] = useState({});
     const [products, setProducts] = useState({});
     //
-    const [state, setState] = useState(0);
     const [currentUser, setCurrentUser] = useState(null);
+    //
     const [currentSelectEmployer, setCurrentSelectEmployer] = useState(null);
     const [currentSelectProduct, setCurrentSelectProduct] = useState(null);
     const [listItem, setListItem] = useState([]);
@@ -55,52 +57,78 @@ function CreatePedido() {
         async function getAll() {
             try {
                 const { ref1, ref2 } = await getNewOrden();
-
                 ref1.unshift("seleccione");
                 ref2.unshift("seleccione");
-                console.log("ref1 : ", ref1);
-                console.log("ref2 : ", ref2);
+
+                console.log(
+                    "ref1 : ",
+                    ref1[1].docId,
+                    ref1[1].dni,
+                    ref1[1].firstName
+                );
+                console.group("Ref 01 ");
+                ref1.map((item) => {
+                    console.log(item.dni, item);
+                });
+                console.groupEnd();
+                console.group("Ref 02 ");
+                ref2.map((item) => {
+                    console.log(item.nameproduct, "=>", item.cantidad);
+                });
+                console.groupEnd();
                 setEmployers(ref1);
                 setProducts(ref2);
             } catch (error) {
                 console.error(error);
             }
         }
-    }, [setListItem, item, count, setItem]);
-
-    useEffect(() => {}, [setListItem, item, count, setItem]);
+    }, [setListItem, item, setItem]);
 
     function handleAddItem() {
-        console.log("currentSelectProduct - 1 ", currentSelectProduct);
+        console.group("handleAddItem");
+        console.log(
+            "currentSelectProduct  : ",
+            currentSelectProduct.nameproduct,
+            " ",
+            currentSelectProduct.cantidad
+        );
         const cantidad = parseInt(count);
-
-        if (cantidad > currentSelectProduct.cantidad) {
-            console.log(" no puede ser mayor al stock");
-        } else {
-            console.log(" hay stock");
-            // actualizar el stock (decontar )
-            console.log("Array products ", products);
-
-            const uptatecount = currentSelectProduct.cantidad - cantidad;
-            products.map((item) => {
-                if (item.docId === currentSelectProduct.docId) {
-                    item.cantidad = uptatecount;
-                }
-            });
-            console.log("products ", products);
-            currentSelectProduct.cantidad = uptatecount;
-            console.log("currentSelectProduct -2 ", currentSelectProduct);
-            ///
-            const newItem = {};
-            newItem.docId = currentSelectProduct.docId;
-            newItem.nameproduct = currentSelectProduct.nameproduct;
-            newItem.cantidad = parseInt(cantidad);
-            console.log("newItem", newItem);
-            listItem.push(newItem);
-            setListItem(listItem);
-            console.log(listItem);
+        console.log("cantidad ingresada ", cantidad);
+        if (Number.isNaN(cantidad) || cantidad === 0) {
+            alert("Error al ingresar cantidad ");
             setCount("");
+        } else {
+            if (cantidad > currentSelectProduct.cantidad) {
+                console.log(" no puede ser mayor al stock");
+            } else {
+                console.log(" hay stock");
+                // actualizar el stock (decontar )
+                console.log("Lista de Productos =>  ", products);
+                const uptatecount = currentSelectProduct.cantidad - cantidad;
+                const newProduct = products.map((item) => {
+                    if (item.docId === currentSelectProduct.docId) {
+                        item.cantidad = uptatecount;
+                    }
+                    return item;
+                });
+
+                console.log("products =>", products);
+                console.log("newProduct =>", newProduct);
+                currentSelectProduct.cantidad = uptatecount;
+
+                ///
+                const newItem = {};
+                newItem.docId = currentSelectProduct.docId;
+                newItem.nameproduct = currentSelectProduct.nameproduct;
+                newItem.cantidad = parseInt(cantidad);
+                console.log("newItem", newItem);
+                listItem.push(newItem);
+                setListItem(listItem);
+                console.log(listItem);
+                setCount("");
+            }
         }
+        console.groupEnd();
     }
 
     const handleSubmit = () => {
@@ -116,8 +144,8 @@ function CreatePedido() {
     };
 
     const handleChangeEmployer = (e) => {
-        console.log("handleChangeEmployer");
-        console.log(e.target.value);
+        console.group("handleChangeEmployer");
+        console.log("value : ", e.target.value);
         const dni = parseInt(e.target.value);
 
         if (Number.isNaN(dni)) {
@@ -133,26 +161,36 @@ function CreatePedido() {
                 return null;
             });
         }
+        console.groupEnd();
     };
 
     const handleChangeProducto = (e) => {
-        console.log("handleChangeProducto", e.target.value);
-        const docIdProducto = e.target.value;
-        products.filter((item) => {
-            if (item.docId === docIdProducto) {
-                console.log("item.docId : ", item.docId);
-                console.log("docIdProducto : ", docIdProducto);
-                setCurrentSelectProduct(item);
-            }
-        });
+        console.group("handleChangeProducto");
+        try {
+            console.log("value : ", e.target.value);
+            const docIdProducto = e.target.value;
+            const rpta = products.filter((item) => {
+                if (item.docId === docIdProducto) {
+                    console.log("item.docId === docIdProducto ");
+                    return item;
+                }
+                return null;
+            });
+            setCurrentSelectProduct(rpta[0]);
+        } catch (error) {
+            console.error(error);
+        }
+        console.groupEnd();
     };
 
     async function handleUserLoggedIn(user) {
         setCurrentUser(user);
         setState(1);
-        /*     const { ref1, ref2 } = await getNewOrden();
+        /*     
+        const { ref1, ref2 } = await getNewOrden();
         setEmployers(ref1);
-        setProducts(ref2); */
+        setProducts(ref2);
+         */
     }
 
     function handleUserNotRegister(user) {}
@@ -234,7 +272,7 @@ function CreatePedido() {
                                               >
                                                   {option.dni
                                                       ? option.dni
-                                                      : "Selecione DNI"}
+                                                      : "Selecione Empleado"}
                                                   {" : "}
                                                   {option.firstName
                                                       ? option.firstName
@@ -290,7 +328,9 @@ function CreatePedido() {
                                                   key={option.docId}
                                                   value={option.docId}
                                               >
-                                                  {option.nameproduct}
+                                                  {option.nameproduct
+                                                      ? option.nameproduct
+                                                      : "Selecione Producto"}
                                               </option>
                                           ))
                                         : null}
