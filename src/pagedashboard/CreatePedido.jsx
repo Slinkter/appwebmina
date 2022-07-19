@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardWrapper from "../components/DashboardWrapper";
 import { v4 as uuidv4 } from "uuid";
@@ -51,6 +51,9 @@ function CreatePedido() {
     const [item, setItem] = useState(null);
     const [count, setCount] = useState("");
 
+    //
+    const refInputCantidad = useRef(null);
+
     useEffect(() => {
         getAll();
 
@@ -58,7 +61,7 @@ function CreatePedido() {
             try {
                 const { ref1, ref2 } = await getNewOrden();
                 ref1.unshift("seleccione");
-                ref2.unshift("seleccione");
+                ref2.unshift({});
 
                 console.log(
                     "ref1 : ",
@@ -73,7 +76,7 @@ function CreatePedido() {
                 console.groupEnd();
                 console.group("Ref 02 ");
                 ref2.map((item) => {
-                    console.log(item.nameproduct, "=>", item.cantidad);
+                    console.log(item.nameproduct, "=>", item);
                 });
                 console.groupEnd();
                 setEmployers(ref1);
@@ -82,23 +85,24 @@ function CreatePedido() {
                 console.error(error);
             }
         }
-    }, [setListItem, item, setItem]);
+    }, [setListItem, item, setItem ]);
+
+  
 
     function handleAddItem() {
         console.group("handleAddItem");
-        console.log(
-            "currentSelectProduct  : ",
-            currentSelectProduct.nameproduct,
-            " ",
-            currentSelectProduct.cantidad
-        );
         const cantidad = parseInt(count);
-        console.log("cantidad ingresada ", cantidad);
+
         if (Number.isNaN(cantidad) || cantidad === 0) {
             alert("Error al ingresar cantidad ");
-            setCount("");
+            currentSelectProduct.cantidad = 0;
+            setCurrentSelectProduct(currentSelectProduct);
+            setCount(0);
         } else {
+            console.log("cantidad ingresada ", cantidad);
+            console.log("currentSelectProduct", "=", currentSelectProduct);
             if (cantidad > currentSelectProduct.cantidad) {
+                alert(" no hay stock !!!");
                 console.log(" no puede ser mayor al stock");
             } else {
                 console.log(" hay stock");
@@ -125,22 +129,22 @@ function CreatePedido() {
                 listItem.push(newItem);
                 setListItem(listItem);
                 console.log(listItem);
-                setCount("");
+                setCount(0);
             }
         }
         console.groupEnd();
     }
 
     const handleSubmit = () => {
-        console.log("handleSubmit");
-        console.log("currentSelectEmployer : ", currentSelectEmployer);
-        console.log("Lista de producto seleccionado :", listItem.length);
+        console.group("handleSubmit");
 
         if (currentSelectEmployer === null || listItem.length === 0) {
             alert("falta ingresar datos");
+        } else {
             console.log("currentSelectEmployer : ", currentSelectEmployer);
-            console.log("Lista de producto seleccionado :", listItem.length);
+            console.log("Lista de producto seleccionado :", listItem);
         }
+        console.groupEnd("handleSubmit");
     };
 
     const handleChangeEmployer = (e) => {
@@ -166,9 +170,12 @@ function CreatePedido() {
 
     const handleChangeProducto = (e) => {
         console.group("handleChangeProducto");
+        const docIdProducto = e.target.value;
+        console.log("docIdProducto : ", docIdProducto);
+        if (docIdProducto === "Selecione Producto") {
+            console.log("hola");
+        }
         try {
-            console.log("value : ", e.target.value);
-            const docIdProducto = e.target.value;
             const rpta = products.filter((item) => {
                 if (item.docId === docIdProducto) {
                     console.log("item.docId === docIdProducto ");
@@ -176,7 +183,14 @@ function CreatePedido() {
                 }
                 return null;
             });
-            setCurrentSelectProduct(rpta[0]);
+            console.log("rpta = ", rpta);
+            if (rpta.length === 1) {
+                setCount(0);
+                setCurrentSelectProduct(rpta[0]);
+            } else {
+                setCount(0);
+                setCurrentSelectProduct(null);
+            }
         } catch (error) {
             console.error(error);
         }
@@ -340,6 +354,7 @@ function CreatePedido() {
                                     <TextField
                                         fullWidth
                                         disabled
+                                        helperText={"Stock actual"}
                                         margin="normal"
                                         name="codigo"
                                         type="number"
@@ -348,8 +363,9 @@ function CreatePedido() {
                                     />
                                 ) : (
                                     <TextField
+                                        helperText={"Stock actual"}
                                         fullWidth
-                                        label="Stock actual"
+                                        value={0}
                                         disabled
                                         margin="normal"
                                         type="number"
@@ -377,6 +393,7 @@ function CreatePedido() {
                                         disabled
                                         margin="normal"
                                         name="codigo"
+                                        value={0}
                                         type="number"
                                         variant="outlined"
                                     />
