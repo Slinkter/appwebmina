@@ -142,6 +142,9 @@ function CreatePedido() {
         } else {
             console.log("currentSelectEmployer : ", currentSelectEmployer);
             console.log("Lista de producto seleccionado :", listItem);
+            // actualizar el stock en firebase
+            // se toma el docID en un for 
+            // cuando se tiene un for 
         }
         console.groupEnd("handleSubmit");
     };
