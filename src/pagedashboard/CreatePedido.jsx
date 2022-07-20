@@ -89,20 +89,22 @@ function CreatePedido() {
         const cantidad = parseInt(count);
 
         if (Number.isNaN(cantidad) || cantidad === 0) {
-            alert("Error al ingresar cantidad ");
+            alert("Error al ingresar");
             currentSelectProduct.cantidad = 0;
             setCurrentSelectProduct(currentSelectProduct);
             setCount(0);
         } else {
-            console.log("cantidad ingresada ", cantidad);
-            console.log("currentSelectProduct", "=", currentSelectProduct);
+       
             if (cantidad > currentSelectProduct.cantidad) {
                 alert(" no hay stock !!!");
                 console.log(" no puede ser mayor al stock");
             } else {
                 console.log(" hay stock");
-                // actualizar el stock (decontar )
+                console.log("cantidad ingresada ", cantidad);
+                console.log("currentSelectProduct", " = ", currentSelectProduct);
+                // actualizar el stock (decontar  en local )
                 console.log("Lista de Productos =>  ", products);
+                console.log("Pre descuento")
                 const uptatecount = currentSelectProduct.cantidad - cantidad;
                 const newProduct = products.map((item) => {
                     if (item.docId === currentSelectProduct.docId) {
@@ -110,21 +112,23 @@ function CreatePedido() {
                     }
                     return item;
                 });
-
+                console.log("Post descuento")
                 console.log("products =>", products);
                 console.log("newProduct =>", newProduct);
                 currentSelectProduct.cantidad = uptatecount;
-
-                ///
+                // Create Item
                 const newItem = {};
                 newItem.docId = currentSelectProduct.docId;
                 newItem.nameproduct = currentSelectProduct.nameproduct;
-                newItem.cantidad = parseInt(cantidad);
-                console.log("newItem", newItem);
+                newItem.cantidad = parseInt(cantidad);               
+                // Add Item to Array
                 listItem.push(newItem);
+                // Upadate listITem
                 setListItem(listItem);
-                console.log(listItem);
+                // Set cantidad
                 setCount(0);
+                console.log("newItem", newItem);
+                console.log(listItem);
             }
         }
         console.groupEnd();
@@ -191,13 +195,6 @@ function CreatePedido() {
         }
         console.groupEnd();
     };
-
-    //
-    function btnOnClean() {
-        setItem([]);
-    }
-
-    //
 
     async function handleUserLoggedIn(user) {
         setCurrentUser(user);
