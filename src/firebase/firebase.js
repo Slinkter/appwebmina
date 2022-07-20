@@ -12,6 +12,8 @@ import {
     where,
     setDoc,
     deleteDoc,
+    updateDoc,
+    increment,
 } from "firebase/firestore";
 import {
     getStorage,
@@ -219,16 +221,41 @@ export async function addNewEmployer(employer) {
 export async function addNewProduct(product) {
     console.group("addNewProduct");
     try {
+        /* 
         const docRef = collection(db, "products");
         const res = await addDoc(docRef, product);
         console.log(docRef);
         console.log(res);
         console.groupEnd();
-        return res;
+        return res; 
+        */
+
+        // Add a new document with a generated id
+        const docRef = doc(collection(db, "products"));
+        console.log(docRef.id)
+        product.docId = docRef.id
+        await setDoc(docRef, product);
+
+
+
     } catch (error) {
         console.log(error);
     }
     console.groupEnd();
+}
+
+export async function updatePlusStock(docId, cantidad) {
+    const docRef = doc(db, "products", docId); 
+    await updateDoc(docRef, {
+        cantidad: increment(cantidad)
+    });
+}
+
+export async function updateStock(docId, currentStock, cantidad) {
+    const docRef = doc(db, "products", docId);
+    await updateDoc(docRef, {
+        cantidad: currentStock - cantidad
+    });
 }
 
 export async function getNewOrden() {

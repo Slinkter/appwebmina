@@ -43,7 +43,6 @@ function NewProduct() {
         validationSchema: Yup.object(inityup),
         onSubmit: (values) => {
             values.userUid = currentUser.uid;
-            values.id = uuidv4();
             values.createdAt = new Date().toISOString();
             console.log(JSON.stringify(values, null, 2));
             saveProduct(values);

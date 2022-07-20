@@ -94,17 +94,20 @@ function CreatePedido() {
             setCurrentSelectProduct(currentSelectProduct);
             setCount(0);
         } else {
-       
             if (cantidad > currentSelectProduct.cantidad) {
                 alert(" no hay stock !!!");
                 console.log(" no puede ser mayor al stock");
             } else {
                 console.log(" hay stock");
                 console.log("cantidad ingresada ", cantidad);
-                console.log("currentSelectProduct", " = ", currentSelectProduct);
+                console.log(
+                    "currentSelectProduct",
+                    " = ",
+                    currentSelectProduct
+                );
                 // actualizar el stock (decontar  en local )
                 console.log("Lista de Productos =>  ", products);
-                console.log("Pre descuento")
+                console.log("Pre descuento");
                 const uptatecount = currentSelectProduct.cantidad - cantidad;
                 const newProduct = products.map((item) => {
                     if (item.docId === currentSelectProduct.docId) {
@@ -112,7 +115,7 @@ function CreatePedido() {
                     }
                     return item;
                 });
-                console.log("Post descuento")
+                console.log("Post descuento");
                 console.log("products =>", products);
                 console.log("newProduct =>", newProduct);
                 currentSelectProduct.cantidad = uptatecount;
@@ -120,7 +123,7 @@ function CreatePedido() {
                 const newItem = {};
                 newItem.docId = currentSelectProduct.docId;
                 newItem.nameproduct = currentSelectProduct.nameproduct;
-                newItem.cantidad = parseInt(cantidad);               
+                newItem.cantidad = parseInt(cantidad);
                 // Add Item to Array
                 listItem.push(newItem);
                 // Upadate listITem
@@ -143,8 +146,8 @@ function CreatePedido() {
             console.log("currentSelectEmployer : ", currentSelectEmployer);
             console.log("Lista de producto seleccionado :", listItem);
             // actualizar el stock en firebase
-            // se toma el docID en un for 
-            // cuando se tiene un for 
+            // se toma el docID en un for
+            // cuando se tiene un for
         }
         console.groupEnd("handleSubmit");
     };
@@ -346,7 +349,7 @@ function CreatePedido() {
                                           ))
                                         : null}
                                 </TextField>
-
+                                {/* mostrar stock*/}
                                 {currentSelectProduct !== null ? (
                                     <TextField
                                         fullWidth
@@ -369,12 +372,12 @@ function CreatePedido() {
                                         variant="outlined"
                                     />
                                 )}
-
+                                {/* ingresar cantidad */}
                                 {currentSelectProduct !== null ? (
                                     <TextField
                                         fullWidth
                                         margin="normal"
-                                        name="codigo"
+                                        name="cantidad"
                                         type="number"
                                         variant="outlined"
                                         label="Escribir cantidad"

@@ -13,11 +13,12 @@ import {
     Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { getProducts } from "../firebase/firebase";
+import { getProducts, updatePlusStock } from "../firebase/firebase";
 
 function UpdateStock() {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
+    const [currentSelectProduct, setCurrentSelectProduct] = useState({});
     //
 
     useEffect(() => {
@@ -26,6 +27,7 @@ function UpdateStock() {
         async function getAllProducts() {
             try {
                 const ref2 = await getProducts();
+                setProducts(ref2);
                 console.log(ref2);
             } catch (error) {
                 console.error(error);
@@ -45,9 +47,49 @@ function UpdateStock() {
         }),
         onSubmit: (values) => {
             console.log(JSON.stringify(values, null, 2));
-            /*   navigate("/dashboard"); */
+            const docId = currentSelectProduct.docId;
+            const stock = currentSelectProduct.cantidad;
+            const cantidad = values.cantidad;
+
+            console.log(
+                "docId : ",
+                docId,
+                "stock:",
+                stock,
+                "cantidad:",
+                cantidad
+            );
+
+            updatePlusStockProduct(docId, stock, cantidad);
+            navigate("/dashboard");
         },
     });
+
+    async function updatePlusStockProduct(docId, currentStock, cantidad) {
+        await updatePlusStock(docId, cantidad);
+    }
+
+    const handleChangeProducto = (e) => {
+        // recibirl del options solo el docIdproducto
+        const docIdProduct = e.target.value;
+        // obtener el producto por docId
+        const productFound = products.filter((item) => {
+            if (item.docId === docIdProduct) {
+                return item;
+            }
+            return null;
+        });
+        console.log(productFound);
+
+        if (productFound.length === 1) {
+            setCurrentSelectProduct(productFound[0]);
+            formik.values.cantidad = 0;
+        } else {
+            setCurrentSelectProduct(null);
+            formik.values.cantidad = 0;
+        }
+    };
+
     return (
         <DashboardWrapper>
             <Box
@@ -71,22 +113,54 @@ function UpdateStock() {
                                         Actualizar inventario stock producto
                                     </Typography>
                                 </Box>
+
                                 <TextField
-                                    fullWidth
-                                    label="Nombre Producto"
                                     margin="normal"
-                                    name="nameproduct"
-                                    variant="outlined"
-                                />
-                                <TextField
                                     fullWidth
-                                    label="stock actual"
-                                    disabled
-                                    margin="normal"
-                                    name="currentAmout"
-                                    type="text"
+                                    name="area"
+                                    select
+                                    SelectProps={{ native: true }}
                                     variant="outlined"
-                                />
+                                    onChange={handleChangeProducto}
+                                >
+                                    {products.length > 0
+                                        ? products.map((option) => (
+                                              <option
+                                                  key={option.docId}
+                                                  value={option.docId}
+                                              >
+                                                  {option.nameproduct
+                                                      ? option.nameproduct
+                                                      : "Selecione Producto"}
+                                              </option>
+                                          ))
+                                        : null}
+                                </TextField>
+
+                                {/* mostrar el stock */}
+                                {currentSelectProduct !== null ? (
+                                    <TextField
+                                        helperText={"Stock actual select"}
+                                        fullWidth
+                                        disabled
+                                        margin="normal"
+                                        name="stock"
+                                        type="number"
+                                        value={currentSelectProduct.cantidad}
+                                        variant="outlined"
+                                    />
+                                ) : (
+                                    <TextField
+                                        helperText={"Stock actual nulll"}
+                                        fullWidth
+                                        disabled
+                                        margin="normal"
+                                        name="stock"
+                                        type="number"
+                                        value={0}
+                                        variant="outlined"
+                                    />
+                                )}
 
                                 <TextField
                                     error={Boolean(
@@ -98,7 +172,7 @@ function UpdateStock() {
                                         formik.touched.cantidad &&
                                         formik.errors.cantidad
                                     }
-                                    label="Cantidad"
+                                    label="Cantidad a aumentar + "
                                     margin="normal"
                                     name="cantidad"
                                     type="number"
