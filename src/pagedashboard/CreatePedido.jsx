@@ -32,9 +32,10 @@ import {
 } from "@mui/material";
 
 import DeleteIcon from "@mui/icons-material/Delete";
-import { getNewOrden } from "../firebase/firebase";
+import { getNewOrden, updateStock } from "../firebase/firebase";
 import UILoading from "../components/UILoading";
 import { connectStorageEmulator } from "firebase/storage";
+import { async } from "@firebase/util";
 
 function CreatePedido() {
     const navigate = useNavigate();
@@ -56,28 +57,7 @@ function CreatePedido() {
 
         async function getAll() {
             try {
-                const { ref1, ref2 } = await getNewOrden();
-                ref1.unshift("seleccione");
-                ref2.unshift({});
-
-                console.log(
-                    "ref1 : ",
-                    ref1[1].docId,
-                    ref1[1].dni,
-                    ref1[1].firstName
-                );
-                console.group("Ref 01 ");
-                ref1.map((item) => {
-                    console.log(item.dni, item);
-                });
-                console.groupEnd();
-                console.group("Ref 02 ");
-                ref2.map((item) => {
-                    console.log(item.nameproduct, "=>", item);
-                });
-                console.groupEnd();
-                setEmployers(ref1);
-                setProducts(ref2);
+                loadInit()
             } catch (error) {
                 console.error(error);
             }
@@ -108,7 +88,9 @@ function CreatePedido() {
                 // actualizar el stock (decontar  en local )
                 console.log("Lista de Productos =>  ", products);
                 console.log("Pre descuento");
+                const currentStockFirebase = currentSelectProduct.cantidad
                 const uptatecount = currentSelectProduct.cantidad - cantidad;
+
                 const newProduct = products.map((item) => {
                     if (item.docId === currentSelectProduct.docId) {
                         item.cantidad = uptatecount;
@@ -124,6 +106,7 @@ function CreatePedido() {
                 newItem.docId = currentSelectProduct.docId;
                 newItem.nameproduct = currentSelectProduct.nameproduct;
                 newItem.cantidad = parseInt(cantidad);
+                newItem.currentStockFirebase = currentStockFirebase
                 // Add Item to Array
                 listItem.push(newItem);
                 // Upadate listITem
@@ -137,6 +120,32 @@ function CreatePedido() {
         console.groupEnd();
     }
 
+    async function loadInit() {
+        const { ref1, ref2 } = await getNewOrden();
+        ref1.unshift("seleccione");
+        ref2.unshift({});
+
+        console.log(
+            "ref1 : ",
+            ref1[1].docId,
+            ref1[1].dni,
+            ref1[1].firstName
+        );
+        console.group("Ref 01 ");
+        ref1.map((item) => {
+            console.log(item.dni, item);
+        });
+        console.groupEnd();
+        console.group("Ref 02 ");
+        ref2.map((item) => {
+            console.log(item.nameproduct, "=>", item);
+        });
+        console.groupEnd();
+        setEmployers(ref1);
+        setProducts(ref2);
+
+    }
+
     const handleSubmit = () => {
         console.group("handleSubmit");
 
@@ -148,9 +157,20 @@ function CreatePedido() {
             // actualizar el stock en firebase
             // se toma el docID en un for
             // cuando se tiene un for
+            listItem.map(item => {
+                updateDecreaseStockProduct(item.docId, item.currentStockFirebase, item.cantidad)
+            })
+
         }
         console.groupEnd("handleSubmit");
     };
+
+
+    async function updateDecreaseStockProduct(docId, stock, cantidad) {
+        await updateStock(docId, stock, cantidad)
+    }
+
+
 
     const handleChangeEmployer = (e) => {
         console.group("handleChangeEmployer");
@@ -207,9 +227,9 @@ function CreatePedido() {
         setState(1);
     }
 
-    function handleUserNotRegister(user) {}
+    function handleUserNotRegister(user) { }
 
-    function handleUserNotLoggedIn() {}
+    function handleUserNotLoggedIn() { }
 
     if (state === 0) {
         return (
@@ -280,23 +300,23 @@ function CreatePedido() {
                                 >
                                     {employers.length > 0
                                         ? employers.map((option) => (
-                                              <option
-                                                  key={option.docId}
-                                                  value={option.dni}
-                                              >
-                                                  {option.dni
-                                                      ? option.dni
-                                                      : "Selecione Empleado"}
-                                                  {" : "}
-                                                  {option.firstName
-                                                      ? option.firstName
-                                                      : ""}
-                                                  {"  "}
-                                                  {option.lastName
-                                                      ? option.lastName
-                                                      : ""}
-                                              </option>
-                                          ))
+                                            <option
+                                                key={option.docId}
+                                                value={option.dni}
+                                            >
+                                                {option.dni
+                                                    ? option.dni
+                                                    : "Selecione Empleado"}
+                                                {" : "}
+                                                {option.firstName
+                                                    ? option.firstName
+                                                    : ""}
+                                                {"  "}
+                                                {option.lastName
+                                                    ? option.lastName
+                                                    : ""}
+                                            </option>
+                                        ))
                                         : null}
                                 </TextField>
 
@@ -338,15 +358,15 @@ function CreatePedido() {
                                 >
                                     {products.length > 0
                                         ? products.map((option) => (
-                                              <option
-                                                  key={option.docId}
-                                                  value={option.docId}
-                                              >
-                                                  {option.nameproduct
-                                                      ? option.nameproduct
-                                                      : "Selecione Producto"}
-                                              </option>
-                                          ))
+                                            <option
+                                                key={option.docId}
+                                                value={option.docId}
+                                            >
+                                                {option.nameproduct
+                                                    ? option.nameproduct
+                                                    : "Selecione Producto"}
+                                            </option>
+                                        ))
                                         : null}
                                 </TextField>
                                 {/* mostrar stock*/}
@@ -420,7 +440,11 @@ function CreatePedido() {
                                             type="submit"
                                             color="primary"
                                             variant="contained"
-                                            onClick={() => setListItem([])}
+                                            onClick={() => {
+                                                setListItem([])
+                                                window.location.reload(false);
+
+                                            }}
                                         >
                                             Limpiar
                                         </Button>
