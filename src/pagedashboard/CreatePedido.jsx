@@ -160,6 +160,7 @@ function CreatePedido() {
             listItem.map(item => {
                 updateDecreaseStockProduct(item.docId, item.currentStockFirebase, item.cantidad)
             })
+            navigate("/dashboard")
 
         }
         console.groupEnd("handleSubmit");
@@ -274,6 +275,10 @@ function CreatePedido() {
                                     </Typography>
                                 </Box>
 
+                                <hr width="100%"
+                                    size="2" color="#c4c4c4"
+                                />
+
                                 <Box sx={{ py: 2 }}>
                                     <Box
                                         sx={{
@@ -320,6 +325,11 @@ function CreatePedido() {
                                         : null}
                                 </TextField>
 
+                                <br></br>
+                                <br></br>
+                                <hr width="100%"
+                                    size="2" color="#c4c4c4"
+                                />
                                 <Box sx={{ py: 2 }}>
                                     <Box
                                         sx={{
@@ -333,9 +343,10 @@ function CreatePedido() {
                                         <Typography sx={{ m: 1 }} variant="h4">
                                             Producto
                                         </Typography>
+
                                         <Box sx={{ m: 1 }}>
                                             <Button
-                                                color="primary"
+                                                color="success"
                                                 variant="contained"
                                                 onClick={() => {
                                                     handleAddItem();
@@ -345,6 +356,7 @@ function CreatePedido() {
                                             </Button>
                                         </Box>
                                     </Box>
+
                                 </Box>
 
                                 <TextField
@@ -421,7 +433,13 @@ function CreatePedido() {
                             </form>
                         </Container>
 
+
                         <Container maxWidth="sm">
+                            <br></br>
+                            <br></br>
+                            <hr width="100%"
+                                size="2" color="#c4c4c4"
+                            />
                             <Box sx={{ py: 2 }}>
                                 <Box
                                     sx={{
@@ -433,12 +451,12 @@ function CreatePedido() {
                                     }}
                                 >
                                     <Typography sx={{ m: 1 }} variant="h4">
-                                        Orden de Pedido
+                                        Lista
                                     </Typography>
                                     <Box sx={{ m: 1 }}>
                                         <Button
                                             type="submit"
-                                            color="primary"
+                                            color="warning"
                                             variant="contained"
                                             onClick={() => {
                                                 setListItem([])
@@ -496,6 +514,20 @@ function CreatePedido() {
                                     onClick={handleSubmit}
                                 >
                                     Guardar
+                                </Button>
+                            </Box>
+                            <Box sx={{ py: 2 }}>
+                                <Button
+                                    color="error"
+                                    fullWidth
+                                    size="large"
+                                    type="submit"
+                                    variant="contained"
+                                    onClick={() => {
+                                        navigate("/dashboard")
+                                    }}
+                                >
+                                    Salir
                                 </Button>
                             </Box>
                         </Container>
