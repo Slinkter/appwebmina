@@ -205,47 +205,44 @@ export async function logout() {
 ////////////////////////////////////////////////////////////////////////
 export async function addNewEmployer(employer) {
     try {
-        console.group("addNewEmployer");
-        const colleRef = collection(db, "employers");
-        const res = await addDoc(colleRef, employer);
-        //
-        console.log(colleRef);
-        console.log(res);
-        console.groupEnd();
+        /*  console.group("addNewEmployer");
+         const colleRef = collection(db, "employers");
+         const res = await addDoc(colleRef, employer);
+         //
+         console.log(colleRef);
+         console.log(res);
+         console.groupEnd();
+         return res; */
+        const docRef = doc(collection(db, "employers")) // solo crear un doc sin nada 
+        employer.docId = docRef.id; // se obtiene el id del documento creado vacio
+        const res = await setDoc(docRef, employer) // se setea el docuemnto los datos
+        console.log("docRef", docRef);
+        console.log("res", res);
         return res;
+
     } catch (error) {
         console.error(error);
     }
 }
 
 export async function addNewProduct(product) {
-    console.group("addNewProduct");
-    try {
-        /* 
-        const docRef = collection(db, "products");
-        const res = await addDoc(docRef, product);
-        console.log(docRef);
-        console.log(res);
-        console.groupEnd();
-        return res; 
-        */
 
+    try {
+        console.group("addNewProduct");
         // Add a new document with a generated id
         const docRef = doc(collection(db, "products"));
         console.log(docRef.id)
         product.docId = docRef.id
         await setDoc(docRef, product);
-
-
-
+        console.groupEnd();
     } catch (error) {
         console.log(error);
     }
-    console.groupEnd();
+
 }
 
 export async function updatePlusStock(docId, cantidad) {
-    const docRef = doc(db, "products", docId); 
+    const docRef = doc(db, "products", docId);
     await updateDoc(docRef, {
         cantidad: increment(cantidad)
     });
@@ -256,6 +253,48 @@ export async function updateStock(docId, currentStock, cantidad) {
     await updateDoc(docRef, {
         cantidad: currentStock - cantidad
     });
+}
+export async function saveAllList(day, userUID, empleadoUID, listOrden) {
+    try {
+        // grabar lista 
+        console.group("saveAllList");
+        console.log("createdAt ", day);
+        console.log("userUID", userUID);
+        console.log("empleadoUID", empleadoUID);
+        console.log("listOrden", listOrden);
+
+        const list = {}
+        /*  list.docId = docRef1.id; */
+        list.createdAt = day
+        list.userUID = userUID
+        list.empleadoUID = empleadoUID
+        list.item = listOrden
+
+        const docRef1 = doc(collection(db, "listOrden"))
+        list.docId = docRef1.id;
+        await setDoc(docRef1, list)
+        console.log("list", list);
+
+
+        // grabar uid 
+        /*         const docRef2 = await addDoc(collection(db, "DetalleOrden"), {
+                    createAt: day,
+                    userUID: userUID,
+                    empleadoUID: empleadoUID,
+                    listOrdenUID: docRef1.id
+                })
+        
+                console.log("docRef1.id: ", docRef1.id);
+                console.log("docRef2.id: ", docRef2.id);
+         */
+
+        console.groupEnd();
+
+    } catch (error) {
+        console.log(error);
+    }
+
+
 }
 
 export async function getNewOrden() {

@@ -7,7 +7,9 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+//
 import {
+    Avatar,
     Button,
     Box,
     Checkbox,
@@ -16,11 +18,6 @@ import {
     Link,
     TextField,
     Typography,
-} from "@mui/material";
-
-//
-import {
-    Avatar,
     Card,
     CardContent,
     Table,
@@ -32,7 +29,7 @@ import {
 } from "@mui/material";
 
 import DeleteIcon from "@mui/icons-material/Delete";
-import { getNewOrden, updateStock } from "../firebase/firebase";
+import { getNewOrden, saveAllList, updateStock } from "../firebase/firebase";
 import UILoading from "../components/UILoading";
 import { connectStorageEmulator } from "firebase/storage";
 import { async } from "@firebase/util";
@@ -160,11 +157,24 @@ function CreatePedido() {
             listItem.map(item => {
                 updateDecreaseStockProduct(item.docId, item.currentStockFirebase, item.cantidad)
             })
+
+            saveAllListProductEmployerByUser(currentSelectEmployer, listItem, currentUser)
             navigate("/dashboard")
 
         }
         console.groupEnd("handleSubmit");
     };
+
+    async function saveAllListProductEmployerByUser(empleado, list, user) {
+        console.group("-----saveAllListProductEmployerByUser-----")
+        const daycreated = new Date().toLocaleString('sv')
+        console.log('daycreated :', daycreated)
+        console.log('user :', user.uid)
+        console.log('empleado :', empleado.docId)
+        console.log('list :', list)
+        saveAllList(daycreated, user.uid, empleado.docId, list)
+        console.groupEnd()
+    }
 
 
     async function updateDecreaseStockProduct(docId, stock, cantidad) {

@@ -76,7 +76,8 @@ function NewEmployer() {
         validationSchema: Yup.object(inityup),
         onSubmit: (values) => {
             values.adminUid = currentUser.uid;
-            values.createdAt = new Date().toISOString();
+            /* values.createdAt = new Date().toISOString(); */
+            values.createdAt = new Date().toLocaleString('sv')
             console.log(JSON.stringify(values, null, 2));
             saveEmployer(values);
             navigate("/dashboard");
@@ -151,7 +152,7 @@ function NewEmployer() {
                                 <TextField
                                     error={Boolean(
                                         formik.touched.firstName &&
-                                            formik.errors.firstName
+                                        formik.errors.firstName
                                     )}
                                     helperText={
                                         formik.touched.firstName &&
@@ -180,7 +181,7 @@ function NewEmployer() {
                                     onChange={formik.handleChange}
                                     error={Boolean(
                                         formik.touched.lastName &&
-                                            formik.errors.lastName
+                                        formik.errors.lastName
                                     )}
                                     helperText={
                                         formik.touched.lastName &&
@@ -219,7 +220,7 @@ function NewEmployer() {
                                     onChange={formik.handleChange}
                                     error={Boolean(
                                         formik.touched.phone &&
-                                            formik.errors.phone
+                                        formik.errors.phone
                                     )}
                                     helperText={
                                         formik.touched.phone &&
@@ -239,7 +240,7 @@ function NewEmployer() {
                                     onChange={formik.handleChange}
                                     error={Boolean(
                                         formik.touched.email &&
-                                            formik.errors.email
+                                        formik.errors.email
                                     )}
                                     helperText={
                                         formik.touched.email &&

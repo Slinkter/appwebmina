@@ -43,7 +43,7 @@ function NewProduct() {
         validationSchema: Yup.object(inityup),
         onSubmit: (values) => {
             values.userUid = currentUser.uid;
-            values.createdAt = new Date().toISOString();
+            values.createdAt = new Date().toLocaleString('sv')
             console.log(JSON.stringify(values, null, 2));
             saveProduct(values);
             navigate("/dashboard");
@@ -114,7 +114,7 @@ function NewProduct() {
                                 <TextField
                                     error={Boolean(
                                         formik.touched.nameproduct &&
-                                            formik.errors.nameproduct
+                                        formik.errors.nameproduct
                                     )}
                                     helperText={
                                         formik.touched.nameproduct &&
@@ -132,7 +132,7 @@ function NewProduct() {
                                 <TextField
                                     error={Boolean(
                                         formik.touched.detail &&
-                                            formik.errors.detail
+                                        formik.errors.detail
                                     )}
                                     fullWidth
                                     helperText={
@@ -152,7 +152,7 @@ function NewProduct() {
                                 <TextField
                                     error={Boolean(
                                         formik.touched.category &&
-                                            formik.errors.category
+                                        formik.errors.category
                                     )}
                                     fullWidth
                                     helperText={
@@ -172,7 +172,7 @@ function NewProduct() {
                                 <TextField
                                     error={Boolean(
                                         formik.touched.lastName &&
-                                            formik.errors.lastName
+                                        formik.errors.lastName
                                     )}
                                     fullWidth
                                     helperText={
