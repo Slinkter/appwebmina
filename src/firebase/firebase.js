@@ -14,6 +14,8 @@ import {
     deleteDoc,
     updateDoc,
     increment,
+    orderBy,
+    limit,
 } from "firebase/firestore";
 import {
     getStorage,
@@ -346,3 +348,48 @@ export async function getProducts() {
         console.error(error);
     }
 }
+
+export async function getAllDocList() {
+    console.group("getAllDocList")
+
+    try {
+        const listOrder = [];
+        const q = query(collection(db, "listOrden"), orderBy("createdAt", "desc"), limit(30));
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((doc) => {
+          
+            listOrder.push(doc.data())
+        });
+
+        return listOrder;
+
+    } catch (error) {
+        console.error(error);
+    }
+    console.groupEnd()
+}
+
+export async function getNameAdminFirebase(uid) {
+    try {
+        const docRef = doc(db, "users", uid);
+        const res = await getDoc(docRef);
+        console.log(res.id, "=>", res.data().displayName)
+        /*    return res.data() */
+    } catch (error) {
+        console.error(error);
+    }
+
+}
+
+export async function getNameEmployerFirebase(uid) {
+    try {
+        const docRef = doc(db, "employers", uid);
+        const res = await getDoc(docRef);
+        console.log(res.id, "=>", res.data().firstName)
+        /*    return res.data() */
+    } catch (error) {
+        console.error(error);
+    }
+}
+

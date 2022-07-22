@@ -14,11 +14,12 @@ import Link from "../components/Link";
 import "../style/Dashboard.css";
 import { Typography } from "@mui/material";
 
-import CDCreateEmployer from "../components/CDCreateEmployer";
-import CDCreateProduct from "../components/CDCreateProduct";
-import CDUpdateProduct from "../components/CDUpdateProduct";
-import CDCreateReport from "../components/CDCreateReport";
-import CDCreateOrder from "../components/CDCreateOrder";
+import CDCreateEmployer from '../pageDashboardUI/CDCreateEmployer'
+import CDCreateProduct from "../pageDashboardUI/CDCreateProduct";
+import CDUpdateProduct from "../pageDashboardUI/CDUpdateProduct";
+import CDCreateReport from "../pageDashboardUI/CDCreateReport";
+import CDCreateOrder from "../pageDashboardUI/CDCreateOrder";
+//
 import UILoading from "../components/UILoading";
 
 import { Box } from "@mui/material";
