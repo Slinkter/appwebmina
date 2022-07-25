@@ -21,9 +21,11 @@ import {
     TableHead,
     TablePagination,
     TableRow,
+    Grid,
 } from "@mui/material";
 //
 import CDGeneratorListAll from "../PageReports/UI/CDGeneratorListAll";
+
 //
 import UILoading from "../components/UILoading";
 import { getAllDocList, getNameAdminFirebase, getNameEmployerFirebase } from "../firebase/firebase";
@@ -48,26 +50,15 @@ function CreateReport() {
 
 
     async function getAllPedidos() {
-        const auxArray = []
+
         const array = await getAllDocList()
-
-        const rpta = await Promise.all(array.map(async (item) => {
-
-
+        const updateArray = await Promise.all(array.map(async (item) => {
             item.nameAdmin = await getNameAdmin(item.userUID)
             item.nameEmployer = await getNameEmployer(item.empleadoUID)
-            console.log("item.nameAdmin", item.nameAdmin)
-            console.log("item.nameEmployer", item.nameEmployer)
-            auxArray.push(item)
-
             return await item;
         }))
-        console.log("array", array)
-        console.log("auxArray", auxArray)
-        console.log("rpta", rpta)
-
-
-
+        console.log("updateArray", updateArray)
+        setListOrder(updateArray)
 
     }
 
@@ -75,7 +66,7 @@ function CreateReport() {
     async function getNameAdmin(uid) {
         try {
             const getNameAdmin = await getNameAdminFirebase(uid)
-            console.log("getNameAdmin", getNameAdmin)
+            /*   console.log("getNameAdmin", getNameAdmin) */
             return getNameAdmin;
 
         } catch (error) {
@@ -86,7 +77,7 @@ function CreateReport() {
     async function getNameEmployer(uid) {
         try {
             const getNameEmployer = await getNameEmployerFirebase(uid)
-            console.log("argetNameEmployerray", getNameEmployer)
+            /*   console.log("argetNameEmployerray", getNameEmployer) */
             return getNameEmployer;
 
         } catch (error) {
@@ -119,50 +110,67 @@ function CreateReport() {
 
                 </h1>
 
-                <div className="container">
-                    <CDGeneratorListAll getAllPedidos={getAllPedidos} />
-                    {listOrder === null ? <h1>es null</h1> : <h1> existe la lista</h1>}
+                <div className="">
+                    <CDGeneratorListAll label={"GENERAR"} metodo={"Lista de Pedido"} getAllPedidos={getAllPedidos} />
 
-                    <div>
+                    {listOrder === null ? <h1> </h1> : <div>
+                        {listOrder.map((item) => {
 
-                        {listOrder === null ? <h1> nada</h1> : <div>
-                            {listOrder.map((item) => {
+                            return (
+                                <Box key={item.docId} sx={{ m: 1 }}
+                                >
+                                    <Card sx={{ height: "100%" }} margin="normal">
+                                        <CardContent>
+                                            <Typography sx={{ m: 1 }} variant="h5">
+                                                Fecha : {item.createdAt}
+                                            </Typography>
+                                            <Typography sx={{ m: 1 }} variant="h5">
+                                                Admin : {item.nameAdmin}
+                                            </Typography>
+
+                                            <Typography sx={{ m: 1 }} variant="h5">
+                                                Empleado :{item.nameEmployer}
+                                            </Typography>
+
+                                            <Table>
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell>Cod.</TableCell>
+                                                        <TableCell>Prod</TableCell>
+                                                        <TableCell>Cantidad</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {item.item.map((item) => (
+                                                        <TableRow >
+                                                            <TableCell>
+                                                                {item.docId.substring(1, 4)}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {item.nameproduct}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {item.cantidad}
+                                                            </TableCell>
+
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+
+                                            </Table>
 
 
 
 
-                                return (
-                                    <div>
-                                        <Typography sx={{ m: 1 }} variant="h5">
-                                            Lista : {item.createdAt}
-                                        </Typography>
-                                        <Typography sx={{ m: 1 }} variant="h5">
-                                            Admin : {name1}
-                                        </Typography>
+                                        </CardContent>
+                                    </Card>
+                                </Box>
 
-                                        <Typography sx={{ m: 1 }} variant="h5">
-                                            Empleado :{name2}
-                                        </Typography>
+                            )
 
-                                        <Table>
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell>Nro.</TableCell>
-                                                    <TableCell>Prod</TableCell>
-                                                    <TableCell>Cantidad</TableCell>
-                                                </TableRow>
-                                            </TableHead>
+                        })}
 
-                                        </Table>
-                                    </div>
-
-                                )
-
-                            })}
-
-                        </div>}
-
-                    </div>
+                    </div>}
 
 
 
