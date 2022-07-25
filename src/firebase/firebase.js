@@ -358,7 +358,7 @@ export async function getAllDocList() {
         const querySnapshot = await getDocs(q);
 
         querySnapshot.forEach((doc) => {
-          
+            console.log(doc.data());
             listOrder.push(doc.data())
         });
 
@@ -374,6 +374,7 @@ export async function getNameAdminFirebase(uid) {
     try {
         const docRef = doc(db, "users", uid);
         const res = await getDoc(docRef);
+        return res.data().displayName
         console.log(res.id, "=>", res.data().displayName)
         /*    return res.data() */
     } catch (error) {
@@ -387,6 +388,7 @@ export async function getNameEmployerFirebase(uid) {
         const docRef = doc(db, "employers", uid);
         const res = await getDoc(docRef);
         console.log(res.id, "=>", res.data().firstName)
+        return res.data().firstName
         /*    return res.data() */
     } catch (error) {
         console.error(error);

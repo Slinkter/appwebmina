@@ -24,11 +24,11 @@ function PublicProfileView() {
                 console.log("userUId : ", userUId);
                 if (userUId) {
                     const userInfo = await getUserPublicProfileInfo(userUId);
-                    console.log(userInfo);
-                    setProfile(userInfo); // profileInfo: profileInfo, linksInfo: linksInfo
                     const url = await getProfilePhotoUrl(
                         userInfo.profileInfo.profilePicture
                     );
+
+                    setProfile(userInfo); // {profileInfo: profileInfo, linksInfo: linksInfo}
                     setUrl(url);
                 } else {
                     setState(7);

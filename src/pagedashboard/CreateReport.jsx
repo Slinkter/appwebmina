@@ -51,27 +51,48 @@ function CreateReport() {
         const auxArray = []
         const array = await getAllDocList()
 
+        const rpta = await Promise.all(array.map(async (item) => {
+
+
+            item.nameAdmin = await getNameAdmin(item.userUID)
+            item.nameEmployer = await getNameEmployer(item.empleadoUID)
+            console.log("item.nameAdmin", item.nameAdmin)
+            console.log("item.nameEmployer", item.nameEmployer)
+            auxArray.push(item)
+
+            return await item;
+        }))
+        console.log("array", array)
         console.log("auxArray", auxArray)
+        console.log("rpta", rpta)
+
+
+
+
     }
 
 
-    /*    async function getNameAdmin(uid) {
-           try {
-               const getNameAdmin = await getNameAdminFirebase(uid)
-               console.log("getNameAdmin", getNameAdmin)
-           } catch (error) {
-               console.log(error);
-           }
-       }
-   
-       async function getNameEmployer(uid) {
-           try {
-               const getNameEmployer = await getNameEmployerFirebase(uid)
-               console.log("argetNameEmployerray", getNameEmployer)
-           } catch (error) {
-               console.log(error);
-           }
-       } */
+    async function getNameAdmin(uid) {
+        try {
+            const getNameAdmin = await getNameAdminFirebase(uid)
+            console.log("getNameAdmin", getNameAdmin)
+            return getNameAdmin;
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function getNameEmployer(uid) {
+        try {
+            const getNameEmployer = await getNameEmployerFirebase(uid)
+            console.log("argetNameEmployerray", getNameEmployer)
+            return getNameEmployer;
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
 
     // -->
