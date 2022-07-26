@@ -29,8 +29,8 @@
 
 @media screen and (max-width: 992px) {
     .containerWrapper > div {
-        margin-left: 10px;
-        margin-right: 10px;
+        margin-left: 1px;
+        margin-right: 1px;
         padding: 0;
     }
 }

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthProvider from "../components/AuthProvider";
 import DashboardWrapper from "../components/DashboardWrapper";
@@ -29,7 +29,12 @@ import CDGeneratorListAll from "../PageReports/UI/CDGeneratorListAll";
 //
 import UILoading from "../components/UILoading";
 import { getAllDocList, getNameAdminFirebase, getNameEmployerFirebase } from "../firebase/firebase";
-import { async } from "@firebase/util";
+
+//
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
+import SendIcon from '@mui/icons-material/Send';
+//
+import "../style/CreateReport.css"
 
 function CreateReport() {
 
@@ -37,6 +42,7 @@ function CreateReport() {
     const [state, setState] = useState(0);
     const [currentUser, setCurrentUser] = useState(null);
     const [listOrder, setListOrder] = useState(null)
+    const btnRefExcel = useRef(null)
 
     const [name1, setName1] = useState("")
     const [name2, setName2] = useState("")
@@ -85,6 +91,24 @@ function CreateReport() {
         }
     }
 
+    function generateExcel(id) {
+        //getting data from our table
+
+        var data_type = 'data:application/vnd.ms-excel';
+        /* var table_div = document.getElementById('table_with_data'); */
+        var table_div = document.getElementById(id);
+        var table_html = table_div.outerHTML.replace(/ /g, '%20');
+
+        var a = document.createElement('a');
+        a.href = data_type + ', ' + table_html;
+        a.download = 'Example_Table_To_Excel.xls';
+        console.log("a", a);
+        console.log("a.href", a.href);
+        console.log("a.download", a.download);
+        /*   a.click(); */
+    }
+
+
 
     // -->
 
@@ -99,6 +123,14 @@ function CreateReport() {
 
     function handleUserNotLoggedIn() {
         navigate("/");
+    }
+    //
+    function handleBtnExport() {
+        if (btnRefExcel.current) {
+            btnRefExcel.current.click();
+        } else {
+            console.log("handleBtnExport")
+        }
     }
 
     if (state === 2) {
@@ -117,47 +149,65 @@ function CreateReport() {
                         {listOrder.map((item) => {
 
                             return (
-                                <Box key={item.docId} sx={{ m: 1 }}
+                                <Box
+                                    key={item.docId}
+                                    sx={{ mt: 1, mb: 1 }}
                                 >
-                                    <Card sx={{ height: "100%" }} margin="normal">
+                                    <Card sx={{ height: "100%" }}>
                                         <CardContent>
-                                            <Typography sx={{ m: 1 }} variant="h5">
-                                                Fecha : {item.createdAt}
-                                            </Typography>
-                                            <Typography sx={{ m: 1 }} variant="h5">
-                                                Admin : {item.nameAdmin}
-                                            </Typography>
 
-                                            <Typography sx={{ m: 1 }} variant="h5">
-                                                Empleado :{item.nameEmployer}
-                                            </Typography>
+                                            <div className="container">
+                                                <div>
+                                                    <Table id={item.docId}>
+                                                        <Typography sx={{ m: 1 }} variant="h6">
+                                                            Fecha : {item.createdAt}
+                                                        </Typography>
+                                                        <Typography sx={{ m: 1 }} variant="h6">
+                                                            Admin : {item.nameAdmin}
+                                                        </Typography>
 
-                                            <Table>
-                                                <TableHead>
-                                                    <TableRow>
-                                                        <TableCell>Cod.</TableCell>
-                                                        <TableCell>Prod</TableCell>
-                                                        <TableCell>Cantidad</TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody>
-                                                    {item.item.map((item) => (
-                                                        <TableRow >
-                                                            <TableCell>
-                                                                {item.docId.substring(1, 4)}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                {item.nameproduct}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                {item.cantidad}
-                                                            </TableCell>
+                                                        <Typography sx={{ m: 1 }} variant="h6">
+                                                            Empleado :{item.nameEmployer}
+                                                        </Typography>
+                                                        <Table id="table_with_data">
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    <TableCell>Cod.</TableCell>
+                                                                    <TableCell>Prod</TableCell>
+                                                                    <TableCell>Cantidad</TableCell>
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                {item.item.map((item) => (
+                                                                    <TableRow >
+                                                                        <TableCell>
+                                                                            {item.docId.substring(1, 4)}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {item.nameproduct}
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            {item.cantidad}
+                                                                        </TableCell>
 
-                                                        </TableRow>
-                                                    ))}
-                                                </TableBody>
 
-                                            </Table>
+                                                                    </TableRow>
+                                                                ))}
+                                                            </TableBody>
+
+                                                        </Table>
+
+
+                                                    </Table>
+                                                </div>
+
+
+                                                <div className="">
+
+
+                                                    <button className="btnExcel" onClick={() => { generateExcel(item.docId) }}> Enviar </button>
+                                                </div>
+                                            </div>
 
 
 
@@ -206,3 +256,10 @@ function CreateReport() {
 }
 
 export default CreateReport;
+   /* {<ReactHTMLTableToExcel
+                                            
+                                            id="export-button"
+                                            table={item.docId}
+                                            filename={item.docId}
+                                            sheet="pagina"
+                                            buttonText=" Export a Excel" />}  */
