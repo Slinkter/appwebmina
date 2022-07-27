@@ -179,6 +179,31 @@ function CreateReport() {
                                                         <Typography sx={{ m: 1 }} variant="h6">
                                                             Empleado :{item.nameEmployer}
                                                         </Typography>
+
+                                                        <div hidden >
+                                                            <TableRow >
+                                                                <TableCell>
+                                                                    Fecha : {item.createdAt}
+                                                                </TableCell>
+
+                                                            </TableRow>
+                                                            <TableRow >
+                                                                <TableCell>
+                                                                    Admin : {item.nameAdmin}
+                                                                </TableCell>
+
+                                                            </TableRow>
+                                                            <TableRow >
+                                                                <TableCell>
+                                                                    Fecha : {item.createdAt}
+                                                                </TableCell>
+
+                                                            </TableRow>
+                                                        </div>
+
+
+
+
                                                         <Table id="table_with_data">
                                                             <TableHead>
                                                                 <TableRow>
@@ -199,8 +224,6 @@ function CreateReport() {
                                                                         <TableCell>
                                                                             {item.cantidad}
                                                                         </TableCell>
-
-
                                                                     </TableRow>
                                                                 ))}
                                                             </TableBody>
@@ -265,9 +288,9 @@ function CreateReport() {
 
 export default CreateReport;
    /* {<ReactHTMLTableToExcel
-     
-     id="export-button"
-     table={item.docId}
-     filename={item.docId}
-     sheet="pagina"
-     buttonText=" Export a Excel" />}  */
+ 
+id="export-button"
+table={item.docId}
+filename={item.docId}
+sheet="pagina"
+buttonText=" Export a Excel" />}  */
