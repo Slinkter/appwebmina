@@ -35,6 +35,8 @@ import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import SendIcon from '@mui/icons-material/Send';
 //
 import "../style/CreateReport.css"
+// export data excel 2
+import * as XLSX from 'xlsx';
 
 function CreateReport() {
 
@@ -131,12 +133,14 @@ function CreateReport() {
         navigate("/");
     }
     //
-    function handleBtnExport() {
-        if (btnRefExcel.current) {
-            btnRefExcel.current.click();
-        } else {
-            console.log("handleBtnExport")
-        }
+    function handleBtnExport(id) {
+        const fileName = id
+        const fileExtension = 'xlsx'
+        var elt = document.getElementById(id);
+        var wb = XLSX.utils.book_new();
+        wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return XLSX.writeFile(wb, fileName + "." + fileExtension || ('MySheetName.' + (fileExtension || 'xlsx')));
+
     }
 
     if (state === 2) {
@@ -209,9 +213,7 @@ function CreateReport() {
 
 
                                                 <div className="">
-
-
-                                                    <button className="btnExcel" onClick={() => { generateExcel(item.docId) }}> Enviar </button>
+                                                    <button className="btnExcel" onClick={() => { handleBtnExport(item.docId) }}> Enviar </button>
                                                 </div>
                                             </div>
 
@@ -263,9 +265,9 @@ function CreateReport() {
 
 export default CreateReport;
    /* {<ReactHTMLTableToExcel
-                                
-                                id="export-button"
-                                table={item.docId}
-                                filename={item.docId}
-                                sheet="pagina"
-                                buttonText=" Export a Excel" />}  */
+     
+     id="export-button"
+     table={item.docId}
+     filename={item.docId}
+     sheet="pagina"
+     buttonText=" Export a Excel" />}  */
