@@ -201,9 +201,6 @@ function CreateReport() {
                                                             </TableRow>
                                                         </div>
 
-
-
-
                                                         <Table id="table_with_data">
                                                             <TableHead>
                                                                 <TableRow>
@@ -235,9 +232,16 @@ function CreateReport() {
                                                 </div>
 
 
-                                                <div className="">
-                                                    <button className="btnExcel" onClick={() => { handleBtnExport(item.docId) }}> Enviar </button>
-                                                </div>
+                                                <Box sx={{ mt: 2, mb: 1 }} >
+                                                    <Button
+                                                        fullWidth
+                                                        margin="normal"
+                                                        color="success"
+                                                        size="large"
+                                                        type="submit"
+                                                        variant="contained"
+                                                        onClick={() => { handleBtnExport(item.docId) }}> Exporta a Excel </Button>
+                                                </Box>
                                             </div>
 
 
