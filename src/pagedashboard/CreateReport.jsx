@@ -94,18 +94,24 @@ function CreateReport() {
     function generateExcel(id) {
         //getting data from our table
 
-        var data_type = 'data:application/vnd.ms-excel';
+        /*  var data_type = 'data:application/vnd.ms-excel'; */
+        var data_type = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
         /* var table_div = document.getElementById('table_with_data'); */
         var table_div = document.getElementById(id);
         var table_html = table_div.outerHTML.replace(/ /g, '%20');
 
         var a = document.createElement('a');
         a.href = data_type + ', ' + table_html;
-        a.download = '.xls';
+        /*  a.download = '.xls'; */
+        /*  a.download = `${id}.xls` */
+        /*  a.download = `${id}.xls` */
+        a.setAttribute('download', `${id}.xls`,)
+
+
         console.log("a", a);
         console.log("a.href", a.href);
         console.log("a.download", a.download);
-        /*   a.click(); */
+        a.click();
     }
 
 
@@ -156,7 +162,7 @@ function CreateReport() {
                                     <Card sx={{ height: "100%" }}>
                                         <CardContent>
 
-                                            <div className="container">
+                                            <div className="containerCR">
                                                 <div>
                                                     <Table id={item.docId}>
                                                         <Typography sx={{ m: 1 }} variant="h6">
@@ -257,9 +263,9 @@ function CreateReport() {
 
 export default CreateReport;
    /* {<ReactHTMLTableToExcel
-                                            
-                                            id="export-button"
-                                            table={item.docId}
-                                            filename={item.docId}
-                                            sheet="pagina"
-                                            buttonText=" Export a Excel" />}  */
+                                
+                                id="export-button"
+                                table={item.docId}
+                                filename={item.docId}
+                                sheet="pagina"
+                                buttonText=" Export a Excel" />}  */

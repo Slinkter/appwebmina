@@ -13,7 +13,7 @@
     background-color: #314831; /* Green */
 }
 
-.container {
+.containerCR {
     display: flex;
     align-content: space-around;
     justify-content: center;
@@ -22,7 +22,7 @@
 }
 
 @media screen and (max-width: 420px) {
-    .container {
+    .containerCR {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -31,7 +31,7 @@
 }
 
 @media screen and (max-width: 768px) {
-    .container {
+    .containerCR {
         display: flex;
         justify-content: center;
         align-items: center;
