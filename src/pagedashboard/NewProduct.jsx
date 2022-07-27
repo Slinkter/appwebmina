@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import { addNewProduct } from "../firebase/firebase";
-import { v4 as uuidv4 } from "uuid";
+
 import UILoading from "../components/UILoading";
 import {
     Box,

@@ -2,17 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthProvider from "../components/AuthProvider";
 import DashboardWrapper from "../components/DashboardWrapper";
-import { v4 as uuidv4 } from "uuid";
-import {
-    delenteLink,
-    getLinks,
-    insertNewLink,
-    updateLink,
-} from "../firebase/firebase";
-import Link from "../components/Link";
+
+
 //css
 import "../style/Dashboard.css";
-import { Typography } from "@mui/material";
+
 
 import CDCreateEmployer from '../pageDashboardUI/CDCreateEmployer'
 import CDCreateProduct from "../pageDashboardUI/CDCreateProduct";
@@ -28,9 +22,7 @@ function DashboardView() {
     const navigate = useNavigate();
     const [state, setState] = useState(0);
     const [currentUser, setCurrentUser] = useState(null);
-    const [title, setTitle] = useState("");
-    const [url, setURL] = useState("");
-    const [links, setLinks] = useState([]);
+
     //-->
     function btn_NewEmployer() {
         navigate("/createemploye");

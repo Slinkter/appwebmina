@@ -1,17 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+
 import {
     auth,
-    getUserInfo,
     registerNewUser,
     userExistes,
 } from "../firebase/firebase";
 
-import {
-    GoogleAuthProvider,
-    onAuthStateChanged,
-    signInWithPopup,
-} from "firebase/auth";
+import { onAuthStateChanged, } from "firebase/auth";
 
 export default function AuthProvider(props) {
     //
@@ -47,7 +42,7 @@ export default function AuthProvider(props) {
                 onUserNotLoggedIn();
             }
         }
-    }, [currentPage, onUserLoggedIn, onUserNotLoggedIn,onUserNotRegister]);
+    }, [currentPage, onUserLoggedIn, onUserNotLoggedIn, onUserNotRegister]);
 
     return <div >{children}</div>;
 }

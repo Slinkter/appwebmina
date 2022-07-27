@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardWrapper from "../components/DashboardWrapper";
-import { v4 as uuidv4 } from "uuid";
+
 import AuthProvider from "../components/AuthProvider";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
