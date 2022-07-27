@@ -40,7 +40,7 @@ function CDCreateProduct(props) {
                                         width: 80,
                                     }}
                                 >
-                                    <InventoryIcon />
+                                    <InventoryIcon  sx={{ fontSize: 40 }} />
                                 </Avatar>
                             </Grid>
                         </Grid>

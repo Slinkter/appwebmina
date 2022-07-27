@@ -1,98 +1,120 @@
 import "./App.css";
-import * as React from "react";
-
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AuthProvider from "./components/AuthProvider";
+import UILoading from "./components/UILoading";
+import { auth } from "./firebase/firebase";
 //MUI
-import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardHeader from "@mui/material/CardHeader";
-import CssBaseline from "@mui/material/CssBaseline";
-import Grid from "@mui/material/Grid";
-import StarIcon from "@mui/icons-material/StarBorder";
-import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-
-import GlobalStyles from "@mui/material/GlobalStyles";
 import Container from "@mui/material/Container";
-import { Link } from "react-router-dom";
-
-// end MUI
+// 
+import { GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 
 function App() {
+    // -->
+    const [state, setState] = useState(0);
+    const navigate = useNavigate();
+    // --->
+    const handleOnClick = async () => {
+        const g_provider = new GoogleAuthProvider();
+        await signInWithGoogle(g_provider);
+    };
+
+    async function signInWithGoogle(g_provider) {
+        try {
+            const res = await signInWithPopup(auth, g_provider);
+            console.log(res);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    //-->
+    function handleUserLoggedIn(user) {
+        console.log("handleUserLoggedIn  : ");
+        navigate("/dashboard");
+        setState(2);
+    }
+
+    function handleUserNotRegister() {
+        console.log("handleUserNotRegister  : ");
+    }
+
+    function handleUserNotLoggedIn(user) {
+        setState(4);
+        console.log("handleUserNotLoggedIn  : ");
+    }
+
+    if (state === 4) {
+        return (
+            <Container component="main">
+                <Box
+                    display="flex"
+                    flexWrap="wrap"
+                    justifyContent="center"
+                    flexDirection="column"
+                    alignItems="center"
+                    minHeight="100vh"
+                >
+                    <Typography
+                        component="h3"
+                        variant="h3"
+                        align="center"
+                        color="text.primary"
+                        gutterBottom
+                    >
+                        Inventario 2
+                    </Typography>
+                    <Typography
+                        variant="h5"
+                        align="center"
+                        color="text.secondary"
+                        component="p"
+                        margin="normal"
+                        gutterBottom
+                    >
+                        demo de inventario
+                    </Typography>
+
+                    <Box sx={{ py: 2 }}>
+                        <Button
+                            fullWidth
+                            type="submit"
+                            size="large"
+                            onClick={handleOnClick}
+                            variant="contained"
+                            color="primary"
+                            margin="normal"
+                        >
+                            Login
+                        </Button>
+                    </Box>
+                </Box>
+            </Container>
+        );
+    }
+
+
     return (
         <React.Fragment>
-         
-
-            <AppBar
-                position="static"
-                color="default"
-                elevation={0}
-                sx={{
-                    borderBottom: (theme) =>
-                        `1px solid ${theme.palette.divider}`,
-                }}
+            <AuthProvider
+                currentPage={"App.js"}
+                onUserLoggedIn={handleUserLoggedIn}
+                onUserNotRegister={handleUserNotRegister}
+                onUserNotLoggedIn={handleUserNotLoggedIn}
             >
-                <Toolbar sx={{ flexWrap: "wrap" }}>
-                    <Typography
-                        variant="h6"
-                        color="inherit"
-                        noWrap
-                        sx={{ flexGrow: 1 }}
-                    ></Typography>
-
-                    <Button
-                        component={Link}
-                        to="/login"
-                        variant="contained"
-                        color="primary"
-                    >
-                        Login 2
-                    </Button>
-                </Toolbar>
-            </AppBar>
-            {/* Hero unit */}
-            <Container
-                disableGutters
-                maxWidth="sm"
-                component="main"
-                sx={{ pt: 8, pb: 6 }}
-            >
-                <Typography
-                    component="h1"
-                    variant="h2"
-                    align="center"
-                    color="text.primary"
-                    gutterBottom
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    minHeight="100vh"
                 >
-                    Inventario
-                </Typography>
-                <Typography
-                    variant="h5"
-                    align="center"
-                    color="text.secondary"
-                    component="p"
-                >
-                    demo de inventario
-                    <br></br>
-                    <Link to="/login">Continuar</Link>
-                </Typography>
-            </Container>
-            {/* End hero unit */}
+                    <UILoading /> App
+                </Box>
+            </AuthProvider>
 
-            {/* Footer */}
-            <Container
-                maxWidth="md"
-                component="footer"
-                sx={{
-                    borderTop: (theme) => `1px solid ${theme.palette.divider}`,
-                    mt: 8,
-                    py: [3, 6],
-                }}
-            ></Container>
-            {/* End footer */}
         </React.Fragment>
     );
 }

@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 // MUI
-import { Container } from "@mui/material";
+
 import {
     Avatar,
-    Box,
+
     Card,
     CardContent,
     Grid,
     Typography,
 } from "@mui/material";
 
-// icon-Crear pedido
-import NoteAddIcon from "@mui/icons-material/NoteAdd";
+// icon-update producto
+import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
 
-function CDCreateOrder(props) {
+function CDUpdateProduct(props) {
     const { btn_NewEmployer, label, metodo } = props;
 
     function handleNewEmployer() {
@@ -50,7 +50,7 @@ function CDCreateOrder(props) {
                                         width: 80,
                                     }}
                                 >
-                                    <NoteAddIcon />
+                                    <SystemUpdateAltIcon  sx={{ fontSize: 40 }} />
                                 </Avatar>
                             </Grid>
                         </Grid>
@@ -61,4 +61,4 @@ function CDCreateOrder(props) {
     );
 }
 
-export default CDCreateOrder;
+export default CDUpdateProduct;

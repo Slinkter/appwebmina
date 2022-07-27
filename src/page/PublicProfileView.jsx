@@ -24,11 +24,11 @@ function PublicProfileView() {
                 console.log("userUId : ", userUId);
                 if (userUId) {
                     const userInfo = await getUserPublicProfileInfo(userUId);
-                    console.log(userInfo);
-                    setProfile(userInfo); // profileInfo: profileInfo, linksInfo: linksInfo
                     const url = await getProfilePhotoUrl(
                         userInfo.profileInfo.profilePicture
                     );
+
+                    setProfile(userInfo); // {profileInfo: profileInfo, linksInfo: linksInfo}
                     setUrl(url);
                 } else {
                     setState(7);
@@ -48,7 +48,14 @@ function PublicProfileView() {
             <div>
                 <img src={url} alt="" width={100} />
             </div>
-            <h2>{profile?.profileInfo.username}</h2>
+        </div>
+    );
+}
+
+export default PublicProfileView;
+
+/* 
+ <h2>{profile?.profileInfo.username}</h2>
             <h3>{profile?.profileInfo.displayName}</h3>
             <div>
                 {profile?.linksInfo.map((link) => (
@@ -59,11 +66,6 @@ function PublicProfileView() {
                     />
                 ))}
             </div>
-        </div>
-    );
-}
 
-export default PublicProfileView;
-/* 
 
- */
+*/

@@ -1,18 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 // MUI
-import { Container } from "@mui/material";
 import {
     Avatar,
+ 
     Box,
     Card,
     CardContent,
     Grid,
     Typography,
 } from "@mui/material";
-// icon-generar reporte
-import AssessmentIcon from "@mui/icons-material/Assessment";
 
-function CDCreateReport(props) {
+// crear empleado
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
+
+function CDCreateEmployer(props) {
     const { btn_NewEmployer, label, metodo } = props;
 
     function handleNewEmployer() {
@@ -24,10 +25,10 @@ function CDCreateReport(props) {
             <Grid item lg={3} sm={6} xl={3} xs={12}>
                 <Card sx={{ height: "100%" }} onClick={handleNewEmployer}>
                     <CardContent>
-                        <Grid
-                            container
-                            spacing={3}
-                            sx={{ justifyContent: "space-between" }}
+                        <Box
+                            display="flex"
+                            justifyContent="space-between"
+                            alignItems="center"
                         >
                             <Grid item>
                                 <Typography
@@ -46,13 +47,13 @@ function CDCreateReport(props) {
                                     sx={{
                                         backgroundColor: "error.main",
                                         height: 80,
-                                        width: 80,
+                                        width: 80
                                     }}
                                 >
-                                    <AssessmentIcon />
+                                    <GroupAddIcon sx={{ fontSize: 40 }} />
                                 </Avatar>
                             </Grid>
-                        </Grid>
+                        </Box>
                     </CardContent>
                 </Card>
             </Grid>
@@ -60,4 +61,4 @@ function CDCreateReport(props) {
     );
 }
 
-export default CDCreateReport;
+export default CDCreateEmployer;

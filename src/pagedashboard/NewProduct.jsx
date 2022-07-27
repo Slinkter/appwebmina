@@ -1,46 +1,96 @@
 import React, { useState } from "react";
 import DashboardWrapper from "../components/DashboardWrapper";
-
-import NextLink from "next/link";
-import { useRouter } from "next/router";
+import AuthProvider from "../components/AuthProvider";
+import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+
+import { addNewProduct } from "../firebase/firebase";
+
+import UILoading from "../components/UILoading";
 import {
     Box,
     Button,
-    Checkbox,
+    Card,
+    CardContent,
+    TextField,
     Container,
     FormHelperText,
-    Link,
-    TextField,
     Typography,
 } from "@mui/material";
+<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
 import { Style } from "@mui/icons-material";
+=======
+>>>>>>> e5a9e484696d2142dc9165faf5171d3bfc247a17
 
 function NewProduct() {
+    //
     const navigate = useNavigate();
-
+    const [state, setState] = useState(0);
+    const [currentUser, setCurrentUser] = useState({});
+    //
+    const initvalue = {
+        nameproduct: "",
+        detail: "",
+        category: "",
+        cantidad: "",
+    };
+    const inityup = {
+        nameproduct: Yup.string().max(150).required("campo faltante "),
+        detail: Yup.string().max(150).required("campo faltante "),
+        category: Yup.string().max(150).required("campo faltante"),
+        cantidad: Yup.string().max(150).required("campo faltante"),
+    };
+    //
     const formik = useFormik({
-        initialValues: {
-            nameproduct: "",
-            detail: "",
-            category: "",
-            codigo: "",
-        },
-        validationSchema: Yup.object({
-            nameproduct: Yup.string().max(150).required("campo faltante "),
-            detail: Yup.string().max(150).required("campo faltante "),
-            category: Yup.string().max(150).required("campo faltante"),
-            codigo: Yup.string().max(150).required("campo faltante"),
-        }),
+        initialValues: initvalue,
+        validationSchema: Yup.object(inityup),
         onSubmit: (values) => {
-            // agregar uid
-            // agregar fecha
+            values.userUid = currentUser.uid;
+            values.createdAt = new Date().toLocaleString('sv')
             console.log(JSON.stringify(values, null, 2));
+            saveProduct(values);
             navigate("/dashboard");
         },
     });
+    //
+
+    async function saveProduct(values) {
+        await addNewProduct(values);
+    }
+
+    function handleUserLoggedIn(user) {
+        setCurrentUser(user);
+        setState(2);
+    }
+
+    function handleUserNotRegister(user) {
+        navigate("/login");
+    }
+
+    function handleUserNotLoggedIn() {
+        navigate("/login");
+    }
+
+    if (state === 0) {
+        return (
+            <AuthProvider
+                onUserLoggedIn={handleUserLoggedIn}
+                onUserNotRegister={handleUserNotRegister}
+                onUserNotLoggedIn={handleUserNotLoggedIn}
+            >
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    minHeight="100vh"
+                >
+                    <UILoading />
+                </Box>
+            </AuthProvider>
+        );
+    }
 
     const states = [
         {
@@ -79,131 +129,123 @@ function NewProduct() {
                 component="main"
                 sx={{
                     alignItems: "center",
+                    justifyContent: "center",
                     display: "flex",
                     flexGrow: 1,
-                    minHeight: "100%",
                 }}
             >
-                <Container maxWidth="sm">
-                    <form onSubmit={formik.handleSubmit}>
-                        <Box sx={{ my: 3 }}>
-                            <Typography color="textPrimary" variant="h3">
-                                Crear un Producto
-                            </Typography>
-                        </Box>
-                        <TextField
-                            error={Boolean(
-                                formik.touched.nameproduct &&
-                                    formik.errors.nameproduct
-                            )}
-                            fullWidth
-                            helperText={
-                                formik.touched.nameproduct &&
-                                formik.errors.nameproduct
-                            }
-                            label="Codigo Producto"
-                            margin="normal"
-                            name="nameproduct"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            value={formik.values.nameproduct}
-                            variant="outlined"
-                        />
-                        <TextField
-                            error={Boolean(
-                                formik.touched.detail && formik.errors.detail
-                            )}
-                            fullWidth
-                            helperText={
-                                formik.touched.detail && formik.errors.detail
-                            }
-                            label="Detalle del producto"
-                            margin="normal"
-                            name="detail"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            type="text"
-                            value={formik.values.detail}
-                            variant="outlined"
-                        />
+                <Card>
+                    <CardContent>
+                        <Container maxWidth="sm">
+                            <form onSubmit={formik.handleSubmit}>
+                                <Box sx={{ pt: 2 }}>
+                                    <Typography
+                                        color="textPrimary"
+                                        variant="h4"
+                                    >
+                                        Crear producto
+                                    </Typography>
+                                </Box>
 
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            label="Categoria"
-                            name="state"
-                            onChange={handleChange}
-                            required
-                            select
-                            SelectProps={{ native: true }}
-                            value={values.state}
-                            variant="outlined"
-                        >
-                            {states.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </TextField>
+                                <TextField
+                                    error={Boolean(
+                                        formik.touched.nameproduct &&
+                                        formik.errors.nameproduct
+                                    )}
+                                    helperText={
+                                        formik.touched.nameproduct &&
+                                        formik.errors.nameproduct
+                                    }
+                                    fullWidth
+                                    label="Nombre Producto"
+                                    margin="normal"
+                                    name="nameproduct"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.nameproduct}
+                                    variant="outlined"
+                                />
+                                <TextField
+                                    error={Boolean(
+                                        formik.touched.detail &&
+                                        formik.errors.detail
+                                    )}
+                                    fullWidth
+                                    helperText={
+                                        formik.touched.detail &&
+                                        formik.errors.detail
+                                    }
+                                    label="Detalle del producto"
+                                    margin="normal"
+                                    name="detail"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    type="text"
+                                    value={formik.values.detail}
+                                    variant="outlined"
+                                />
 
-                        <TextField
-                            error={Boolean(
-                                formik.touched.category &&
-                                    formik.errors.category
-                            )}
-                            fullWidth
-                            helperText={
-                                formik.touched.category &&
-                                formik.errors.category
-                            }
-                            label="Categoria"
-                            margin="normal"
-                            name="category"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            type="text"
-                            value={formik.values.category}
-                            variant="outlined"
-                            hidden={true}
-                        />
+                                <TextField
+                                    error={Boolean(
+                                        formik.touched.category &&
+                                        formik.errors.category
+                                    )}
+                                    fullWidth
+                                    helperText={
+                                        formik.touched.category &&
+                                        formik.errors.category
+                                    }
+                                    label="Categoria"
+                                    margin="normal"
+                                    name="category"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    type="text"
+                                    value={formik.values.category}
+                                    variant="outlined"
+                                />
 
-                        <TextField
-                            error={Boolean(
-                                formik.touched.lastName &&
-                                    formik.errors.lastName
-                            )}
-                            fullWidth
-                            helperText={
-                                formik.touched.lastName &&
-                                formik.errors.lastName
-                            }
-                            label="Cantidad"
-                            margin="normal"
-                            name="codigo"
-                            type="number"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            value={formik.values.lastName}
-                            variant="outlined"
-                        />
+                                <TextField
+                                    error={Boolean(
+                                        formik.touched.lastName &&
+                                        formik.errors.lastName
+                                    )}
+                                    fullWidth
+                                    helperText={
+                                        formik.touched.lastName &&
+                                        formik.errors.lastName
+                                    }
+                                    label="Cantidad"
+                                    margin="normal"
+                                    name="cantidad"
+                                    type="number"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.lastName}
+                                    variant="outlined"
+                                />
 
-                        <Box sx={{ py: 2 }}>
-                            <Button
-                                color="primary"
-                                disabled={formik.isSubmitting}
-                                fullWidth
-                                size="large"
-                                type="submit"
-                                variant="contained"
-                            >
-                                Sign Up Now
-                            </Button>
-                        </Box>
-                    </form>
-                </Container>
+                                <Box sx={{ py: 2 }}>
+                                    <Button
+                                        margin="normal"
+                                        color="primary"
+                                        disabled={formik.isSubmitting}
+                                        fullWidth
+                                        size="large"
+                                        type="submit"
+                                        variant="contained"
+                                    >
+                                        Guardar
+                                    </Button>
+                                </Box>
+                            </form>
+                        </Container>
+                    </CardContent>
+                </Card>
             </Box>
         </DashboardWrapper>
     );
 }
 
 export default NewProduct;
+∫

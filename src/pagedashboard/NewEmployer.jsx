@@ -14,20 +14,7 @@ import {
     TextField,
 } from "@mui/material";
 
-const states = [
-    {
-        value: "a1",
-        label: "Area 1",
-    },
-    {
-        value: "a2",
-        label: "Area 2",
-    },
-    {
-        value: "a3",
-        label: "Area 3",
-    },
-];
+
 
 function NewEmployer() {
     const [values, setValues] = useState({
@@ -39,6 +26,21 @@ function NewEmployer() {
         country: "",
     });
 
+
+    const states = [
+        {
+            value: "a1",
+            label: "Area 1",
+        },
+        {
+            value: "a2",
+            label: "Area 2",
+        },
+        {
+            value: "a3",
+            label: "Area 3",
+        },
+    ];
     const handleChange = (event) => {
         setValues({
             ...values,

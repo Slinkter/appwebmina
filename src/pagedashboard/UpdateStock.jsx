@@ -1,136 +1,202 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import DashboardWrapper from "../components/DashboardWrapper";
 
-import NextLink from "next/link";
-import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
     Box,
     Button,
-    Checkbox,
+    Card,
+    CardContent,
     Container,
-    FormHelperText,
-    Link,
     TextField,
     Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { getProducts, updatePlusStock } from "../firebase/firebase";
 
 function UpdateStock() {
     const navigate = useNavigate();
+    const [products, setProducts] = useState([]);
+    const [currentSelectProduct, setCurrentSelectProduct] = useState({});
+    //
+
+    useEffect(() => {
+        getAllProducts();
+
+        async function getAllProducts() {
+            try {
+                const ref2 = await getProducts();
+                setProducts(ref2);
+                console.log(ref2);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    }, []);
 
     const formik = useFormik({
         initialValues: {
-            nameproduct: "",
-            currentAmout: "",
-            
-            codigo: "",
+            cantidad: 0,
         },
         validationSchema: Yup.object({
-            nameproduct: Yup.string().max(150).required("campo faltante "),
-            currentAmout: Yup.string().max(150).required("campo faltante "),
-           
-            codigo: Yup.string().max(150).required("campo faltante"),
+            cantidad: Yup.number()
+                .max(9999, "el limite es 4 digitos ")
+                .positive()
+                .required("campo faltante"),
         }),
         onSubmit: (values) => {
-            // agregar uid
-            // agregar fecha
             console.log(JSON.stringify(values, null, 2));
+            const docId = currentSelectProduct.docId;
+            const stock = currentSelectProduct.cantidad;
+            const cantidad = values.cantidad;
+
+            console.log(
+                "docId : ",
+                docId,
+                "stock:",
+                stock,
+                "cantidad:",
+                cantidad
+            );
+
+            updatePlusStockProduct(docId, stock, cantidad);
             navigate("/dashboard");
         },
     });
+
+    async function updatePlusStockProduct(docId, currentStock, cantidad) {
+        await updatePlusStock(docId, cantidad);
+    }
+
+    const handleChangeProducto = (e) => {
+        // recibirl del options solo el docIdproducto
+        const docIdProduct = e.target.value;
+        // obtener el producto por docId
+        const productFound = products.filter((item) => {
+            if (item.docId === docIdProduct) {
+                return item;
+            }
+            return null;
+        });
+        console.log(productFound);
+
+        if (productFound.length === 1) {
+            setCurrentSelectProduct(productFound[0]);
+            formik.values.cantidad = 0;
+        } else {
+            setCurrentSelectProduct(null);
+            formik.values.cantidad = 0;
+        }
+    };
+
     return (
         <DashboardWrapper>
             <Box
                 component="main"
                 sx={{
                     alignItems: "center",
+                    justifyContent: "center",
                     display: "flex",
                     flexGrow: 1,
-                    minHeight: "100%",
                 }}
             >
-                <Container maxWidth="sm">
-                    <form onSubmit={formik.handleSubmit}>
-                        <Box sx={{ my: 3 }}>
-                            <Typography color="textPrimary" variant="h4">
-                                Actualizar inventario stock producto
-                            </Typography>
-                        </Box>
-                        <TextField
-                            error={Boolean(
-                                formik.touched.nameproduct &&
-                                    formik.errors.nameproduct
-                            )}
-                            fullWidth
-                            helperText={
-                                formik.touched.nameproduct &&
-                                formik.errors.nameproduct
-                            }
-                            label="Nombre Producto"
-                            margin="normal"
-                            name="nameproduct"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            value={formik.values.nameproduct}
-                            variant="outlined"
-                        />
-                        <TextField
-                            error={Boolean(
-                                formik.touched.detail && formik.errors.detail
-                            )}
-                            fullWidth
-                            helperText={
-                                formik.touched.detail && formik.errors.detail
-                            }
-                            label="Actual Cantidad"
-                            disabled
-                            margin="normal"
-                            name="currentAmout"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            type="text"
-                            value={formik.values.currentAmout}
-                            variant="outlined"
-                        />
+                <Card>
+                    <CardContent>
+                        <Container maxWidth="sm">
+                            <form onSubmit={formik.handleSubmit}>
+                                <Box sx={{ my: 3 }}>
+                                    <Typography
+                                        color="textPrimary"
+                                        variant="h4"
+                                    >
+                                        Actualizar inventario stock producto
+                                    </Typography>
+                                </Box>
 
-                  
+                                <TextField
+                                    margin="normal"
+                                    fullWidth
+                                    name="area"
+                                    select
+                                    SelectProps={{ native: true }}
+                                    variant="outlined"
+                                    onChange={handleChangeProducto}
+                                >
+                                    {products.length > 0
+                                        ? products.map((option) => (
+                                              <option
+                                                  key={option.docId}
+                                                  value={option.docId}
+                                              >
+                                                  {option.nameproduct
+                                                      ? option.nameproduct
+                                                      : "Selecione Producto"}
+                                              </option>
+                                          ))
+                                        : null}
+                                </TextField>
 
-                        <TextField
-                            error={Boolean(
-                                formik.touched.lastName &&
-                                    formik.errors.lastName
-                            )}
-                            fullWidth
-                            helperText={
-                                formik.touched.lastName &&
-                                formik.errors.lastName
-                            }
-                            label="Cantidad"
-                            margin="normal"
-                            name="codigo"
-                            type="number"
-                            onBlur={formik.handleBlur}
-                            onChange={formik.handleChange}
-                            value={formik.values.lastName}
-                            variant="outlined"
-                        />
+                                {/* mostrar el stock */}
+                                {currentSelectProduct !== null ? (
+                                    <TextField
+                                        helperText={"Stock actual select"}
+                                        fullWidth
+                                        disabled
+                                        margin="normal"
+                                        name="stock"
+                                        type="number"
+                                        value={currentSelectProduct.cantidad}
+                                        variant="outlined"
+                                    />
+                                ) : (
+                                    <TextField
+                                        helperText={"Stock actual nulll"}
+                                        fullWidth
+                                        disabled
+                                        margin="normal"
+                                        name="stock"
+                                        type="number"
+                                        value={0}
+                                        variant="outlined"
+                                    />
+                                )}
 
-                        <Box sx={{ py: 2 }}>
-                            <Button
-                                color="primary"
-                                disabled={formik.isSubmitting}
-                                fullWidth
-                                size="large"
-                                type="submit"
-                                variant="contained"
-                            >
-                                Sign Up Now
-                            </Button>
-                        </Box>
-                    </form>
-                </Container>
+                                <TextField
+                                    error={Boolean(
+                                        formik.touched.cantidad &&
+                                            formik.errors.cantidad
+                                    )}
+                                    fullWidth
+                                    helperText={
+                                        formik.touched.cantidad &&
+                                        formik.errors.cantidad
+                                    }
+                                    label="Cantidad a aumentar + "
+                                    margin="normal"
+                                    name="cantidad"
+                                    type="number"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.cantidad}
+                                    variant="outlined"
+                                />
+
+                                <Box sx={{ py: 2 }}>
+                                    <Button
+                                        color="primary"
+                                        fullWidth
+                                        size="large"
+                                        type="submit"
+                                        variant="contained"
+                                    >
+                                        Actualizar
+                                    </Button>
+                                </Box>
+                            </form>
+                        </Container>
+                    </CardContent>
+                </Card>
             </Box>
         </DashboardWrapper>
     );

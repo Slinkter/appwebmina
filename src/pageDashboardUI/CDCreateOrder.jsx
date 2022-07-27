@@ -1,27 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 // MUI
-import { Container } from "@mui/material";
+
 import {
     Avatar,
-    Box,
+  
     Card,
     CardContent,
     Grid,
     Typography,
 } from "@mui/material";
 
-// crear empleado
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-// icon-crear producto
-import InventoryIcon from "@mui/icons-material/Inventory";
-// icon-update producto
-import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
-// icon-generar reporte
-import AssessmentIcon from "@mui/icons-material/Assessment";
 // icon-Crear pedido
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 
-function CardDashboard(props) {
+function CDCreateOrder(props) {
     const { btn_NewEmployer, label, metodo } = props;
 
     function handleNewEmployer() {
@@ -58,7 +50,7 @@ function CardDashboard(props) {
                                         width: 80,
                                     }}
                                 >
-                                    <GroupAddIcon />
+                                    <NoteAddIcon   sx={{ fontSize: 40 }}/>
                                 </Avatar>
                             </Grid>
                         </Grid>
@@ -69,4 +61,4 @@ function CardDashboard(props) {
     );
 }
 
-export default CardDashboard;
+export default CDCreateOrder;
