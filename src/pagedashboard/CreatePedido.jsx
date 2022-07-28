@@ -54,12 +54,12 @@ function CreatePedido() {
 
         async function getAll() {
             try {
-                loadInit()
+                loadInit();
             } catch (error) {
                 console.error(error);
             }
         }
-    }, [setListItem, item, setItem]);
+    }, [setCurrentSelectProduct, setProducts]);
 
     function handleAddItem() {
         console.group("handleAddItem");
@@ -85,7 +85,7 @@ function CreatePedido() {
                 // actualizar el stock (decontar  en local )
                 console.log("Lista de Productos =>  ", products);
                 console.log("Pre descuento");
-                const currentStockFirebase = currentSelectProduct.cantidad
+                const currentStockFirebase = currentSelectProduct.cantidad;
                 const uptatecount = currentSelectProduct.cantidad - cantidad;
 
                 const newProduct = products.map((item) => {
@@ -103,7 +103,7 @@ function CreatePedido() {
                 newItem.docId = currentSelectProduct.docId;
                 newItem.nameproduct = currentSelectProduct.nameproduct;
                 newItem.cantidad = parseInt(cantidad);
-                newItem.currentStockFirebase = currentStockFirebase
+                newItem.currentStockFirebase = currentStockFirebase;
                 // Add Item to Array
                 listItem.push(newItem);
                 // Upadate listITem
@@ -121,13 +121,6 @@ function CreatePedido() {
         const { ref1, ref2 } = await getNewOrden();
         ref1.unshift("seleccione");
         ref2.unshift({});
-
-        console.log(
-            "ref1 : ",
-            ref1[1].docId,
-            ref1[1].dni,
-            ref1[1].firstName
-        );
         console.group("Ref 01 ");
         ref1.map((item) => {
             console.log(item.dni, item);
@@ -140,7 +133,6 @@ function CreatePedido() {
         console.groupEnd();
         setEmployers(ref1);
         setProducts(ref2);
-
     }
 
     const handleSubmit = () => {
@@ -154,34 +146,38 @@ function CreatePedido() {
             // actualizar el stock en firebase
             // se toma el docID en un for
             // cuando se tiene un for
-            listItem.map(item => {
-                updateDecreaseStockProduct(item.docId, item.currentStockFirebase, item.cantidad)
-            })
+            listItem.map((item) => {
+                updateDecreaseStockProduct(
+                    item.docId,
+                    item.currentStockFirebase,
+                    item.cantidad
+                );
+            });
 
-            saveAllListProductEmployerByUser(currentSelectEmployer, listItem, currentUser)
-            navigate("/dashboard")
-
+            saveAllListProductEmployerByUser(
+                currentSelectEmployer,
+                listItem,
+                currentUser
+            );
+            navigate("/dashboard");
         }
         console.groupEnd("handleSubmit");
     };
 
     async function saveAllListProductEmployerByUser(empleado, list, user) {
-        console.group("-----saveAllListProductEmployerByUser-----")
-        const daycreated = new Date().toLocaleString('sv')
-        console.log('daycreated :', daycreated)
-        console.log('user :', user.uid)
-        console.log('empleado :', empleado.docId)
-        console.log('list :', list)
-        saveAllList(daycreated, user.uid, empleado.docId, list)
-        console.groupEnd()
+        console.group("-----saveAllListProductEmployerByUser-----");
+        const daycreated = new Date().toLocaleString("sv");
+        console.log("daycreated :", daycreated);
+        console.log("user :", user.uid);
+        console.log("empleado :", empleado.docId);
+        console.log("list :", list);
+        saveAllList(daycreated, user.uid, empleado.docId, list);
+        console.groupEnd();
     }
-
 
     async function updateDecreaseStockProduct(docId, stock, cantidad) {
-        await updateStock(docId, stock, cantidad)
+        await updateStock(docId, stock, cantidad);
     }
-
-
 
     const handleChangeEmployer = (e) => {
         console.group("handleChangeEmployer");
@@ -209,7 +205,7 @@ function CreatePedido() {
         const docIdProducto = e.target.value;
         console.log("docIdProducto : ", docIdProducto);
         if (docIdProducto === "Selecione Producto") {
-            console.log("hola");
+           
         }
         try {
             const rpta = products.filter((item) => {
@@ -285,9 +281,7 @@ function CreatePedido() {
                                     </Typography>
                                 </Box>
 
-                                <hr width="100%"
-                                    size="2" color="#c4c4c4"
-                                />
+                                <hr width="100%" size="2" color="#c4c4c4" />
 
                                 <Box sx={{ py: 2 }}>
                                     <Box
@@ -337,9 +331,7 @@ function CreatePedido() {
 
                                 <br></br>
                                 <br></br>
-                                <hr width="100%"
-                                    size="2" color="#c4c4c4"
-                                />
+                                <hr width="100%" size="2" color="#c4c4c4" />
                                 <Box sx={{ py: 2 }}>
                                     <Box
                                         sx={{
@@ -366,7 +358,6 @@ function CreatePedido() {
                                             </Button>
                                         </Box>
                                     </Box>
-
                                 </Box>
 
                                 <TextField
@@ -378,7 +369,7 @@ function CreatePedido() {
                                     variant="outlined"
                                     onChange={handleChangeProducto}
                                 >
-                                    {products.length > 0
+                                    {(products.length > 0 )
                                         ? products.map((option) => (
                                             <option
                                                 key={option.docId}
@@ -443,13 +434,10 @@ function CreatePedido() {
                             </form>
                         </Container>
 
-
                         <Container maxWidth="sm">
                             <br></br>
                             <br></br>
-                            <hr width="100%"
-                                size="2" color="#c4c4c4"
-                            />
+                            <hr width="100%" size="2" color="#c4c4c4" />
                             <Box sx={{ py: 2 }}>
                                 <Box
                                     sx={{
@@ -469,8 +457,11 @@ function CreatePedido() {
                                             color="warning"
                                             variant="contained"
                                             onClick={() => {
-                                                setListItem([])
-                                                window.location.reload(false);
+                                                setCurrentSelectProduct(null);
+                                                setProducts([])
+                                                setListItem([]);
+                                                loadInit();
+                                               
 
                                             }}
                                         >
@@ -534,7 +525,7 @@ function CreatePedido() {
                                     type="submit"
                                     variant="contained"
                                     onClick={() => {
-                                        navigate("/dashboard")
+                                        navigate("/dashboard");
                                     }}
                                 >
                                     Salir

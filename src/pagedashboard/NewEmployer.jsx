@@ -22,6 +22,10 @@ import UILoading from "../components/UILoading";
 
 const areainput = [
     {
+        value: "s",
+        label: "Seleccion area",
+    },
+    {
         value: "a1",
         label: "Area 1",
     },
@@ -75,12 +79,19 @@ function NewEmployer() {
         initialValues: initvalue,
         validationSchema: Yup.object(inityup),
         onSubmit: (values) => {
-            values.adminUid = currentUser.uid;
-            /* values.createdAt = new Date().toISOString(); */
-            values.createdAt = new Date().toLocaleString('sv')
-            console.log(JSON.stringify(values, null, 2));
-            saveEmployer(values);
-            navigate("/dashboard");
+            console.log(values);
+            if (values.area === "s") {
+                alert("Debe seleccionar una area")
+
+
+            } else {
+                values.adminUid = currentUser.uid;
+                /* values.createdAt = new Date().toISOString(); */
+                values.createdAt = new Date().toLocaleString('sv')
+                console.log(JSON.stringify(values, null, 2));
+                saveEmployer(values);
+                navigate("/dashboard");
+            }
         },
     });
 
@@ -104,7 +115,7 @@ function NewEmployer() {
 
     useEffect(() => {
         console.log("areainput", areainput);
-    }, []);
+    }, [areainput]);
 
     if (state === 0) {
         return (
@@ -274,7 +285,7 @@ function NewEmployer() {
                                         margin="normal"
                                         color="primary"
                                         fullWidth
-                                        disabled={formik.isSubmitting}
+                                      
                                         size="large"
                                         type="submit"
                                         variant="contained"
