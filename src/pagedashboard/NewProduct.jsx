@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import DashboardWrapper from "../components/DashboardWrapper";
 import AuthProvider from "../components/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
-// MUI
 
+import { addNewProduct } from "../firebase/firebase";
+import { v4 as uuidv4 } from "uuid";
+import UILoading from "../components/UILoading";
 import {
     Box,
     Button,
@@ -17,76 +18,41 @@ import {
     FormHelperText,
     Typography,
 } from "@mui/material";
-import { addNewEmployer } from "../firebase/firebase";
-import UILoading from "../components/UILoading";
 
-const areainput = [
-    {
-        value: "a1",
-        label: "Area 1",
-    },
-    {
-        value: "a2",
-        label: "Area 2",
-    },
-    {
-        value: "a3",
-        label: "Area 3",
-    },
-];
-
-function NewEmployer() {
+function NewProduct() {
     //
     const navigate = useNavigate();
     const [state, setState] = useState(0);
     const [currentUser, setCurrentUser] = useState({});
-
+    //
     const initvalue = {
-        firstName: "",
-        lastName: "",
-        dni: "",
-        phone: "",
-        email: "",
-        area: "",
+        nameproduct: "",
+        detail: "",
+        category: "",
+        cantidad: "",
     };
-
     const inityup = {
-        firstName: Yup.string()
-            .max(25, " el limite es de 25 caracteres")
-            .required("campo faltante "),
-        lastName: Yup.string()
-            .max(25, " el limite es de 25 caracteres")
-            .required("campo faltante "),
-        dni: Yup.string()
-            .max(8, "el limite es 8 digitos ")
-            .required("campo faltante"),
-        phone: Yup.string()
-            .max(12, " el limite es de 12 caracteres")
-            .required("campo faltante"),
-        email: Yup.string()
-            .max(40, " el limite es de 40 caracteres")
-            .required("campo faltante"),
-        area: Yup.string()
-            .max(20, " el limite es de 20 caracteres")
-            .required("campo faltante"),
+        nameproduct: Yup.string().max(150).required("campo faltante "),
+        detail: Yup.string().max(150).required("campo faltante "),
+        category: Yup.string().max(150).required("campo faltante"),
+        cantidad: Yup.string().max(150).required("campo faltante"),
     };
-
+    //
     const formik = useFormik({
         initialValues: initvalue,
         validationSchema: Yup.object(inityup),
         onSubmit: (values) => {
-            values.adminUid = currentUser.uid;
-            /* values.createdAt = new Date().toISOString(); */
-            values.createdAt = new Date().toLocaleString('sv')
+            values.userUid = currentUser.uid;
+            values.createdAt = new Date().toISOString();
             console.log(JSON.stringify(values, null, 2));
-            saveEmployer(values);
+            saveProduct(values);
             navigate("/dashboard");
         },
     });
+    //
 
-    async function saveEmployer(values) {
-        const rpta = await addNewEmployer(values);
-        console.log(rpta);
+    async function saveProduct(values) {
+        await addNewProduct(values);
     }
 
     function handleUserLoggedIn(user) {
@@ -101,10 +67,6 @@ function NewEmployer() {
     function handleUserNotLoggedIn() {
         navigate("/login");
     }
-
-    useEffect(() => {
-        console.log("areainput", areainput);
-    }, []);
 
     if (state === 0) {
         return (
@@ -131,8 +93,8 @@ function NewEmployer() {
                 component="main"
                 sx={{
                     alignItems: "center",
-                    display: "flex",
                     justifyContent: "center",
+                    display: "flex",
                     flexGrow: 1,
                 }}
             >
@@ -145,156 +107,99 @@ function NewEmployer() {
                                         color="textPrimary"
                                         variant="h4"
                                     >
-                                        Crear empleado
+                                        Crear producto
                                     </Typography>
                                 </Box>
 
                                 <TextField
                                     error={Boolean(
-                                        formik.touched.firstName &&
-                                        formik.errors.firstName
+                                        formik.touched.nameproduct &&
+                                            formik.errors.nameproduct
                                     )}
                                     helperText={
-                                        formik.touched.firstName &&
-                                        formik.errors.firstName
+                                        formik.touched.nameproduct &&
+                                        formik.errors.nameproduct
                                     }
-                                    margin="normal"
                                     fullWidth
-                                    label="Nombres"
-                                    name="firstName"
-                                    required
+                                    label="Nombre Producto"
+                                    margin="normal"
+                                    name="nameproduct"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.nameproduct}
+                                    variant="outlined"
+                                />
+                                <TextField
+                                    error={Boolean(
+                                        formik.touched.detail &&
+                                            formik.errors.detail
+                                    )}
+                                    fullWidth
+                                    helperText={
+                                        formik.touched.detail &&
+                                        formik.errors.detail
+                                    }
+                                    label="Detalle del producto"
+                                    margin="normal"
+                                    name="detail"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
                                     type="text"
+                                    value={formik.values.detail}
                                     variant="outlined"
+                                />
+
+                                <TextField
+                                    error={Boolean(
+                                        formik.touched.category &&
+                                            formik.errors.category
+                                    )}
+                                    fullWidth
+                                    helperText={
+                                        formik.touched.category &&
+                                        formik.errors.category
+                                    }
+                                    label="Categoria"
+                                    margin="normal"
+                                    name="category"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
-                                    value={formik.values.firstName}
-                                />
-                                <TextField
-                                    margin="normal"
-                                    fullWidth
-                                    label="Apellidos"
-                                    name="lastName"
-                                    required
+                                    type="text"
+                                    value={formik.values.category}
                                     variant="outlined"
+                                />
+
+                                <TextField
+                                    error={Boolean(
+                                        formik.touched.lastName &&
+                                            formik.errors.lastName
+                                    )}
+                                    fullWidth
+                                    helperText={
+                                        formik.touched.lastName &&
+                                        formik.errors.lastName
+                                    }
+                                    label="Cantidad"
+                                    margin="normal"
+                                    name="cantidad"
+                                    type="number"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
                                     value={formik.values.lastName}
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    error={Boolean(
-                                        formik.touched.lastName &&
-                                        formik.errors.lastName
-                                    )}
-                                    helperText={
-                                        formik.touched.lastName &&
-                                        formik.errors.lastName
-                                    }
-                                />
-
-                                <TextField
-                                    margin="normal"
-                                    fullWidth
-                                    label="DNI"
-                                    name="dni"
-                                    type="number"
-                                    required
                                     variant="outlined"
-                                    value={formik.values.dni}
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    error={Boolean(
-                                        formik.touched.dni && formik.errors.dni
-                                    )}
-                                    helperText={
-                                        formik.touched.dni && formik.errors.dni
-                                    }
                                 />
-
-                                <TextField
-                                    margin="normal"
-                                    fullWidth
-                                    label="Telefono"
-                                    name="phone"
-                                    type="number"
-                                    variant="outlined"
-                                    value={formik.values.phone}
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    error={Boolean(
-                                        formik.touched.phone &&
-                                        formik.errors.phone
-                                    )}
-                                    helperText={
-                                        formik.touched.phone &&
-                                        formik.errors.phone
-                                    }
-                                />
-                                <TextField
-                                    margin="normal"
-                                    fullWidth
-                                    label="Correo"
-                                    type="email"
-                                    name="email"
-                                    required
-                                    variant="outlined"
-                                    value={formik.values.email}
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    error={Boolean(
-                                        formik.touched.email &&
-                                        formik.errors.email
-                                    )}
-                                    helperText={
-                                        formik.touched.email &&
-                                        formik.errors.email
-                                    }
-                                />
-
-                                <TextField
-                                    margin="normal"
-                                    fullWidth
-                                    label="Area de Trabajo"
-                                    name="area"
-                                    onChange={formik.handleChange}
-                                    value={formik.values.area}
-                                    select
-                                    SelectProps={{ native: true }}
-                                    variant="outlined"
-                                >
-                                    {areainput.map((option) => (
-                                        <option
-                                            key={option.value}
-                                            value={option.value}
-                                        >
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </TextField>
 
                                 <Box sx={{ py: 2 }}>
                                     <Button
                                         margin="normal"
                                         color="primary"
-                                        fullWidth
                                         disabled={formik.isSubmitting}
+                                        fullWidth
                                         size="large"
                                         type="submit"
                                         variant="contained"
                                     >
-                                        Crear
-                                    </Button>
-                                </Box>
-
-                                <Box sx={{ py: 2 }}>
-                                    <Button
-                                        color="error"
-                                        fullWidth
-                                        margin="normal"
-                                        component={Link}
-                                        to="/dashboard"
-                                        variant="contained"
-                                        ariant="outlined"
-                                        size="large"
-                                    >
-                                        Regresar
+                                        Guardar
                                     </Button>
                                 </Box>
                             </form>
@@ -306,4 +211,4 @@ function NewEmployer() {
     );
 }
 
-export default NewEmployer;
+export default NewProduct;

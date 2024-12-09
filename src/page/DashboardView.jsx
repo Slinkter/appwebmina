@@ -1,27 +1,25 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import AuthProvider from "../components/AuthProvider";
 import DashboardWrapper from "../components/DashboardWrapper";
 
-
-//css
-import "../style/Dashboard.css";
-
-
-import CDCreateEmployer from '../pageDashboardUI/CDCreateEmployer'
+import CDCreateEmployer from "../pageDashboardUI/CDCreateEmployer";
 import CDCreateProduct from "../pageDashboardUI/CDCreateProduct";
 import CDUpdateProduct from "../pageDashboardUI/CDUpdateProduct";
 import CDCreateReport from "../pageDashboardUI/CDCreateReport";
 import CDCreateOrder from "../pageDashboardUI/CDCreateOrder";
 //
 import UILoading from "../components/UILoading";
+//css
+import "../style/Dashboard.css";
 
 import { Box } from "@mui/material";
 
 function DashboardView() {
-    const navigate = useNavigate();
-    const [state, setState] = useState(0);
     const [currentUser, setCurrentUser] = useState(null);
+    const [state, setState] = useState(0);
+    const navigate = useNavigate();
 
     //-->
     function btn_NewEmployer() {
@@ -31,7 +29,6 @@ function DashboardView() {
     function btn_NewProduct() {
         navigate("/createproduct");
     }
-
 
     function btn_UpdateProductt() {
         navigate("/updateproduct");
@@ -62,10 +59,8 @@ function DashboardView() {
     if (state === 2) {
         return (
             <DashboardWrapper>
-
                 <h1 className="h2_title">
                     Bienvenido {currentUser.displayName}
-
                 </h1>
 
                 <div className="container">
@@ -96,12 +91,10 @@ function DashboardView() {
                         label={"Crear"}
                         metodo={"Reporte"}
                     />
-
                 </div>
             </DashboardWrapper>
         );
     }
-
 
     return (
         <AuthProvider
@@ -116,14 +109,11 @@ function DashboardView() {
                 alignItems="center"
                 minHeight="100vh"
             >
-                <UILoading />DashboardView
+                <UILoading />
+                DashboardView
             </Box>
-
         </AuthProvider>
     );
-
-
-
 }
 
 export default DashboardView;

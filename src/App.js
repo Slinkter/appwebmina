@@ -9,7 +9,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-// 
+//
 import { GoogleAuthProvider } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
 
@@ -33,18 +33,16 @@ function App() {
     }
     //-->
     function handleUserLoggedIn(user) {
-        console.log("handleUserLoggedIn  : ");
-        navigate("/dashboard");
         setState(2);
+        navigate("/dashboard");
     }
 
     function handleUserNotRegister() {
         console.log("handleUserNotRegister  : ");
     }
 
-    function handleUserNotLoggedIn(user) {
+    function handleUserNotLoggedIn() {
         setState(4);
-        console.log("handleUserNotLoggedIn  : ");
     }
 
     if (state === 4) {
@@ -65,7 +63,7 @@ function App() {
                         color="text.primary"
                         gutterBottom
                     >
-                        Inventario 2
+                        Inventario
                     </Typography>
                     <Typography
                         variant="h5"
@@ -75,7 +73,7 @@ function App() {
                         margin="normal"
                         gutterBottom
                     >
-                        demo de inventario
+                        demo
                     </Typography>
 
                     <Box sx={{ py: 2 }}>
@@ -96,26 +94,17 @@ function App() {
         );
     }
 
-
     return (
-        <React.Fragment>
+        <>
             <AuthProvider
                 currentPage={"App.js"}
                 onUserLoggedIn={handleUserLoggedIn}
                 onUserNotRegister={handleUserNotRegister}
                 onUserNotLoggedIn={handleUserNotLoggedIn}
             >
-                <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    minHeight="100vh"
-                >
-                    <UILoading /> App
-                </Box>
+                <UILoading />
             </AuthProvider>
-
-        </React.Fragment>
+        </>
     );
 }
 

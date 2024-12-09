@@ -4,7 +4,12 @@ import Box from "@mui/material/Box";
 
 function UILoading() {
     return (
-        <Box sx={{ display: "flex" }}>
+        <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            minHeight="100vh"
+        >
             <CircularProgress />
         </Box>
     );

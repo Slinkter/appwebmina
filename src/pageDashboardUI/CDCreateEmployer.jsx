@@ -1,16 +1,7 @@
 import React from "react";
 // MUI
-import {
-    Avatar,
- 
-    Box,
-    Card,
-    CardContent,
-    Grid,
-    Typography,
-} from "@mui/material";
-
-// crear empleado
+import { Card, CardContent } from "@mui/material";
+import { Avatar, Box, Grid, Typography } from "@mui/material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 
 function CDCreateEmployer(props) {
@@ -21,7 +12,7 @@ function CDCreateEmployer(props) {
     }
 
     return (
-        <React.Fragment>
+        <>
             <Grid item lg={3} sm={6} xl={3} xs={12}>
                 <Card sx={{ height: "100%" }} onClick={handleNewEmployer}>
                     <CardContent>
@@ -47,7 +38,7 @@ function CDCreateEmployer(props) {
                                     sx={{
                                         backgroundColor: "error.main",
                                         height: 80,
-                                        width: 80
+                                        width: 80,
                                     }}
                                 >
                                     <GroupAddIcon sx={{ fontSize: 40 }} />
@@ -57,7 +48,7 @@ function CDCreateEmployer(props) {
                     </CardContent>
                 </Card>
             </Grid>
-        </React.Fragment>
+        </>
     );
 }
 

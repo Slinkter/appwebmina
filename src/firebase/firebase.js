@@ -194,14 +194,9 @@ export async function getUserPublicProfileInfo(uid) {
 }
 
 export async function logout() {
-
     await auth.signOut().then(() => {
         window.location.reload(false);
-    }
-
-    );
-
-
+    });
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -215,70 +210,66 @@ export async function addNewEmployer(employer) {
          console.log(res);
          console.groupEnd();
          return res; */
-        const docRef = doc(collection(db, "employers")) // solo crear un doc sin nada 
+        const docRef = doc(collection(db, "employers")); // solo crear un doc sin nada
         employer.docId = docRef.id; // se obtiene el id del documento creado vacio
-        const res = await setDoc(docRef, employer) // se setea el docuemnto los datos
+        const res = await setDoc(docRef, employer); // se setea el docuemnto los datos
         console.log("docRef", docRef);
         console.log("res", res);
         return res;
-
     } catch (error) {
         console.error(error);
     }
 }
 
 export async function addNewProduct(product) {
-
     try {
         console.group("addNewProduct");
         // Add a new document with a generated id
         const docRef = doc(collection(db, "products"));
-        console.log(docRef.id)
-        product.docId = docRef.id
+        console.log(docRef.id);
+        product.docId = docRef.id;
         await setDoc(docRef, product);
         console.groupEnd();
     } catch (error) {
         console.log(error);
     }
-
 }
 
 export async function updatePlusStock(docId, cantidad) {
     const docRef = doc(db, "products", docId);
     await updateDoc(docRef, {
-        cantidad: increment(cantidad)
+        cantidad: increment(cantidad),
     });
 }
 
 export async function updateStock(docId, currentStock, cantidad) {
     const docRef = doc(db, "products", docId);
     await updateDoc(docRef, {
-        cantidad: currentStock - cantidad
+        cantidad: currentStock - cantidad,
     });
 }
 export async function saveAllList(day, userUID, empleadoUID, listOrden) {
     try {
-        // grabar lista 
+        // grabar lista
         console.group("saveAllList");
         console.log("createdAt ", day);
         console.log("userUID", userUID);
         console.log("empleadoUID", empleadoUID);
         console.log("listOrden", listOrden);
 
-        const list = {}
+        const list = {};
         /*  list.docId = docRef1.id; */
-        list.createdAt = day
-        list.userUID = userUID
-        list.empleadoUID = empleadoUID
-        list.item = listOrden
+        list.createdAt = day;
+        list.userUID = userUID;
+        list.empleadoUID = empleadoUID;
+        list.item = listOrden;
 
-        const docRef1 = doc(collection(db, "listOrden"))
+        const docRef1 = doc(collection(db, "listOrden"));
         list.docId = docRef1.id;
-        await setDoc(docRef1, list)
+        await setDoc(docRef1, list);
         console.log("list", list);
 
-
-        // grabar uid 
+        // grabar uid
         /*         const docRef2 = await addDoc(collection(db, "DetalleOrden"), {
                     createAt: day,
                     userUID: userUID,
@@ -291,12 +282,9 @@ export async function saveAllList(day, userUID, empleadoUID, listOrden) {
          */
 
         console.groupEnd();
-
     } catch (error) {
         console.log(error);
     }
-
-
 }
 
 export async function getNewOrden() {
@@ -350,37 +338,39 @@ export async function getProducts() {
 }
 
 export async function getAllDocList() {
-    console.group("getAllDocList")
+    console.group("getAllDocList");
 
     try {
         const listOrder = [];
-        const q = query(collection(db, "listOrden"), orderBy("createdAt", "desc"), limit(30));
+        const q = query(
+            collection(db, "listOrden"),
+            orderBy("createdAt", "desc"),
+            limit(30)
+        );
         const querySnapshot = await getDocs(q);
 
         querySnapshot.forEach((doc) => {
             /* console.log(doc.data()); */
-            listOrder.push(doc.data())
+            listOrder.push(doc.data());
         });
 
         return listOrder;
-
     } catch (error) {
         console.error(error);
     }
-    console.groupEnd()
+    console.groupEnd();
 }
 
 export async function getNameAdminFirebase(uid) {
     try {
         const docRef = doc(db, "users", uid);
         const res = await getDoc(docRef);
-        return res.data().displayName
+        return res.data().displayName;
         /*  console.log(res.id, "=>", res.data().displayName) */
         /*    return res.data() */
     } catch (error) {
         console.error(error);
     }
-
 }
 
 export async function getNameEmployerFirebase(uid) {
@@ -388,10 +378,9 @@ export async function getNameEmployerFirebase(uid) {
         const docRef = doc(db, "employers", uid);
         const res = await getDoc(docRef);
         /*  console.log(res.id, "=>", res.data().firstName) */
-        return res.data().firstName
+        return res.data().firstName;
         /*    return res.data() */
     } catch (error) {
         console.error(error);
     }
 }
-

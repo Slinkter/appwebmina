@@ -81,13 +81,11 @@ function NewEmployer() {
         onSubmit: (values) => {
             console.log(values);
             if (values.area === "s") {
-                alert("Debe seleccionar una area")
-
-
+                alert("Debe seleccionar una area");
             } else {
                 values.adminUid = currentUser.uid;
                 /* values.createdAt = new Date().toISOString(); */
-                values.createdAt = new Date().toLocaleString('sv')
+                values.createdAt = new Date().toLocaleString("sv");
                 console.log(JSON.stringify(values, null, 2));
                 saveEmployer(values);
                 navigate("/dashboard");
@@ -163,7 +161,7 @@ function NewEmployer() {
                                 <TextField
                                     error={Boolean(
                                         formik.touched.firstName &&
-                                        formik.errors.firstName
+                                            formik.errors.firstName
                                     )}
                                     helperText={
                                         formik.touched.firstName &&
@@ -192,7 +190,7 @@ function NewEmployer() {
                                     onChange={formik.handleChange}
                                     error={Boolean(
                                         formik.touched.lastName &&
-                                        formik.errors.lastName
+                                            formik.errors.lastName
                                     )}
                                     helperText={
                                         formik.touched.lastName &&
@@ -231,7 +229,7 @@ function NewEmployer() {
                                     onChange={formik.handleChange}
                                     error={Boolean(
                                         formik.touched.phone &&
-                                        formik.errors.phone
+                                            formik.errors.phone
                                     )}
                                     helperText={
                                         formik.touched.phone &&
@@ -251,7 +249,7 @@ function NewEmployer() {
                                     onChange={formik.handleChange}
                                     error={Boolean(
                                         formik.touched.email &&
-                                        formik.errors.email
+                                            formik.errors.email
                                     )}
                                     helperText={
                                         formik.touched.email &&
@@ -285,7 +283,6 @@ function NewEmployer() {
                                         margin="normal"
                                         color="primary"
                                         fullWidth
-                                      
                                         size="large"
                                         type="submit"
                                         variant="contained"

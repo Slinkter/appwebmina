@@ -1,9 +1,8 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
 
+import App from "./App";
 import DashboardView from "./page/DashboardView";
 import EditProfileView from "./page/EditProfileView";
 import SingOutView from "./page/SingOutView";
@@ -16,6 +15,8 @@ import NewProduct from "./pagedashboard/NewProduct";
 import UpdateStock from "./pagedashboard/UpdateStock";
 import CreateReport from "./pagedashboard/CreateReport";
 import CreatePedido from "./pagedashboard/CreatePedido";
+
+import "./index.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
