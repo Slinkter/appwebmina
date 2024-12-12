@@ -202,14 +202,6 @@ export async function logout() {
 ////////////////////////////////////////////////////////////////////////
 export async function addNewEmployer(employer) {
     try {
-        /*  console.group("addNewEmployer");
-         const colleRef = collection(db, "employers");
-         const res = await addDoc(colleRef, employer);
-         //
-         console.log(colleRef);
-         console.log(res);
-         console.groupEnd();
-         return res; */
         const docRef = doc(collection(db, "employers")); // solo crear un doc sin nada
         employer.docId = docRef.id; // se obtiene el id del documento creado vacio
         const res = await setDoc(docRef, employer); // se setea el docuemnto los datos
@@ -244,10 +236,9 @@ export async function updatePlusStock(docId, cantidad) {
 
 export async function updateStock(docId, currentStock, cantidad) {
     const docRef = doc(db, "products", docId);
-    await updateDoc(docRef, {
-        cantidad: currentStock - cantidad,
-    });
+    await updateDoc(docRef, { cantidad: currentStock - cantidad });
 }
+
 export async function saveAllList(day, userUID, empleadoUID, listOrden) {
     try {
         // grabar lista
@@ -288,30 +279,24 @@ export async function saveAllList(day, userUID, empleadoUID, listOrden) {
 }
 
 export async function getNewOrden() {
+    console.group("addNewOrden");
     try {
-        console.group("addNewOrden");
-        const ref1 = await getEmployers();
-        const ref2 = await getProducts();
-        console.log(ref1);
-        console.log(ref2);
-        console.groupEnd();
-        return { ref1: ref1, ref2: ref2 };
+        const listEmployeers = await getEmployers();
+        const listProducts = await getProducts();
+        return { ref1: listEmployeers, ref2: listProducts };
     } catch (error) {
         console.log(error);
     }
+    console.groupEnd();
 }
 
 export async function getEmployers() {
-    const employers = [];
-
     try {
-        const querySnapshot = await getDocs(collection(db, "employers"));
-        querySnapshot.forEach((doc) => {
-            const employer = { ...doc.data() };
-            employer.docId = doc.id;
-            employers.push(employer);
-            console.log(doc.id, " => ", doc.data());
-        });
+        const list = await getDocs(collection(db, "employers"));
+        const employers = list.docs.map((doc) => ({
+            ...doc.data(),
+            docId: doc.id,
+        }));
 
         return employers;
     } catch (error) {
@@ -320,17 +305,12 @@ export async function getEmployers() {
 }
 
 export async function getProducts() {
-    const products = [];
-
     try {
-        const querySnapshot = await getDocs(collection(db, "products"));
-        querySnapshot.forEach((doc) => {
-            const product = { ...doc.data() };
-            product.docId = doc.id;
-            products.push(product);
-            console.log(doc.id, " => ", doc.data());
-        });
-
+        const list = await getDocs(collection(db, "products"));
+        const products = list.docs.map((doc) => ({
+            ...doc.data(),
+            docId: doc.id,
+        }));
         return products;
     } catch (error) {
         console.error(error);

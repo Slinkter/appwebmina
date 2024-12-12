@@ -1,21 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DashboardWrapper from "../components/DashboardWrapper";
-
-import AuthProvider from "../components/AuthProvider";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import DashboardWrapper from "../components/DashboardWrapper";
+import MenuItem from "@mui/material/MenuItem";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AuthProvider from "../components/AuthProvider";
+
 //
 import {
-    Avatar,
     Button,
     Box,
-    Checkbox,
     Container,
-    FormHelperText,
-    Link,
     TextField,
     Typography,
     Card,
@@ -24,19 +22,15 @@ import {
     TableBody,
     TableCell,
     TableHead,
-    TablePagination,
     TableRow,
 } from "@mui/material";
 
-import DeleteIcon from "@mui/icons-material/Delete";
 import { getNewOrden, saveAllList, updateStock } from "../firebase/firebase";
 import UILoading from "../components/UILoading";
-import { connectStorageEmulator } from "firebase/storage";
-import { async } from "@firebase/util";
 
 function CreatePedido() {
-    const navigate = useNavigate();
     const [state, setState] = useState(0);
+    const navigate = useNavigate();
     //
     const [employers, setEmployers] = useState({});
     const [products, setProducts] = useState({});
@@ -51,23 +45,33 @@ function CreatePedido() {
 
     useEffect(() => {
         getAll();
-
-        async function getAll() {
-            try {
-                loadInit();
-            } catch (error) {
-                console.error(error);
-            }
-        }
     }, [setCurrentSelectProduct, setProducts]);
+
+    async function getAll() {
+        console.log("-----------> getAll() ");
+
+        try {
+            loadInit();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function loadInit() {
+        const { ref1, ref2 } = await getNewOrden();
+        ref1.unshift({});
+        ref2.unshift({});
+
+        setEmployers(ref1);
+        setProducts(ref2);
+    }
 
     function handleAddItem() {
         console.group("handleAddItem");
         const cantidad = parseInt(count);
 
-        if (Number.isNaN(cantidad) || cantidad === 0) {
-            alert("Error al ingresar");
-            currentSelectProduct.cantidad = 0;
+        if (Number.isNaN(cantidad) || cantidad === 0 || cantidad < 0) {
+            alert("Error : solo numero entero ");
             setCurrentSelectProduct(currentSelectProduct);
             setCount(0);
         } else {
@@ -77,26 +81,9 @@ function CreatePedido() {
             } else {
                 console.log(" hay stock");
                 console.log("cantidad ingresada ", cantidad);
-                console.log(
-                    "currentSelectProduct",
-                    " = ",
-                    currentSelectProduct
-                );
-                // actualizar el stock (decontar  en local )
-                console.log("Lista de Productos =>  ", products);
-                console.log("Pre descuento");
+
                 const currentStockFirebase = currentSelectProduct.cantidad;
                 const uptatecount = currentSelectProduct.cantidad - cantidad;
-
-                const newProduct = products.map((item) => {
-                    if (item.docId === currentSelectProduct.docId) {
-                        item.cantidad = uptatecount;
-                    }
-                    return item;
-                });
-                console.log("Post descuento");
-                console.log("products =>", products);
-                console.log("newProduct =>", newProduct);
                 currentSelectProduct.cantidad = uptatecount;
                 // Create Item
                 const newItem = {};
@@ -105,9 +92,7 @@ function CreatePedido() {
                 newItem.cantidad = parseInt(cantidad);
                 newItem.currentStockFirebase = currentStockFirebase;
                 // Add Item to Array
-                listItem.push(newItem);
-                // Upadate listITem
-                setListItem(listItem);
+                setListItem([...listItem, newItem]);
                 // Set cantidad
                 setCount(0);
                 console.log("newItem", newItem);
@@ -117,42 +102,21 @@ function CreatePedido() {
         console.groupEnd();
     }
 
-    async function loadInit() {
-        const { ref1, ref2 } = await getNewOrden();
-        ref1.unshift("seleccione");
-        ref2.unshift({});
-        console.group("Ref 01 ");
-        ref1.map((item) => {
-            console.log(item.dni, item);
-        });
-        console.groupEnd();
-        console.group("Ref 02 ");
-        ref2.map((item) => {
-            console.log(item.nameproduct, "=>", item);
-        });
-        console.groupEnd();
-        setEmployers(ref1);
-        setProducts(ref2);
-    }
-
     const handleSubmit = () => {
         console.group("handleSubmit");
 
         if (currentSelectEmployer === null || listItem.length === 0) {
+            console.log(currentSelectEmployer);
+            console.log(listItem.length);
             alert("falta ingresar datos");
         } else {
-            console.log("currentSelectEmployer : ", currentSelectEmployer);
-            console.log("Lista de producto seleccionado :", listItem);
-            // actualizar el stock en firebase
-            // se toma el docID en un for
-            // cuando se tiene un for
-            listItem.map((item) => {
+            listItem.map((item) =>
                 updateDecreaseStockProduct(
                     item.docId,
                     item.currentStockFirebase,
                     item.cantidad
-                );
-            });
+                )
+            );
 
             saveAllListProductEmployerByUser(
                 currentSelectEmployer,
@@ -165,14 +129,8 @@ function CreatePedido() {
     };
 
     async function saveAllListProductEmployerByUser(empleado, list, user) {
-        console.group("-----saveAllListProductEmployerByUser-----");
         const daycreated = new Date().toLocaleString("sv");
-        console.log("daycreated :", daycreated);
-        console.log("user :", user.uid);
-        console.log("empleado :", empleado.docId);
-        console.log("list :", list);
         saveAllList(daycreated, user.uid, empleado.docId, list);
-        console.groupEnd();
     }
 
     async function updateDecreaseStockProduct(docId, stock, cantidad) {
@@ -201,27 +159,27 @@ function CreatePedido() {
     };
 
     const handleChangeProducto = (e) => {
-        console.group("handleChangeProducto");
         const docIdProducto = e.target.value;
+        console.group("handleChangeProducto");
         console.log("docIdProducto : ", docIdProducto);
         if (docIdProducto === "Selecione Producto") {
-           
+            setCurrentSelectProduct(null);
+            return;
         }
         try {
-            const rpta = products.filter((item) => {
+            const isProductFound = products.filter((item) => {
                 if (item.docId === docIdProducto) {
-                    console.log("item.docId === docIdProducto ");
                     return item;
                 }
                 return null;
             });
-            console.log("rpta = ", rpta);
-            if (rpta.length === 1) {
-                setCount(0);
-                setCurrentSelectProduct(rpta[0]);
-            } else {
-                setCount(0);
+            console.log("isProductFound = ", isProductFound);
+            if (isProductFound.length !== 1) {
                 setCurrentSelectProduct(null);
+                setCount(0);
+            } else {
+                setCurrentSelectProduct(isProductFound[0]);
+                setCount(0);
             }
         } catch (error) {
             console.error(error);
@@ -234,9 +192,9 @@ function CreatePedido() {
         setState(1);
     }
 
-    function handleUserNotRegister(user) { }
+    function handleUserNotRegister(user) {}
 
-    function handleUserNotLoggedIn() { }
+    function handleUserNotLoggedIn() {}
 
     if (state === 0) {
         return (
@@ -245,14 +203,7 @@ function CreatePedido() {
                 onUserNotRegister={handleUserNotRegister}
                 onUserNotLoggedIn={handleUserNotLoggedIn}
             >
-                <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    minHeight="100vh"
-                >
-                    <UILoading />
-                </Box>
+                <UILoading />
             </AuthProvider>
         );
     }
@@ -260,7 +211,6 @@ function CreatePedido() {
     return (
         <DashboardWrapper>
             <Box
-                component="main"
                 sx={{
                     alignItems: "center",
                     justifyContent: "center",
@@ -273,15 +223,10 @@ function CreatePedido() {
                         <Container maxWidth="sm">
                             <form>
                                 <Box sx={{ my: 3 }}>
-                                    <Typography
-                                        color="textPrimary"
-                                        variant="h4"
-                                    >
+                                    <Typography variant="h2">
                                         Crear Orden
                                     </Typography>
                                 </Box>
-
-                                <hr width="100%" size="2" color="#c4c4c4" />
 
                                 <Box sx={{ py: 2 }}>
                                     <Box
@@ -303,36 +248,29 @@ function CreatePedido() {
                                     margin="normal"
                                     fullWidth
                                     select
+                                    variant="standard"
                                     SelectProps={{ native: true }}
-                                    variant="outlined"
                                     onChange={handleChangeEmployer}
                                 >
                                     {employers.length > 0
-                                        ? employers.map((option) => (
-                                            <option
-                                                key={option.docId}
-                                                value={option.dni}
-                                            >
-                                                {option.dni
-                                                    ? option.dni
-                                                    : "Selecione Empleado"}
-                                                {" : "}
-                                                {option.firstName
-                                                    ? option.firstName
-                                                    : ""}
-                                                {"  "}
-                                                {option.lastName
-                                                    ? option.lastName
-                                                    : ""}
-                                            </option>
-                                        ))
+                                        ? employers.map((obj) => (
+                                              <option
+                                                  key={obj.docId}
+                                                  value={obj.dni}
+                                              >
+                                                  {obj.dni
+                                                      ? obj.dni +
+                                                        " : " +
+                                                        obj.firstName +
+                                                        " " +
+                                                        obj.lastName
+                                                      : "Selecione Empleado"}
+                                              </option>
+                                          ))
                                         : null}
                                 </TextField>
 
-                                <br></br>
-                                <br></br>
-                                <hr width="100%" size="2" color="#c4c4c4" />
-                                <Box sx={{ py: 2 }}>
+                                <Box sx={{ py: 3 }}>
                                     <Box
                                         sx={{
                                             alignItems: "center",
@@ -345,18 +283,6 @@ function CreatePedido() {
                                         <Typography sx={{ m: 1 }} variant="h4">
                                             Producto
                                         </Typography>
-
-                                        <Box sx={{ m: 1 }}>
-                                            <Button
-                                                color="success"
-                                                variant="contained"
-                                                onClick={() => {
-                                                    handleAddItem();
-                                                }}
-                                            >
-                                                Agregar
-                                            </Button>
-                                        </Box>
                                     </Box>
                                 </Box>
 
@@ -366,20 +292,20 @@ function CreatePedido() {
                                     name="area"
                                     select
                                     SelectProps={{ native: true }}
-                                    variant="outlined"
+                                    variant="standard"
                                     onChange={handleChangeProducto}
                                 >
-                                    {(products.length > 0 )
+                                    {products.length > 0
                                         ? products.map((option) => (
-                                            <option
-                                                key={option.docId}
-                                                value={option.docId}
-                                            >
-                                                {option.nameproduct
-                                                    ? option.nameproduct
-                                                    : "Selecione Producto"}
-                                            </option>
-                                        ))
+                                              <option
+                                                  key={option.docId}
+                                                  value={option.docId}
+                                              >
+                                                  {option.nameproduct
+                                                      ? option.nameproduct
+                                                      : "Selecione Producto"}
+                                              </option>
+                                          ))
                                         : null}
                                 </TextField>
                                 {/* mostrar stock*/}
@@ -387,7 +313,7 @@ function CreatePedido() {
                                     <TextField
                                         fullWidth
                                         disabled
-                                        helperText={"Stock actual"}
+                                        label={"Stock actual"}
                                         margin="normal"
                                         name="codigo"
                                         type="number"
@@ -396,7 +322,7 @@ function CreatePedido() {
                                     />
                                 ) : (
                                     <TextField
-                                        helperText={"Stock actual"}
+                                        label={"Stock actual"}
                                         fullWidth
                                         value={0}
                                         disabled
@@ -431,21 +357,33 @@ function CreatePedido() {
                                         variant="outlined"
                                     />
                                 )}
+
+                                {/*  <SelectTextFields /> */}
+
+                                <Box sx={{ m: 1 }}>
+                                    <Button
+                                        fullWidth
+                                        color="success"
+                                        variant="contained"
+                                        onClick={() => {
+                                            handleAddItem();
+                                        }}
+                                    >
+                                        Agregar
+                                    </Button>
+                                </Box>
                             </form>
                         </Container>
 
                         <Container maxWidth="sm">
-                            <br></br>
-                            <br></br>
-                            <hr width="100%" size="2" color="#c4c4c4" />
                             <Box sx={{ py: 2 }}>
                                 <Box
                                     sx={{
-                                        alignItems: "center",
                                         display: "flex",
                                         justifyContent: "space-between",
+                                        alignItems: "center",
                                         flexWrap: "wrap",
-                                        m: -1,
+                                        m: 0,
                                     }}
                                 >
                                     <Typography sx={{ m: 1 }} variant="h4">
@@ -458,11 +396,9 @@ function CreatePedido() {
                                             variant="contained"
                                             onClick={() => {
                                                 setCurrentSelectProduct(null);
-                                                setProducts([])
+                                                setProducts([]);
                                                 setListItem([]);
                                                 loadInit();
-                                               
-
                                             }}
                                         >
                                             Limpiar
@@ -470,6 +406,7 @@ function CreatePedido() {
                                     </Box>
                                 </Box>
                             </Box>
+                            {/*  */}
                             <Table>
                                 <TableHead>
                                     <TableRow>
@@ -490,7 +427,7 @@ function CreatePedido() {
                                                 {item.nameproduct}
                                             </TableCell>
                                             <TableCell>
-                                                {item.cantidad}{" "}
+                                                {item.cantidad}
                                             </TableCell>
                                             <TableCell>
                                                 <Button
@@ -534,9 +471,55 @@ function CreatePedido() {
                         </Container>
                     </CardContent>
                 </Card>
+                <Box></Box>
             </Box>
         </DashboardWrapper>
     );
 }
 
 export default CreatePedido;
+
+const currencies = [
+    {
+        value: "USD",
+        label: "$",
+    },
+    {
+        value: "EUR",
+        label: "€",
+    },
+    {
+        value: "BTC",
+        label: "฿",
+    },
+    {
+        value: "JPY",
+        label: "¥",
+    },
+];
+
+function SelectTextFields() {
+    return (
+        <Box
+            component="form"
+            sx={{ "& .MuiTextField-root": { m: 0, width: "100%" } }}
+            noValidate
+            autoComplete="off"
+        >
+            <div>
+                <TextField
+                    label="Select"
+                    defaultValue="EUR"
+                    helperText="Please select your currency"
+                    select
+                >
+                    {currencies.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </TextField>
+            </div>
+        </Box>
+    );
+}

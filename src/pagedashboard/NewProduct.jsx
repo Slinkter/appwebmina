@@ -15,7 +15,6 @@ import {
     CardContent,
     TextField,
     Container,
-    FormHelperText,
     Typography,
 } from "@mui/material";
 
@@ -25,7 +24,7 @@ function NewProduct() {
     const [state, setState] = useState(0);
     const [currentUser, setCurrentUser] = useState({});
     //
-    const initvalue = {
+    const initialValues = {
         nameproduct: "",
         detail: "",
         category: "",
@@ -39,7 +38,7 @@ function NewProduct() {
     };
     //
     const formik = useFormik({
-        initialValues: initvalue,
+        initialValues: initialValues,
         validationSchema: Yup.object(inityup),
         onSubmit: (values) => {
             values.userUid = currentUser.uid;
@@ -75,14 +74,7 @@ function NewProduct() {
                 onUserNotRegister={handleUserNotRegister}
                 onUserNotLoggedIn={handleUserNotLoggedIn}
             >
-                <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    minHeight="100vh"
-                >
-                    <UILoading />
-                </Box>
+                <UILoading />
             </AuthProvider>
         );
     }
@@ -96,21 +88,19 @@ function NewProduct() {
                     justifyContent: "center",
                     display: "flex",
                     flexGrow: 1,
+                    bgcolor: "gray",
+                    height: "100vh",
                 }}
             >
                 <Card>
                     <CardContent>
                         <Container maxWidth="sm">
+                            <Box sx={{ pt: 2 }}>
+                                <Typography color="textPrimary" variant="h4">
+                                    Crear producto
+                                </Typography>
+                            </Box>
                             <form onSubmit={formik.handleSubmit}>
-                                <Box sx={{ pt: 2 }}>
-                                    <Typography
-                                        color="textPrimary"
-                                        variant="h4"
-                                    >
-                                        Crear producto
-                                    </Typography>
-                                </Box>
-
                                 <TextField
                                     error={Boolean(
                                         formik.touched.nameproduct &&

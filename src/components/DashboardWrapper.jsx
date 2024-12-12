@@ -9,7 +9,7 @@ import { Grid, Button } from "@mui/material";
 export default function DashboardWrapper(props) {
     const { children } = props;
     return (
-        <React.Fragment>
+        <>
             <AppBar
                 position="static"
                 color="default"
@@ -55,8 +55,7 @@ export default function DashboardWrapper(props) {
                     </Grid>
                 </Toolbar>
             </AppBar>
-
             <div className="containerWrapper">{children}</div>
-        </React.Fragment>
+        </>
     );
 }

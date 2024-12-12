@@ -1,15 +1,6 @@
 import React from "react";
 // MUI
-
-import {
-    Avatar,
-  
-    Card,
-    CardContent,
-    Grid,
-    Typography,
-} from "@mui/material";
-
+import { Avatar, Card, CardContent, Grid, Typography } from "@mui/material";
 // icon-Crear pedido
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 
@@ -21,7 +12,7 @@ function CDCreateOrder(props) {
     }
 
     return (
-        <React.Fragment>
+        <>
             <Grid item lg={3} sm={6} xl={3} xs={12}>
                 <Card sx={{ height: "100%" }} onClick={handleNewEmployer}>
                     <CardContent>
@@ -50,14 +41,14 @@ function CDCreateOrder(props) {
                                         width: 80,
                                     }}
                                 >
-                                    <NoteAddIcon   sx={{ fontSize: 40 }}/>
+                                    <NoteAddIcon sx={{ fontSize: 40 }} />
                                 </Avatar>
                             </Grid>
                         </Grid>
                     </CardContent>
                 </Card>
             </Grid>
-        </React.Fragment>
+        </>
     );
 }
 

@@ -59,11 +59,9 @@ function DashboardView() {
     if (state === 2) {
         return (
             <DashboardWrapper>
-                <h1 className="h2_title">
-                    Bienvenido {currentUser.displayName}
-                </h1>
+                <h2 className="">Bienvenido {currentUser.displayName}</h2>
 
-                <div className="container">
+                <Box className="container">
                     <CDCreateEmployer
                         btn_NewEmployer={btn_NewEmployer}
                         label={"crear"}
@@ -91,7 +89,7 @@ function DashboardView() {
                         label={"Crear"}
                         metodo={"Reporte"}
                     />
-                </div>
+                </Box>
             </DashboardWrapper>
         );
     }
