@@ -1,14 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import NextLink from "next/link";
-import { useRouter } from "next/router";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import DashboardWrapper from "../components/DashboardWrapper";
 import MenuItem from "@mui/material/MenuItem";
 import DeleteIcon from "@mui/icons-material/Delete";
+import UILoading from "../components/UILoading";
 import AuthProvider from "../components/AuthProvider";
-
+import DashboardWrapper from "../components/DashboardWrapper";
+import { getNewOrden, saveAllList, updateStock } from "../firebase/firebase";
 //
 import {
     Button,
@@ -25,27 +22,26 @@ import {
     TableRow,
 } from "@mui/material";
 
-import { getNewOrden, saveAllList, updateStock } from "../firebase/firebase";
-import UILoading from "../components/UILoading";
-
 function CreatePedido() {
     const [state, setState] = useState(0);
     const navigate = useNavigate();
     //
-    const [employers, setEmployers] = useState({});
-    const [products, setProducts] = useState({});
+    const [employers, setEmployers] = useState([]);
+    const [products, setProducts] = useState([]);
     //
     const [currentUser, setCurrentUser] = useState(null);
     //
     const [currentSelectEmployer, setCurrentSelectEmployer] = useState(null);
     const [currentSelectProduct, setCurrentSelectProduct] = useState(null);
     const [listItem, setListItem] = useState([]);
-    const [item, setItem] = useState(null);
+
     const [count, setCount] = useState("");
 
     useEffect(() => {
         getAll();
     }, [setCurrentSelectProduct, setProducts]);
+
+    useEffect(() => {}, [listItem]);
 
     async function getAll() {
         console.log("-----------> getAll() ");
@@ -92,7 +88,7 @@ function CreatePedido() {
                 newItem.cantidad = parseInt(cantidad);
                 newItem.currentStockFirebase = currentStockFirebase;
                 // Add Item to Array
-                setListItem([...listItem, newItem]);
+                setListItem((prevListItem) => [...prevListItem, newItem]);
                 // Set cantidad
                 setCount(0);
                 console.log("newItem", newItem);
@@ -141,19 +137,16 @@ function CreatePedido() {
         console.group("handleChangeEmployer");
         console.log("value : ", e.target.value);
         const dni = parseInt(e.target.value);
-
+        // 👉️ this runs only if NaN and type of number
         if (Number.isNaN(dni)) {
-            // 👉️ this runs only if NaN and type of number
-            console.log("no hacer nada ");
             setCurrentSelectEmployer(null);
         } else {
-            employers.filter((item) => {
-                if (item.dni === dni) {
-                    setCurrentSelectEmployer(item);
-                    return item;
-                }
-                return null;
-            });
+            const employee = employers.find((employee) => employee.dni === dni);
+            if (!employee) {
+                setCurrentSelectProduct(null);
+            } else {
+                setEmployers(employee);
+            }
         }
         console.groupEnd();
     };
@@ -195,6 +188,40 @@ function CreatePedido() {
     function handleUserNotRegister(user) {}
 
     function handleUserNotLoggedIn() {}
+
+    const handleDelete = (item) => {
+        // Encontrar el producto correspondiente en la lista de productos
+        const productIndex = products.findIndex(
+            (product) => product.docId === item.docId
+        );
+
+        // Si encontramos el producto, actualizamos su stock
+        if (productIndex !== -1) {
+            const updatedProduct = {
+                ...products[productIndex],
+            };
+
+            // Aumentar el stock del producto
+            updatedProduct.cantidad += item.cantidad;
+
+            // Actualizar el producto en la lista de productos
+            const updatedProducts = [...products];
+            updatedProducts[productIndex] = updatedProduct;
+
+            setProducts(updatedProducts);
+        }
+
+        // Eliminar el ítem de la lista de pedidos
+        const updateList = [...listItem].filter((x) => x.docId !== item.docId);
+        setListItem(updateList);
+
+        // Restaurar el producto seleccionado a su estado previo
+        setCurrentSelectProduct(
+            products.find((product) => product.docId === item.docId)
+        );
+
+        // Restaurar el campo "count" con la cantidad que tenía el producto antes de ser añadido
+    };
 
     if (state === 0) {
         return (
@@ -431,6 +458,9 @@ function CreatePedido() {
                                             </TableCell>
                                             <TableCell>
                                                 <Button
+                                                    onClick={() =>
+                                                        handleDelete(item)
+                                                    }
                                                     startIcon={
                                                         <DeleteIcon fontSize="small" />
                                                     }
@@ -471,55 +501,12 @@ function CreatePedido() {
                         </Container>
                     </CardContent>
                 </Card>
-                <Box></Box>
+                <Box>
+                    <pre>{JSON.stringify(listItem, null, 2)}</pre>
+                </Box>
             </Box>
         </DashboardWrapper>
     );
 }
 
 export default CreatePedido;
-
-const currencies = [
-    {
-        value: "USD",
-        label: "$",
-    },
-    {
-        value: "EUR",
-        label: "€",
-    },
-    {
-        value: "BTC",
-        label: "฿",
-    },
-    {
-        value: "JPY",
-        label: "¥",
-    },
-];
-
-function SelectTextFields() {
-    return (
-        <Box
-            component="form"
-            sx={{ "& .MuiTextField-root": { m: 0, width: "100%" } }}
-            noValidate
-            autoComplete="off"
-        >
-            <div>
-                <TextField
-                    label="Select"
-                    defaultValue="EUR"
-                    helperText="Please select your currency"
-                    select
-                >
-                    {currencies.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                        </MenuItem>
-                    ))}
-                </TextField>
-            </div>
-        </Box>
-    );
-}

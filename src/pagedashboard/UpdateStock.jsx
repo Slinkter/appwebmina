@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DashboardWrapper from "../components/DashboardWrapper";
-
+import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -12,28 +11,28 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import DashboardWrapper from "../components/DashboardWrapper";
 import { getProducts, updatePlusStock } from "../firebase/firebase";
 
 function UpdateStock() {
-    const navigate = useNavigate();
+    //
     const [products, setProducts] = useState([]);
     const [currentSelectProduct, setCurrentSelectProduct] = useState({});
+    const navigate = useNavigate();
     //
-
     useEffect(() => {
         getAllProducts();
-
-        async function getAllProducts() {
-            try {
-                const ref2 = await getProducts();
-                setProducts(ref2);
-                console.log(ref2);
-            } catch (error) {
-                console.error(error);
-            }
-        }
     }, []);
+    //
+    async function getAllProducts() {
+        try {
+            const ref2 = await getProducts();
+            setProducts(ref2);
+            console.log(ref2);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const formik = useFormik({
         initialValues: {
@@ -46,20 +45,9 @@ function UpdateStock() {
                 .required("campo faltante"),
         }),
         onSubmit: (values) => {
-            console.log(JSON.stringify(values, null, 2));
             const docId = currentSelectProduct.docId;
             const stock = currentSelectProduct.cantidad;
             const cantidad = values.cantidad;
-
-            console.log(
-                "docId : ",
-                docId,
-                "stock:",
-                stock,
-                "cantidad:",
-                cantidad
-            );
-
             updatePlusStockProduct(docId, stock, cantidad);
             navigate("/dashboard");
         },
