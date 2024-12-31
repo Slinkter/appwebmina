@@ -2,19 +2,19 @@ import React, { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, registerNewUser, userExistes } from "../firebase/firebase";
 
-export default function AuthProvider(props) {
-    //
-    const { children } = props;
-    const { currentPage } = props;
-    const { onUserLoggedIn, onUserNotLoggedIn, onUserNotRegister } = props;
-
-    async function checkchangeStateUser(user) {
+export default function AuthProvider({
+    currentPage,
+    onUserLoggedIn,
+    onUserNotLoggedIn,
+    onUserNotRegister,
+    children,
+}) {
+    /*  */
+    async function checkStatusUser(user) {
         if (!user) {
             onUserNotLoggedIn();
         } else {
-            //
             const isRegister = await userExistes(user.uid);
-            //
             if (!isRegister) {
                 const newUser = {
                     uid: user.uid,
@@ -29,12 +29,10 @@ export default function AuthProvider(props) {
             }
         }
     }
-    //
+    /*  */
     useEffect(() => {
-        // -->
-        onAuthStateChanged(auth, checkchangeStateUser);
-        //
-    }, [currentPage, onUserLoggedIn, onUserNotLoggedIn, onUserNotRegister]);
-
-    return <React.Fragment>{children}</React.Fragment>;
+        onAuthStateChanged(auth, checkStatusUser);
+    }, []);
+    /*  */
+    return <>{children}</>;
 }

@@ -47,24 +47,36 @@ export async function userExistes(uid) {
     //buscar un documento
     const docRef = doc(db, "users", uid);
     const res = await getDoc(docRef);
-    console.log("userExistes : ", res);
     return res.exists();
 }
 
+/**
+ * Checks if a username exists in the Firestore database.
+ * @param {string} StringUsername - The username to check.
+ * @returns {string|null} - The UID of the user if the username exists, otherwise null.
+ */
 export async function existsUsername(StringUsername) {
     try {
-        //buscar en varios documento
+        // Reference to the 'users' collection
+        const listRef = collection(db, "users");
+
+        // Create a query against the collection
+        const q = query(listRef, where("username", "==", StringUsername));
+
+        // Execute the query
+        const querySnapshot = await getDocs(q);
+
+        // Extract user data from the query results
         const users = [];
-        const docsRef = collection(db, "users");
-        const q = query(docsRef, where("username", "==", StringUsername));
-        const querySnapShot = await getDocs(q);
-        querySnapShot.forEach((doc) => {
+        querySnapshot.forEach((doc) => {
             users.push(doc.data());
         });
 
+        // Return the UID of the first user found, or null if no users found
         return users.length > 0 ? users[0].uid : null;
     } catch (error) {
-        console.log(error);
+        console.error("Error checking username existence:", error);
+        return null;
     }
 }
 
@@ -321,20 +333,19 @@ export async function getAllDocList() {
     console.group("getAllDocList");
 
     try {
-        const listOrder = [];
         const q = query(
             collection(db, "listOrden"),
             orderBy("createdAt", "desc"),
             limit(30)
         );
         const querySnapshot = await getDocs(q);
+        const list = [];
 
         querySnapshot.forEach((doc) => {
-            /* console.log(doc.data()); */
-            listOrder.push(doc.data());
+            list.push(doc.data());
         });
 
-        return listOrder;
+        return list;
     } catch (error) {
         console.error(error);
     }
@@ -346,8 +357,6 @@ export async function getNameAdminFirebase(uid) {
         const docRef = doc(db, "users", uid);
         const res = await getDoc(docRef);
         return res.data().displayName;
-        /*  console.log(res.id, "=>", res.data().displayName) */
-        /*    return res.data() */
     } catch (error) {
         console.error(error);
     }
@@ -357,9 +366,7 @@ export async function getNameEmployerFirebase(uid) {
     try {
         const docRef = doc(db, "employers", uid);
         const res = await getDoc(docRef);
-        /*  console.log(res.id, "=>", res.data().firstName) */
         return res.data().firstName;
-        /*    return res.data() */
     } catch (error) {
         console.error(error);
     }

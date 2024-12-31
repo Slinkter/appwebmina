@@ -14,18 +14,16 @@ import {
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 
 function CDGeneratorListAll(props) {
-    const { label, metodo, getAllPedidos } = props
+    const { label, metodo, getAllPedidos } = props;
 
     function handleGetDocAll() {
-        getAllPedidos()
+        getAllPedidos();
     }
 
     return (
-
-        <React.Fragment>
-
+        <>
             <Grid item lg={3} sm={6} xl={3} xs={12}>
-                <Card sx={{ height: "100%" }} onClick={ handleGetDocAll}>
+                <Card sx={{ height: "100%" }} onClick={handleGetDocAll}>
                     <CardContent>
                         <Box
                             display="flex"
@@ -49,7 +47,7 @@ function CDGeneratorListAll(props) {
                                     sx={{
                                         backgroundColor: "error.main",
                                         height: 80,
-                                        width: 80
+                                        width: 80,
                                     }}
                                 >
                                     <GroupAddIcon sx={{ fontSize: 40 }} />
@@ -59,8 +57,8 @@ function CDGeneratorListAll(props) {
                     </CardContent>
                 </Card>
             </Grid>
-        </React.Fragment>
-    )
+        </>
+    );
 }
 
-export default CDGeneratorListAll
+export default CDGeneratorListAll;

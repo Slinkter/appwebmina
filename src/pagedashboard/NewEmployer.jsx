@@ -8,28 +8,22 @@ import * as Yup from "yup";
 import DashboardWrapper from "../components/DashboardWrapper";
 import AuthProvider from "../components/AuthProvider";
 import { Card, CardContent } from "@mui/material";
-import { Box, Button, TextField, Container, Typography } from "@mui/material";
+import {
+    Box,
+    Button,
+    TextField,
+    Container,
+    Typography,
+    MenuItem,
+} from "@mui/material";
 
 import { addNewEmployer } from "../firebase/firebase";
 import UILoading from "../components/UILoading";
 
-const areainput = [
-    {
-        value: "s",
-        label: "Seleccion area",
-    },
-    {
-        value: "a1",
-        label: "Area 1",
-    },
-    {
-        value: "a2",
-        label: "Area 2",
-    },
-    {
-        value: "a3",
-        label: "Area 3",
-    },
+const areas = [
+    { value: "a1", label: "Area 1" },
+    { value: "a2", label: "Area 2" },
+    { value: "a3", label: "Area 3" },
 ];
 
 function NewEmployer() {
@@ -49,25 +43,24 @@ function NewEmployer() {
         },
         validationSchema: Yup.object({
             firstName: Yup.string()
-                .max(25, " el limite es de 25 caracteres")
-                .required("campo faltante "),
+                .max(25, "El límite es de 25 caracteres")
+                .required("Campo faltante"),
             lastName: Yup.string()
-                .max(25, " el limite es de 25 caracteres")
-                .required("campo faltante "),
+                .max(25, "El límite es de 25 caracteres")
+                .required("Campo faltante"),
             dni: Yup.string()
-                .length(8, "El DNI debe tener exactamente 8 caracteres") // Cambié el mensaje predeterminado aquí
+                .length(8, "El DNI debe tener exactamente 8 caracteres")
                 .matches(
                     /^\d{8}$/,
                     "El DNI debe contener exactamente 8 números"
-                ) // Solo números y exactamente 8 dígitos
-                .required("Campo obligatorio"),
+                ),
             phone: Yup.string()
-                .max(12, " el limite es de 12 caracteres")
-                .required("campo faltante"),
+                .matches(/^\d+$/, "El teléfono debe contener solo números")
+                .required("Campo faltante"),
             email: Yup.string()
-                .max(40, " el limite es de 40 caracteres")
-                .required("campo faltante"),
-            area: Yup.string().required("campo faltante"),
+                .email("Correo electrónico inválido")
+                .required("Campo faltante"),
+            area: Yup.string().required("Campo faltante"),
         }),
         onSubmit: (values) => {
             if (values.area === "s") {
@@ -238,13 +231,13 @@ function NewEmployer() {
                                 SelectProps={{ native: true }}
                                 variant="outlined"
                             >
-                                {areainput.map((option) => (
-                                    <option
+                                {areas.map((option) => (
+                                    <MenuItem
                                         key={option.value}
                                         value={option.value}
                                     >
                                         {option.label}
-                                    </option>
+                                    </MenuItem>
                                 ))}
                             </TextField>
 

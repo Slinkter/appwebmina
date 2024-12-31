@@ -28,13 +28,13 @@ root.render(
             <Route path="signout" element={<SingOutView />} />
             <Route path="u/:username" element={<PublicProfileView />} />
             <Route path="choose-username" element={<ChooseUsernameView />} />
-            <Route path="*" element={<ErrorView />}></Route>
 
             <Route path="createemploye" element={<NewEmployer />} />
             <Route path="createproduct" element={<NewProduct />} />
             <Route path="createorder" element={<CreatePedido />} />
             <Route path="updateproduct" element={<UpdateStock />} />
             <Route path="createreport" element={<CreateReport />} />
+            <Route path="*" element={<ErrorView />}></Route>
         </Routes>
     </BrowserRouter>
 );

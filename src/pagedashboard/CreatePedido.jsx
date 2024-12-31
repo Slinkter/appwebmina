@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MenuItem from "@mui/material/MenuItem";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UILoading from "../components/UILoading";
 import AuthProvider from "../components/AuthProvider";
@@ -39,9 +38,7 @@ function CreatePedido() {
 
     useEffect(() => {
         getAll();
-    }, [setCurrentSelectProduct, setProducts]);
-
-    useEffect(() => {}, [listItem]);
+    }, []);
 
     async function getAll() {
         console.log("-----------> getAll() ");
@@ -66,35 +63,37 @@ function CreatePedido() {
         console.group("handleAddItem");
         const cantidad = parseInt(count);
 
-        if (Number.isNaN(cantidad) || cantidad === 0 || cantidad < 0) {
-            alert("Error : solo numero entero ");
-            setCurrentSelectProduct(currentSelectProduct);
+        if (cantidad <= 0 || Number.isNaN(cantidad)) {
+            alert("Error  ");
             setCount(0);
-        } else {
-            if (cantidad > currentSelectProduct.cantidad) {
-                alert(" no hay stock !!!");
-                console.log(" no puede ser mayor al stock");
-            } else {
-                console.log(" hay stock");
-                console.log("cantidad ingresada ", cantidad);
-
-                const currentStockFirebase = currentSelectProduct.cantidad;
-                const uptatecount = currentSelectProduct.cantidad - cantidad;
-                currentSelectProduct.cantidad = uptatecount;
-                // Create Item
-                const newItem = {};
-                newItem.docId = currentSelectProduct.docId;
-                newItem.nameproduct = currentSelectProduct.nameproduct;
-                newItem.cantidad = parseInt(cantidad);
-                newItem.currentStockFirebase = currentStockFirebase;
-                // Add Item to Array
-                setListItem((prevListItem) => [...prevListItem, newItem]);
-                // Set cantidad
-                setCount(0);
-                console.log("newItem", newItem);
-                console.log(listItem);
-            }
+            return;
         }
+
+        if (cantidad > currentSelectProduct.cantidad) {
+            alert(" no hay stock !!!");
+            console.log(" no puede ser mayor al stock");
+            return;
+        }
+
+        console.log("cantidad ingresada ", cantidad);
+        const currentStockFirebase = currentSelectProduct.cantidad;
+
+        const uptatecount = currentSelectProduct.cantidad - cantidad;
+        currentSelectProduct.cantidad = uptatecount;
+        // Create Item
+        const newItem = {};
+        newItem.docId = currentSelectProduct.docId;
+        newItem.nameproduct = currentSelectProduct.nameproduct;
+        newItem.cantidad = cantidad;
+        newItem.currentStockFirebase = currentStockFirebase;
+        // Actualizamos el stock y la lista de items
+
+        // Add Item to Array
+        setListItem((prevListItem) => [...prevListItem, newItem]);
+        // Set cantidad
+        setCount(0);
+        console.log("newItem", newItem);
+        console.log(listItem);
         console.groupEnd();
     }
 
@@ -142,10 +141,10 @@ function CreatePedido() {
             setCurrentSelectEmployer(null);
         } else {
             const employee = employers.find((employee) => employee.dni === dni);
-            if (!employee) {
-                setCurrentSelectProduct(null);
+            if (employee) {
+                setCurrentSelectEmployer(employee);
             } else {
-                setEmployers(employee);
+                setCurrentSelectEmployer(null); // reset if employee not found
             }
         }
         console.groupEnd();
@@ -191,28 +190,36 @@ function CreatePedido() {
 
     const handleDelete = (item) => {
         // Encontrar el producto correspondiente en la lista de productos
-        const productIndex = products.findIndex(
-            (product) => product.docId === item.docId
-        );
-
+        const index = products.findIndex((p) => p.docId === item.docId);
         // Si encontramos el producto, actualizamos su stock
-        if (productIndex !== -1) {
-            const updatedProduct = {
-                ...products[productIndex],
-            };
+        if (index !== -1) {
+            const copyProd = { ...products[index] };
 
             // Aumentar el stock del producto
-            updatedProduct.cantidad += item.cantidad;
+            copyProd.cantidad += item.cantidad;
 
             // Actualizar el producto en la lista de productos
             const updatedProducts = [...products];
-            updatedProducts[productIndex] = updatedProduct;
-
+            updatedProducts[index] = copyProd;
             setProducts(updatedProducts);
+            currentSelectProduct.cantidad = copyProd.cantidad;
         }
 
         // Eliminar el ítem de la lista de pedidos
         const updateList = [...listItem].filter((x) => x.docId !== item.docId);
+        setListItem(updateList);
+
+        // Restaurar el producto seleccionado a su estado previo
+        setCurrentSelectProduct(
+            products.find((product) => product.docId === item.docId)
+        );
+
+        // Restaurar el campo "count" con la cantidad que tenía el producto antes de ser añadido
+    };
+
+    const removeItemFromList = (item) => {
+        // Eliminar el ítem de la lista de pedidos
+        const updateList = listItem.filter((x) => x.docId !== item.docId);
         setListItem(updateList);
 
         // Restaurar el producto seleccionado a su estado previo
@@ -286,11 +293,11 @@ function CreatePedido() {
                                                   value={obj.dni}
                                               >
                                                   {obj.dni
-                                                      ? obj.dni +
+                                                      ? obj?.dni +
                                                         " : " +
-                                                        obj.firstName +
+                                                        obj?.firstName +
                                                         " " +
-                                                        obj.lastName
+                                                        obj?.lastName
                                                       : "Selecione Empleado"}
                                               </option>
                                           ))

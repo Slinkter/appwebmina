@@ -3,25 +3,17 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthProvider from "./components/AuthProvider";
 import UILoading from "./components/UILoading";
-import { auth } from "./firebase/firebase";
+import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 //MUI
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-//
-import { GoogleAuthProvider } from "firebase/auth";
-import { signInWithPopup } from "firebase/auth";
 
 function App() {
-    // -->
     const [state, setState] = useState(0);
     const navigate = useNavigate();
-    // --->
-    const handleOnClick = async () => {
-        const g_provider = new GoogleAuthProvider();
-        await signInWithGoogle(g_provider);
-    };
+    const auth = getAuth();
 
     async function signInWithGoogle(g_provider) {
         try {
@@ -31,14 +23,18 @@ function App() {
             console.error(error);
         }
     }
-    //-->
-    function handleUserLoggedIn(user) {
+    const handleLogin = async () => {
+        const g_provider = new GoogleAuthProvider();
+        await signInWithGoogle(g_provider);
+    };
+
+    function handleUserLoggedIn() {
         setState(2);
         navigate("/dashboard");
     }
 
     function handleUserNotRegister() {
-        console.log("handleUserNotRegister  : ");
+        console.log("handleUserNotRegister");
     }
 
     function handleUserNotLoggedIn() {
@@ -81,7 +77,7 @@ function App() {
                             fullWidth
                             type="submit"
                             size="large"
-                            onClick={handleOnClick}
+                            onClick={() => handleLogin()}
                             variant="contained"
                             color="primary"
                             margin="normal"
@@ -98,9 +94,9 @@ function App() {
         <>
             <AuthProvider
                 currentPage={"App.js"}
-                onUserLoggedIn={handleUserLoggedIn}
+                onUserLoggedIn={handleUserLoggedIn} // state 2
                 onUserNotRegister={handleUserNotRegister}
-                onUserNotLoggedIn={handleUserNotLoggedIn}
+                onUserNotLoggedIn={handleUserNotLoggedIn} // state 4
             >
                 <UILoading />
             </AuthProvider>
