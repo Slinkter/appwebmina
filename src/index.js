@@ -1,6 +1,8 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
 
 import App from "./App";
 import DashboardView from "./page/DashboardView";
@@ -20,21 +22,23 @@ import "./index.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    <BrowserRouter>
-        <Routes>
-            <Route path="/" element={<App />} />
-            <Route path="dashboard" element={<DashboardView />} />
-            <Route path="dashboard/profile" element={<EditProfileView />} />
-            <Route path="signout" element={<SingOutView />} />
-            <Route path="u/:username" element={<PublicProfileView />} />
-            <Route path="choose-username" element={<ChooseUsernameView />} />
+    <Provider store={store}>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<App />} />
+                <Route path="dashboard" element={<DashboardView />} />
+                <Route path="dashboard/profile" element={<EditProfileView />} />
+                <Route path="signout" element={<SingOutView />} />
+                <Route path="u/:username" element={<PublicProfileView />} />
+                <Route path="choose-username" element={<ChooseUsernameView />} />
 
-            <Route path="createemploye" element={<NewEmployer />} />
-            <Route path="createproduct" element={<NewProduct />} />
-            <Route path="createorder" element={<CreatePedido />} />
-            <Route path="updateproduct" element={<UpdateStock />} />
-            <Route path="createreport" element={<CreateReport />} />
-            <Route path="*" element={<ErrorView />}></Route>
-        </Routes>
-    </BrowserRouter>
+                <Route path="createemploye" element={<NewEmployer />} />
+                <Route path="createproduct" element={<NewProduct />} />
+                <Route path="createorder" element={<CreatePedido />} />
+                <Route path="updateproduct" element={<UpdateStock />} />
+                <Route path="createreport" element={<CreateReport />} />
+                <Route path="*" element={<ErrorView />}></Route>
+            </Routes>
+        </BrowserRouter>
+    </Provider>
 );

@@ -1,8 +1,10 @@
 import "./App.css";
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import AuthProvider from "./components/AuthProvider";
 import UILoading from "./components/UILoading";
+import { setUserLoggedIn, setUserLoggedOut } from "./redux/appSlice";
 import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 //MUI
 import Box from "@mui/material/Box";
@@ -11,9 +13,10 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
 function App() {
-    const [state, setState] = useState(0);
     const navigate = useNavigate();
     const auth = getAuth();
+    const dispatch = useDispatch();
+    const appStatus = useSelector((state) => state.app.status);
 
     async function signInWithGoogle(g_provider) {
         try {
@@ -29,19 +32,18 @@ function App() {
     };
 
     function handleUserLoggedIn() {
-        setState(2);
         navigate("/dashboard");
     }
 
     function handleUserNotRegister() {
-        console.log("handleUserNotRegister");
+        dispatch(setUserLoggedOut());
     }
 
     function handleUserNotLoggedIn() {
-        setState(4);
+        dispatch(setUserLoggedOut());
     }
 
-    if (state === 4) {
+    if (appStatus === "loggedOut") {
         return (
             <Container component="main">
                 <Box
@@ -94,9 +96,9 @@ function App() {
         <>
             <AuthProvider
                 currentPage={"App.js"}
-                onUserLoggedIn={handleUserLoggedIn} // state 2
+                onUserLoggedIn={handleUserLoggedIn}
                 onUserNotRegister={handleUserNotRegister}
-                onUserNotLoggedIn={handleUserNotLoggedIn} // state 4
+                onUserNotLoggedIn={handleUserNotLoggedIn}
             >
                 <UILoading />
             </AuthProvider>
