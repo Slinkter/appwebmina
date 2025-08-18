@@ -16,6 +16,8 @@ import {
     increment,
     orderBy,
     limit,
+    onSnapshot,
+    writeBatch,
 } from "firebase/firestore";
 import {
     getStorage,
@@ -246,48 +248,15 @@ export async function updatePlusStock(docId, cantidad) {
     });
 }
 
-export async function updateStock(docId, currentStock, cantidad) {
+/**
+ * Decrementa el stock de un producto de forma atómica.
+ * @param {string} docId - El ID del documento del producto.
+ * @param {number} cantidadADescontar - La cantidad a restar del stock.
+ */
+export async function updateStock(docId, cantidadADescontar) {
     const docRef = doc(db, "products", docId);
-    await updateDoc(docRef, { cantidad: currentStock - cantidad });
-}
-
-export async function saveAllList(day, userUID, empleadoUID, listOrden) {
-    try {
-        // grabar lista
-        console.group("saveAllList");
-        console.log("createdAt ", day);
-        console.log("userUID", userUID);
-        console.log("empleadoUID", empleadoUID);
-        console.log("listOrden", listOrden);
-
-        const list = {};
-        /*  list.docId = docRef1.id; */
-        list.createdAt = day;
-        list.userUID = userUID;
-        list.empleadoUID = empleadoUID;
-        list.item = listOrden;
-
-        const docRef1 = doc(collection(db, "listOrden"));
-        list.docId = docRef1.id;
-        await setDoc(docRef1, list);
-        console.log("list", list);
-
-        // grabar uid
-        /*         const docRef2 = await addDoc(collection(db, "DetalleOrden"), {
-                    createAt: day,
-                    userUID: userUID,
-                    empleadoUID: empleadoUID,
-                    listOrdenUID: docRef1.id
-                })
-        
-                console.log("docRef1.id: ", docRef1.id);
-                console.log("docRef2.id: ", docRef2.id);
-         */
-
-        console.groupEnd();
-    } catch (error) {
-        console.log(error);
-    }
+    // Usamos un número negativo para restar de forma atómica.
+    await updateDoc(docRef, { cantidad: increment(-cantidadADescontar) });
 }
 
 export async function getNewOrden() {
@@ -301,6 +270,38 @@ export async function getNewOrden() {
     }
     console.groupEnd();
 }
+
+/**
+ * Guarda una orden y actualiza el stock de productos en una sola transacción atómica.
+ * @param {object} orderData - { userUID, employerDocId, items }
+ */
+export async function saveOrderAndDecreaseStock(orderData) {
+    const batch = writeBatch(db);
+
+    // 1. Crear el nuevo documento de la orden
+    const newOrderRef = doc(collection(db, "listOrden"));
+    batch.set(newOrderRef, {
+        docId: newOrderRef.id,
+        userUID: orderData.userUID,
+        empleadoUID: orderData.employerDocId,
+        items: orderData.items,
+        createdAt: new Date().toLocaleString("sv"),
+    });
+
+    // 2. Actualizar el stock para cada item en la orden
+    orderData.items.forEach((item) => {
+        const productRef = doc(db, "products", item.docId);
+        batch.update(productRef, { cantidad: increment(-item.cantidad) });
+    });
+
+    // 3. Ejecutar todas las operaciones en el batch
+    await batch.commit();
+    return newOrderRef.id;
+}
+
+// =================================================================
+// FUNCIONES DE ESCUCHA EN TIEMPO REAL (REAL-TIME LISTENERS)
+// =================================================================
 
 export async function getEmployers() {
     try {
@@ -316,6 +317,23 @@ export async function getEmployers() {
     }
 }
 
+/**
+ * Escucha cambios en la colección de empleados en tiempo real.
+ * @param {function} onDataChange - Callback que se ejecuta con la nueva lista de empleados.
+ * @returns {function} - Función para cancelar la suscripción (unsubscribe).
+ */
+export function listenToEmployers(onDataChange) {
+    const q = query(collection(db, "employers"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const employers = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            docId: doc.id,
+        }));
+        onDataChange(employers);
+    });
+    return unsubscribe;
+}
+
 export async function getProducts() {
     try {
         const list = await getDocs(collection(db, "products"));
@@ -327,6 +345,23 @@ export async function getProducts() {
     } catch (error) {
         console.error(error);
     }
+}
+
+/**
+ * Escucha cambios en la colección de productos en tiempo real.
+ * @param {function} onDataChange - Callback que se ejecuta con la nueva lista de productos.
+ * @returns {function} - Función para cancelar la suscripción (unsubscribe).
+ */
+export function listenToProducts(onDataChange) {
+    const q = query(collection(db, "products"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const products = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            docId: doc.id,
+        }));
+        onDataChange(products);
+    });
+    return unsubscribe;
 }
 
 export async function getAllDocList() {

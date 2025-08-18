@@ -1,10 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UILoading from "../components/UILoading";
-import AuthProvider from "../components/AuthProvider";
 import DashboardWrapper from "../components/DashboardWrapper";
-import { getNewOrden, saveAllList, updateStock } from "../firebase/firebase";
+import {
+    listenToEmployers,
+    listenToProducts,
+    saveOrderAndDecreaseStock,
+} from "../firebase/firebase";
+import { setEmployers, setEmployersLoading } from "../redux/employersSlice";
+import { setProducts, setProductsLoading } from "../redux/productsSlice";
+import { selectCurrentUser } from "../redux/authSlice";
+import {
+    addItemToOrder,
+    removeItemFromOrder,
+    setOrderEmployer,
+    clearOrder,
+} from "../redux/orderSlice";
+
 //
 import {
     Button,
@@ -22,205 +36,130 @@ import {
 } from "@mui/material";
 
 function CreatePedido() {
-    const [state, setState] = useState(0);
     const navigate = useNavigate();
-    //
-    const [employers, setEmployers] = useState([]);
-    const [products, setProducts] = useState([]);
-    //
-    const [currentUser, setCurrentUser] = useState(null);
-    //
-    const [currentSelectEmployer, setCurrentSelectEmployer] = useState(null);
-    const [currentSelectProduct, setCurrentSelectProduct] = useState(null);
-    const [listItem, setListItem] = useState([]);
+    const dispatch = useDispatch();
 
+    // Obtener datos del store de Redux
+    const currentUser = useSelector(selectCurrentUser);
+    const { items: employers, status: employersStatus } = useSelector(
+        (state) => state.employers
+    );
+    const { items: products, status: productsStatus } = useSelector(
+        (state) => state.products
+    );
+    const { selectedEmployer, items: listItem } = useSelector(
+        (state) => state.order
+    );
+
+    // Estado local solo para los inputs del formulario
+    const [currentSelectProduct, setCurrentSelectProduct] = useState(null);
     const [count, setCount] = useState("");
 
     useEffect(() => {
-        getAll();
-    }, []);
+        // Iniciar listeners de Firebase en tiempo real
+        dispatch(setProductsLoading());
+        const unsubscribeProducts = listenToProducts((data) => {
+            dispatch(setProducts(data));
+        });
 
-    async function getAll() {
-        console.log("-----------> getAll() ");
+        dispatch(setEmployersLoading());
+        const unsubscribeEmployers = listenToEmployers((data) => {
+            dispatch(setEmployers(data));
+        });
 
-        try {
-            loadInit();
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    async function loadInit() {
-        const { ref1, ref2 } = await getNewOrden();
-        ref1.unshift({});
-        ref2.unshift({});
-
-        setEmployers(ref1);
-        setProducts(ref2);
-    }
+        // Limpiar listeners y el estado de la orden al salir del componente
+        return () => {
+            unsubscribeProducts();
+            unsubscribeEmployers();
+            dispatch(clearOrder());
+        };
+    }, [dispatch]);
 
     function handleAddItem() {
-        console.group("handleAddItem");
         const cantidad = parseInt(count);
 
         if (cantidad <= 0 || Number.isNaN(cantidad)) {
-            alert("Error  ");
-            setCount(0);
+            alert("La cantidad debe ser un número mayor a cero.");
+            setCount("");
             return;
         }
 
         if (cantidad > currentSelectProduct.cantidad) {
-            alert(" no hay stock !!!");
-            console.log(" no puede ser mayor al stock");
+            alert("No hay suficiente stock disponible.");
             return;
         }
 
-        console.log("cantidad ingresada ", cantidad);
-        const currentStockFirebase = currentSelectProduct.cantidad;
-
-        const uptatecount = currentSelectProduct.cantidad - cantidad;
-        currentSelectProduct.cantidad = uptatecount;
         // Create Item
         const newItem = {};
         newItem.docId = currentSelectProduct.docId;
         newItem.nameproduct = currentSelectProduct.nameproduct;
         newItem.cantidad = cantidad;
-        newItem.currentStockFirebase = currentStockFirebase;
-        // Actualizamos el stock y la lista de items
 
-        // Add Item to Array
-        setListItem((prevListItem) => [...prevListItem, newItem]);
-        // Set cantidad
-        setCount(0);
-        console.log("newItem", newItem);
-        console.log(listItem);
-        console.groupEnd();
+        dispatch(addItemToOrder(newItem));
+        setCount("");
     }
 
-    const handleSubmit = () => {
-        console.group("handleSubmit");
-
-        if (currentSelectEmployer === null || listItem.length === 0) {
-            console.log(currentSelectEmployer);
-            console.log(listItem.length);
-            alert("falta ingresar datos");
+    const handleSubmit = async () => {
+        if (!selectedEmployer || listItem.length === 0) {
+            alert(
+                "Debe seleccionar un empleado y agregar al menos un producto."
+            );
         } else {
-            listItem.map((item) =>
-                updateDecreaseStockProduct(
-                    item.docId,
-                    item.currentStockFirebase,
-                    item.cantidad
-                )
-            );
-
-            saveAllListProductEmployerByUser(
-                currentSelectEmployer,
-                listItem,
-                currentUser
-            );
-            navigate("/dashboard");
+            try {
+                await saveOrderAndDecreaseStock({
+                    userUID: currentUser.uid,
+                    employerDocId: selectedEmployer.docId,
+                    items: listItem,
+                });
+                alert("Orden guardada exitosamente");
+                navigate("/dashboard");
+            } catch (error) {
+                console.error("Error al guardar la orden:", error);
+                alert("Hubo un error al guardar la orden.");
+            }
         }
-        console.groupEnd("handleSubmit");
     };
 
-    async function saveAllListProductEmployerByUser(empleado, list, user) {
-        const daycreated = new Date().toLocaleString("sv");
-        saveAllList(daycreated, user.uid, empleado.docId, list);
-    }
-
-    async function updateDecreaseStockProduct(docId, stock, cantidad) {
-        await updateStock(docId, stock, cantidad);
-    }
-
     const handleChangeEmployer = (e) => {
-        console.group("handleChangeEmployer");
-        console.log("value : ", e.target.value);
         const dni = parseInt(e.target.value);
-        // 👉️ this runs only if NaN and type of number
         if (Number.isNaN(dni)) {
-            setCurrentSelectEmployer(null);
+            dispatch(setOrderEmployer(null));
         } else {
             const employee = employers.find((employee) => employee.dni === dni);
             if (employee) {
-                setCurrentSelectEmployer(employee);
+                dispatch(setOrderEmployer(employee));
             } else {
-                setCurrentSelectEmployer(null); // reset if employee not found
+                dispatch(setOrderEmployer(null));
             }
         }
-        console.groupEnd();
     };
 
     const handleChangeProducto = (e) => {
         const docIdProducto = e.target.value;
-        console.group("handleChangeProducto");
-        console.log("docIdProducto : ", docIdProducto);
         if (docIdProducto === "Selecione Producto") {
             setCurrentSelectProduct(null);
             return;
         }
         try {
-            const isProductFound = products.filter((item) => {
-                if (item.docId === docIdProducto) {
-                    return item;
-                }
-                return null;
-            });
-            console.log("isProductFound = ", isProductFound);
-            if (isProductFound.length !== 1) {
+            const productFound = products.find(
+                (item) => item.docId === docIdProducto
+            );
+            if (!productFound) {
                 setCurrentSelectProduct(null);
-                setCount(0);
+                setCount("");
             } else {
-                setCurrentSelectProduct(isProductFound[0]);
-                setCount(0);
+                setCurrentSelectProduct(productFound);
+                setCount("");
             }
         } catch (error) {
             console.error(error);
         }
-        console.groupEnd();
     };
-
-    async function handleUserLoggedIn(user) {
-        setCurrentUser(user);
-        setState(1);
-    }
-
-    function handleUserNotRegister(user) {}
-
-    function handleUserNotLoggedIn() {}
 
     const handleDelete = (item) => {
-        // Encontrar el producto correspondiente en la lista de productos
-        const index = products.findIndex((p) => p.docId === item.docId);
-        // Si encontramos el producto, actualizamos su stock
-        if (index !== -1) {
-            const copyProd = { ...products[index] };
-
-            // Aumentar el stock del producto
-            copyProd.cantidad += item.cantidad;
-
-            // Actualizar el producto en la lista de productos
-            const updatedProducts = [...products];
-            updatedProducts[index] = copyProd;
-            setProducts(updatedProducts);
-            currentSelectProduct.cantidad = copyProd.cantidad;
-        }
-
-        // Eliminar el ítem de la lista de pedidos
-        const updateList = [...listItem].filter((x) => x.docId !== item.docId);
-        setListItem(updateList);
-
-        // Restaurar el producto seleccionado a su estado previo
-        setCurrentSelectProduct(
-            products.find((product) => product.docId === item.docId)
-        );
-
-        // Restaurar el campo "count" con la cantidad que tenía el producto antes de ser añadido
-    };
-
-    const removeItemFromList = (item) => {
         // Eliminar el ítem de la lista de pedidos
         const updateList = listItem.filter((x) => x.docId !== item.docId);
-        setListItem(updateList);
+       // setListItem(updateList);
 
         // Restaurar el producto seleccionado a su estado previo
         setCurrentSelectProduct(
@@ -229,18 +168,6 @@ function CreatePedido() {
 
         // Restaurar el campo "count" con la cantidad que tenía el producto antes de ser añadido
     };
-
-    if (state === 0) {
-        return (
-            <AuthProvider
-                onUserLoggedIn={handleUserLoggedIn}
-                onUserNotRegister={handleUserNotRegister}
-                onUserNotLoggedIn={handleUserNotLoggedIn}
-            >
-                <UILoading />
-            </AuthProvider>
-        );
-    }
 
     return (
         <DashboardWrapper>
@@ -428,12 +355,7 @@ function CreatePedido() {
                                             type="submit"
                                             color="warning"
                                             variant="contained"
-                                            onClick={() => {
-                                                setCurrentSelectProduct(null);
-                                                setProducts([]);
-                                                setListItem([]);
-                                                loadInit();
-                                            }}
+                                            onClick={() => {}}
                                         >
                                             Limpiar
                                         </Button>

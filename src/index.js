@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
-import { store } from "./redux/store";
+import { store } from "./store/store";
 
 import App from "./App";
 import DashboardView from "./page/DashboardView";
@@ -25,10 +25,13 @@ root.render(
     <Provider store={store}>
         <BrowserRouter>
             <Routes>
+         
                 <Route path="/" element={<App />} />
                 <Route path="dashboard" element={<DashboardView />} />
-                <Route path="dashboard/profile" element={<EditProfileView />} />
                 <Route path="signout" element={<SingOutView />} />
+                {/*           
+                <Route path="dashboard/profile" element={<EditProfileView />} />
+               
                 <Route path="u/:username" element={<PublicProfileView />} />
                 <Route path="choose-username" element={<ChooseUsernameView />} />
 
@@ -37,7 +40,7 @@ root.render(
                 <Route path="createorder" element={<CreatePedido />} />
                 <Route path="updateproduct" element={<UpdateStock />} />
                 <Route path="createreport" element={<CreateReport />} />
-                <Route path="*" element={<ErrorView />}></Route>
+                <Route path="*" element={<ErrorView />}></Route> */}
             </Routes>
         </BrowserRouter>
     </Provider>

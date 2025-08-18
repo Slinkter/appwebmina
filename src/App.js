@@ -1,11 +1,15 @@
 import "./App.css";
-import React from "react";
+import  { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import AuthProvider from "./components/AuthProvider";
 import UILoading from "./components/UILoading";
-import { setUserLoggedIn, setUserLoggedOut } from "./redux/appSlice";
-import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
+import {
+    GoogleAuthProvider,
+    signInWithPopup,
+    onAuthStateChanged,
+} from "firebase/auth";
+import { auth, getUserInfo } from "./firebase/firebase";
+import { setUser, clearUser, selectAuthStatus } from "./redux/authSlice";
 //MUI
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -14,9 +18,32 @@ import Container from "@mui/material/Container";
 
 function App() {
     const navigate = useNavigate();
-    const auth = getAuth();
     const dispatch = useDispatch();
-    const appStatus = useSelector((state) => state.app.status);
+    const authStatus = useSelector(selectAuthStatus);
+
+    useEffect(() => {
+        // Listener central para el estado de autenticación
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Usuario está logueado
+                const userInfo = await getUserInfo(user.uid);
+                if (userInfo.processCompleted) {
+                    dispatch(setUser(userInfo));
+                    navigate("/dashboard");
+                } else {
+                    // Aún no ha completado el registro (elegir username)
+                    dispatch(setUser(userInfo));
+                    navigate("/choose-username");
+                }
+            } else {
+                // Usuario no está logueado
+                dispatch(clearUser());
+            }
+        });
+
+        // Limpiar el listener al desmontar el componente
+        return () => unsubscribe();
+    }, [dispatch, navigate]);
 
     async function signInWithGoogle(g_provider) {
         try {
@@ -31,19 +58,7 @@ function App() {
         await signInWithGoogle(g_provider);
     };
 
-    function handleUserLoggedIn() {
-        navigate("/dashboard");
-    }
-
-    function handleUserNotRegister() {
-        dispatch(setUserLoggedOut());
-    }
-
-    function handleUserNotLoggedIn() {
-        dispatch(setUserLoggedOut());
-    }
-
-    if (appStatus === "loggedOut") {
+    if (authStatus === "unauthenticated") {
         return (
             <Container component="main">
                 <Box
@@ -92,18 +107,8 @@ function App() {
         );
     }
 
-    return (
-        <>
-            <AuthProvider
-                currentPage={"App.js"}
-                onUserLoggedIn={handleUserLoggedIn}
-                onUserNotRegister={handleUserNotRegister}
-                onUserNotLoggedIn={handleUserNotLoggedIn}
-            >
-                <UILoading />
-            </AuthProvider>
-        </>
-    );
+    // Muestra un loader mientras se verifica el estado de autenticación
+    return <UILoading />;
 }
 
 export default App;
