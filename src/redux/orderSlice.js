@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import reducer from "./authSlice";
 
 const initialState = {
     selectedEmployer: null,
@@ -10,10 +9,19 @@ export const orderSlice = createSlice({
     name: "order",
     initialState: initialState,
     reducers: {
-        setOrderEmployer: (state, action) => {},
-        addItemToOrder: (state, action) => {},
-        removeItemFromOrder: (state, action) => {},
-        clearOrder: (state, action) => {},
+        setOrderEmployer: (state, action) => {
+            state.selectedEmployer =action.payload
+        },
+        addItemToOrder: (state, action) => {
+            state.items.push(action.payload)
+        },
+        removeItemFromOrder: (state, action) => {
+            state.items = state.items.filter(item=> item.id !== action.payload.docId)
+        },
+        clearOrder: (state, action) => {
+            state.items = [];
+            state.selectedEmployer = null;
+        },
     },
 });
 

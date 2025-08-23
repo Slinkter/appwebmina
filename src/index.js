@@ -31,19 +31,18 @@ root.render(
                 <Route path="createemploye" element={<NewEmployer />} />
 
                 <Route path="signout" element={<SingOutView />} />
-                {/*           
- 
-                  <Route path="dashboard/profile" element={<EditProfileView />} />
+                <Route path="dashboard/profile" element={<EditProfileView />} />
                 <Route path="u/:username" element={<PublicProfileView />} />
-                <Route path="choose-username" element={<ChooseUsernameView />} />
+                <Route
+                    path="choose-username"
+                    element={<ChooseUsernameView />}
+                />
 
-             
                 <Route path="createproduct" element={<NewProduct />} />
                 <Route path="createorder" element={<CreatePedido />} />
                 <Route path="updateproduct" element={<UpdateStock />} />
                 <Route path="createreport" element={<CreateReport />} />
-    
-                */}
+            
                 <Route path="*" element={<ErrorView />}></Route>
             </Routes>
         </BrowserRouter>

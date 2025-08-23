@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { Card, CardContent } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
+import { Container, Typography, MenuItem } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-// MUI
+
 import DashboardWrapper from "../components/DashboardWrapper";
 import AuthProvider from "../components/AuthProvider";
-import { Card, CardContent } from "@mui/material";
-import { Box, Button, TextField } from "@mui/material";
-
-import { Container, Typography, MenuItem } from "@mui/material";
+import UILoading from "../components/UILoading";
 
 import { addNewEmployer } from "../firebase/firebase";
-import UILoading from "../components/UILoading";
+
 
 const areas = [
     { value: "a1", label: "Area 1" },

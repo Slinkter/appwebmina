@@ -9,7 +9,7 @@ import {
     listenToProducts,
     saveOrderAndDecreaseStock,
 } from "../firebase/firebase";
-import { setEmployers, setEmployersLoading } from "../redux/employersSlice";
+import { setEmployer, setEmployerLoading } from "../redux/employersSlice";
 import { setProducts, setProductsLoading } from "../redux/productsSlice";
 import { selectCurrentUser } from "../redux/authSlice";
 import {
@@ -40,16 +40,11 @@ function CreatePedido() {
     const dispatch = useDispatch();
 
     // Obtener datos del store de Redux
-    const currentUser = useSelector(selectCurrentUser);
-    const { items: employers, status: employersStatus } = useSelector(
-        (state) => state.employers
-    );
-    const { items: products, status: productsStatus } = useSelector(
-        (state) => state.products
-    );
-    const { selectedEmployer, items: listItem } = useSelector(
-        (state) => state.order
-    );
+    const currentUser = useSelector(state => state.auth.user);
+    
+    const { items: employers, status: employersStatus } = useSelector((state) => state.employers  );
+    const { items: products, status: productsStatus } = useSelector((state) => state.products );
+    const { selectedEmployer, items: listItem } = useSelector((state) => state.order);
 
     // Estado local solo para los inputs del formulario
     const [currentSelectProduct, setCurrentSelectProduct] = useState(null);
@@ -62,11 +57,10 @@ function CreatePedido() {
             dispatch(setProducts(data));
         });
 
-        dispatch(setEmployersLoading());
+        dispatch(setEmployerLoading());
         const unsubscribeEmployers = listenToEmployers((data) => {
-            dispatch(setEmployers(data));
+            dispatch(setEmployer(data));
         });
-
         // Limpiar listeners y el estado de la orden al salir del componente
         return () => {
             unsubscribeProducts();
