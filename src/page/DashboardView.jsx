@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Box } from "@mui/material";
 import AuthProvider from "../components/AuthProvider";
 import DashboardWrapper from "../components/DashboardWrapper";
 import UILoading from "../components/UILoading";
-import { Box } from "@mui/material";
-import "../style/Dashboard.css";
 import CardDashBoard from "./CardDashBoard";
+import "../style/Dashboard.css";
 
 function DashboardView() {
     const [currentUser, setCurrentUser] = useState(null);

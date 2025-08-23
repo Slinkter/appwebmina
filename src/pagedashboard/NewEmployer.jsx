@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { Card, CardContent } from "@mui/material";
-import { Box, Button, TextField } from "@mui/material";
-import { Container, Typography, MenuItem } from "@mui/material";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { Card, CardContent, Box, Button, Container, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-
 
 import DashboardWrapper from "../components/DashboardWrapper";
 import AuthProvider from "../components/AuthProvider";
 import UILoading from "../components/UILoading";
+import FormField from "../components/FormField";
 
 import { addNewEmployer } from "../firebase/firebase";
 
 
 const areas = [
+ 
     { value: "a1", label: "Area 1" },
     { value: "a2", label: "Area 2" },
     { value: "a3", label: "Area 3" },
@@ -35,7 +33,7 @@ function NewEmployer() {
             phone: "",
             email: "",
             area: "",
-        },
+        }, // Set initial value for area
         validationSchema: Yup.object({
             firstName: Yup.string()
                 .max(25, "El límite es de 25 caracteres")
@@ -55,21 +53,15 @@ function NewEmployer() {
             email: Yup.string()
                 .email("Correo electrónico inválido")
                 .required("Campo faltante"),
-            area: Yup.string().required("Campo faltante"),
+            area: Yup.string().notOneOf(["s"], "Debe seleccionar un área").required("Campo faltante"), // Added validation for area
         }),
         onSubmit: (values) => {
-            if (values.area === "s") {
-                alert("Debe seleccionar una area");
-            } else {
-                /* values.createdAt = new Date().toISOString(); */
-                values.createdAt = new Date().toLocaleString("sv");
-                values.adminUid = currentUser.uid;
-                saveEmployer(values);
-                navigate("/dashboard");
-                console.log(JSON.stringify(values, null, 2));
-            }
-
-            console.log(values);
+            // values.createdAt = new Date().toISOString();
+            values.createdAt = new Date().toLocaleString("sv");
+            values.adminUid = currentUser.uid;
+            saveEmployer(values);
+            navigate("/dashboard");
+            console.log(JSON.stringify(values, null, 2));
         },
     });
 
@@ -114,127 +106,49 @@ function NewEmployer() {
                             </Typography>
                         </Box>
                         <form onSubmit={formik.handleSubmit}>
-                            <TextField
-                                error={Boolean(
-                                    formik.touched.firstName &&
-                                        formik.errors.firstName
-                                )}
-                                helperText={
-                                    formik.touched.firstName &&
-                                    formik.errors.firstName
-                                }
-                                margin="normal"
-                                fullWidth
-                                label="Nombres"
+                            <FormField
                                 name="firstName"
+                                label="Nombres"
+                                formik={formik}
                                 required
-                                type="text"
-                                variant="outlined"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                value={formik.values.firstName}
                             />
-                            <TextField
-                                margin="normal"
-                                fullWidth
-                                label="Apellidos"
+                            <FormField
                                 name="lastName"
+                                label="Apellidos"
+                                formik={formik}
                                 required
-                                variant="outlined"
-                                value={formik.values.lastName}
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                error={Boolean(
-                                    formik.touched.lastName &&
-                                        formik.errors.lastName
-                                )}
-                                helperText={
-                                    formik.touched.lastName &&
-                                    formik.errors.lastName
-                                }
                             />
-
-                            <TextField
-                                margin="normal"
-                                fullWidth
-                                label="DNI"
+                            <FormField
                                 name="dni"
+                                label="DNI"
+                                formik={formik}
                                 required
-                                variant="outlined"
-                                value={formik.values.dni}
-                                onBlur={formik.handleBlur}
                                 onChange={(e) => {
-                                    // Solo permitimos números en el campo del DNI
-                                    const newValue = e.target.value.replace(
-                                        /\D/g,
-                                        ""
-                                    ); // Elimina cualquier carácter no numérico
-                                    formik.setFieldValue("dni", newValue); // Actualiza el valor en el formulario
+                                    const newValue = e.target.value.replace(/\D/g, "");
+                                    formik.setFieldValue("dni", newValue);
                                 }}
-                                error={Boolean(
-                                    formik.touched.dni && formik.errors.dni
-                                )}
-                                helperText={
-                                    formik.touched.dni && formik.errors.dni
-                                }
                             />
-
-                            <TextField
-                                margin="normal"
-                                fullWidth
-                                label="Telefono"
+                            <FormField
                                 name="phone"
+                                label="Teléfono"
                                 type="number"
-                                variant="outlined"
-                                value={formik.values.phone}
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                error={Boolean(
-                                    formik.touched.phone && formik.errors.phone
-                                )}
-                                helperText={
-                                    formik.touched.phone && formik.errors.phone
-                                }
+                                formik={formik}
                             />
-                            <TextField
-                                margin="normal"
-                                fullWidth
+                            <FormField
+                                name="email"
                                 label="Correo"
                                 type="email"
-                                name="email"
+                                formik={formik}
                                 required
-                                variant="outlined"
-                                value={formik.values.email}
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                error={Boolean(
-                                    formik.touched.email && formik.errors.email
-                                )}
-                                helperText={
-                                    formik.touched.email && formik.errors.email
-                                }
                             />
-
-                            <TextField
-                                margin="normal"
-                                fullWidth
-                                label="Area de Trabajo"
+                            <FormField
                                 name="area"
-                                onChange={formik.handleChange}
-                                value={formik.values.area}
+                                label="Area de Trabajo"
+                                
+                                formik={formik}
                                 select
-                                SelectProps={{ native: true }}
-                                variant="outlined"
-                            >
-                                {areas.map((option) => (
-                                    <MenuItem
-                                        key={option.value}
-                                        value={option.value}
-                                    >
-                                        {option.label}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
+                                options={areas}
+                            />
 
                             <Box sx={{ py: 2 }}>
                                 <Button
