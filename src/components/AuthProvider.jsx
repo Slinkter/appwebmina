@@ -34,5 +34,19 @@ export default function AuthProvider({
         onAuthStateChanged(auth, checkStatusUser);
     }, []);
     /*  */
-    return <>{children}</>;
+    return (
+        <React.Fragment>
+            {children}
+            <div
+                className=""
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    border: "1px solid red",
+                }}
+            >
+                <h1>hola</h1>
+            </div>
+        </React.Fragment>
+    );
 }

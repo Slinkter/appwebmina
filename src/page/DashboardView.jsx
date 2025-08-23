@@ -11,7 +11,6 @@ function DashboardView() {
     const [currentUser, setCurrentUser] = useState(null);
     const navigate = useNavigate();
 
-
     return (
         <AuthProvider
             currentPage={"DashboardView"}
@@ -24,7 +23,6 @@ function DashboardView() {
             ) : (
                 <DashboardWrapper>
                     <Box className="dashboard-buttons">
-                       
                         <CardDashBoard
                             label={"New Employer "}
                             url={"/createemploye"}
@@ -54,7 +52,3 @@ function DashboardView() {
 }
 
 export default DashboardView;
-
-
-
-                    

@@ -1,32 +1,40 @@
 import "./App.css";
-import  { useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import UILoading from "./components/UILoading";
 import {
     GoogleAuthProvider,
     signInWithPopup,
     onAuthStateChanged,
 } from "firebase/auth";
-import { auth, getUserInfo } from "./firebase/firebase";
-import { setUser, clearUser, selectAuthStatus } from "./redux/authSlice";
 //MUI
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import SendIcon from "@mui/icons-material/Send";
+import Stack from "@mui/material/Stack";
+//
+import { auth, getUserInfo } from "./firebase/firebase";
+import { setUser, clearUser, selectAuthStatus } from "./redux/authSlice";
+
+import UILoading from "./components/UILoading";
 
 function App() {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    //
     const authStatus = useSelector(selectAuthStatus);
+    const dispatch = useDispatch();
 
     useEffect(() => {
+        console.log("init useEffect");
+
         // Listener central para el estado de autenticación
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Usuario está logueado
+                //----> Usuario está logueado
                 const userInfo = await getUserInfo(user.uid);
+                //
                 if (userInfo.processCompleted) {
                     dispatch(setUser(userInfo));
                     navigate("/dashboard");
@@ -36,7 +44,7 @@ function App() {
                     navigate("/choose-username");
                 }
             } else {
-                // Usuario no está logueado
+                //---->  Usuario no está logueado
                 dispatch(clearUser());
             }
         });
@@ -53,10 +61,13 @@ function App() {
             console.error(error);
         }
     }
-    const handleLogin = async () => {
+
+    async function handleLogin() {
         const g_provider = new GoogleAuthProvider();
         await signInWithGoogle(g_provider);
-    };
+    }
+
+    console.log(authStatus);
 
     if (authStatus === "unauthenticated") {
         return (
@@ -64,17 +75,18 @@ function App() {
                 <Box
                     display="flex"
                     flexWrap="wrap"
-                    justifyContent="center"
+                    minHeight="100dvh"
                     flexDirection="column"
+                    justifyContent="center"
                     alignItems="center"
-                    minHeight="100vh"
+                    border={"1px solid red"}
+                    gap={2}
                 >
                     <Typography
-                        component="h3"
-                        variant="h3"
+                        component="h2"
+                        variant="h2"
                         align="center"
                         color="text.primary"
-                        gutterBottom
                     >
                         Inventario
                     </Typography>
@@ -84,24 +96,27 @@ function App() {
                         color="text.secondary"
                         component="p"
                         margin="normal"
-                        gutterBottom
                     >
                         demo
                     </Typography>
 
-                    <Box sx={{ py: 2 }}>
+                    <Stack
+                        marginTop={4}
+                        width={"80%"}
+                        border={"1px solid black"}
+                    >
                         <Button
-                            fullWidth
-                            type="submit"
                             size="large"
-                            onClick={() => handleLogin()}
                             variant="contained"
                             color="primary"
                             margin="normal"
+                            type="submit"
+                            onClick={() => handleLogin()}
+                            endIcon={<SendIcon />}
                         >
                             Login
                         </Button>
-                    </Box>
+                    </Stack>
                 </Box>
             </Container>
         );
