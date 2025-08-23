@@ -21,26 +21,30 @@ import CreatePedido from "./pagedashboard/CreatePedido";
 import "./index.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
 root.render(
     <Provider store={store}>
         <BrowserRouter>
             <Routes>
-         
                 <Route path="/" element={<App />} />
                 <Route path="dashboard" element={<DashboardView />} />
+                <Route path="createemploye" element={<NewEmployer />} />
+
                 <Route path="signout" element={<SingOutView />} />
                 {/*           
-                <Route path="dashboard/profile" element={<EditProfileView />} />
-               
+ 
+                  <Route path="dashboard/profile" element={<EditProfileView />} />
                 <Route path="u/:username" element={<PublicProfileView />} />
                 <Route path="choose-username" element={<ChooseUsernameView />} />
 
-                <Route path="createemploye" element={<NewEmployer />} />
+             
                 <Route path="createproduct" element={<NewProduct />} />
                 <Route path="createorder" element={<CreatePedido />} />
                 <Route path="updateproduct" element={<UpdateStock />} />
                 <Route path="createreport" element={<CreateReport />} />
-                <Route path="*" element={<ErrorView />}></Route> */}
+    
+                */}
+                <Route path="*" element={<ErrorView />}></Route>
             </Routes>
         </BrowserRouter>
     </Provider>

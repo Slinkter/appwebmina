@@ -8,14 +8,9 @@ import * as Yup from "yup";
 import DashboardWrapper from "../components/DashboardWrapper";
 import AuthProvider from "../components/AuthProvider";
 import { Card, CardContent } from "@mui/material";
-import {
-    Box,
-    Button,
-    TextField,
-    Container,
-    Typography,
-    MenuItem,
-} from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
+
+import { Container, Typography, MenuItem } from "@mui/material";
 
 import { addNewEmployer } from "../firebase/firebase";
 import UILoading from "../components/UILoading";
@@ -28,8 +23,8 @@ const areas = [
 
 function NewEmployer() {
     //
-    const [currentUser, setCurrentUser] = useState({});
     const [state, setState] = useState(0);
+    const [currentUser, setCurrentUser] = useState({});
     const navigate = useNavigate();
     //
     const formik = useFormik({
