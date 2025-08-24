@@ -6,7 +6,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import { addNewProduct } from "../firebase/firebase";
-import { v4 as uuidv4 } from "uuid";
 import UILoading from "../components/UILoading";
 import {
     Box,
@@ -17,12 +16,14 @@ import {
     Container,
     Typography,
 } from "@mui/material";
+import { useSelector } from "react-redux";
 
 function NewProduct() {
     //
     const navigate = useNavigate();
     const [state, setState] = useState(0);
     const [currentUser, setCurrentUser] = useState({});
+
     //
     const initialValues = {
         nameproduct: "",
@@ -55,7 +56,7 @@ function NewProduct() {
     }
 
     function handleUserLoggedIn(user) {
-        setCurrentUser(user);
+        // setCurrentUser(user);
         setState(2);
     }
 
