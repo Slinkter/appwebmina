@@ -1,50 +1,21 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
+import { BrowserRouter } from "react-router-dom";
 
 import App from "./App";
-import DashboardView from "./page/DashboardView";
-import EditProfileView from "./page/EditProfileView";
-import SingOutView from "./page/SingOutView";
-import PublicProfileView from "./page/PublicProfileView";
-import ChooseUsernameView from "./page/ChooseUsernameView";
-import ErrorView from "./page/ErrorView";
-
-import NewEmployer from "./pagedashboard/NewEmployer";
-import NewProduct from "./pagedashboard/NewProduct";
-import UpdateStock from "./pagedashboard/UpdateStock";
-import CreateReport from "./pagedashboard/CreateReport";
-import CreatePedido from "./pagedashboard/CreatePedido";
 
 import "./index.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-    <Provider store={store}>
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<App />} />
-                <Route path="dashboard" element={<DashboardView />} />
-                <Route path="createemploye" element={<NewEmployer />} />
-
-                <Route path="signout" element={<SingOutView />} />
-                <Route path="dashboard/profile" element={<EditProfileView />} />
-                <Route path="u/:username" element={<PublicProfileView />} />
-                <Route
-                    path="choose-username"
-                    element={<ChooseUsernameView />}
-                />
-
-                <Route path="createproduct" element={<NewProduct />} />
-                <Route path="createorder" element={<CreatePedido />} />
-                <Route path="updateproduct" element={<UpdateStock />} />
-                <Route path="createreport" element={<CreateReport />} />
-            
-                <Route path="*" element={<ErrorView />}></Route>
-            </Routes>
-        </BrowserRouter>
-    </Provider>
+    <React.StrictMode>
+        <Provider store={store}>
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+        </Provider>
+    </React.StrictMode>
 );

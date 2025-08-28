@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DashboardWrapper from "../components/DashboardWrapper";
 import AuthProvider from "../components/AuthProvider";
 import { useNavigate } from "react-router-dom";
@@ -17,12 +17,13 @@ import {
     Typography,
 } from "@mui/material";
 import { useSelector } from "react-redux";
+import { selectCurrentUser, selectAuthStatus } from "../redux/authSlice";
 
 function NewProduct() {
     //
     const navigate = useNavigate();
-    const [state, setState] = useState(0);
-    const [currentUser, setCurrentUser] = useState({});
+    const currentUser = useSelector(selectCurrentUser);
+    const authStatus = useSelector(selectAuthStatus);
 
     //
     const initialValues = {
@@ -42,11 +43,13 @@ function NewProduct() {
         initialValues: initialValues,
         validationSchema: Yup.object(inityup),
         onSubmit: (values) => {
-            values.userUid = currentUser.uid;
-            values.createdAt = new Date().toISOString();
-            console.log(JSON.stringify(values, null, 2));
-            saveProduct(values);
-            navigate("/dashboard");
+            if (currentUser) {
+                values.userUid = currentUser.uid;
+                values.createdAt = new Date().toISOString();
+                saveProduct(values);
+                console.log(JSON.stringify(values, null, 2));
+                navigate("/dashboard");
+            }
         },
     });
     //
@@ -54,30 +57,16 @@ function NewProduct() {
     async function saveProduct(values) {
         await addNewProduct(values);
     }
+    useEffect(() => {
+        if (authStatus === "unauthenticated") {
+            navigate("/login");
+        }
 
-    function handleUserLoggedIn(user) {
-        // setCurrentUser(user);
-        setState(2);
-    }
+        return () => {};
+    }, [authStatus, navigate]);
 
-    function handleUserNotRegister(user) {
-        navigate("/login");
-    }
-
-    function handleUserNotLoggedIn() {
-        navigate("/login");
-    }
-
-    if (state === 0) {
-        return (
-            <AuthProvider
-                onUserLoggedIn={handleUserLoggedIn}
-                onUserNotRegister={handleUserNotRegister}
-                onUserNotLoggedIn={handleUserNotLoggedIn}
-            >
-                <UILoading />
-            </AuthProvider>
-        );
+    if (authStatus === "loading") {
+        return <UILoading />;
     }
 
     return (

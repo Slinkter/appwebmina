@@ -44,9 +44,7 @@ export default function AuthProvider({
                     justifyContent: "center",
                     border: "1px solid red",
                 }}
-            >
-                <h1>hola</h1>
-            </div>
+            ></div>
         </React.Fragment>
     );
 }
