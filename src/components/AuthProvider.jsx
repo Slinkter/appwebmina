@@ -31,7 +31,13 @@ export default function AuthProvider({
     }
     /*  */
     useEffect(() => {
-        onAuthStateChanged(auth, checkStatusUser);
+        // onAuthStateChanged(auth, checkStatusUser);
+        const unsubscribe = onAuthStateChanged(auth, checkStatusUser);
+        /*      return () => {
+            if (typeof unsubscribe === "function") {
+                unsubscribe;
+            }
+        }; */
     }, []);
     /*  */
     return (

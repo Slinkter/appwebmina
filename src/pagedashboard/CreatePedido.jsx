@@ -9,7 +9,11 @@ import {
     listenToProducts,
     saveOrderAndDecreaseStock,
 } from "../firebase/firebase";
-import { setEmployer, setEmployerLoading } from "../redux/employersSlice";
+import {
+    selectEmployers,
+    setEmployer,
+    setEmployerLoading,
+} from "../redux/employersSlice";
 import { setProducts, setProductsLoading } from "../redux/productsSlice";
 import { selectCurrentUser } from "../redux/authSlice";
 import {
@@ -40,11 +44,17 @@ function CreatePedido() {
     const dispatch = useDispatch();
 
     // Obtener datos del store de Redux
-    const currentUser = useSelector(state => state.auth.user);
-    
-    const { items: employers, status: employersStatus } = useSelector((state) => state.employers  );
-    const { items: products, status: productsStatus } = useSelector((state) => state.products );
-    const { selectedEmployer, items: listItem } = useSelector((state) => state.order);
+    const currentUser = useSelector((state) => state.auth.user);
+
+    const { items: employers, status: employersStatus } = useSelector(
+        (state) => state.employers
+    );
+    const { items: products, status: productsStatus } = useSelector(
+        (state) => state.products
+    );
+    const { selectedEmployer, items: listItem } = useSelector(
+        (state) => state.order
+    );
 
     // Estado local solo para los inputs del formulario
     const [currentSelectProduct, setCurrentSelectProduct] = useState(null);
@@ -100,6 +110,25 @@ function CreatePedido() {
             );
         } else {
             try {
+                console.log("debug...--> ", {
+                    currentUser,
+                    selectEmployers,
+                    listItem,
+                });
+                // Validaciones simples
+
+                if (!currentUser?.uid)
+                    throw new Error("currentUser.uid missing");
+                if (!selectedEmployer?.docId)
+                    throw new Error("selectedEmployer.docId missing");
+                if (!Array.isArray(listItem) || listItem.length === 0)
+                    throw new Error("listItem empty");
+                listItem.forEach((it, i) => {
+                    if (!it.docId) throw new Error(`item[${i}].docId missing`);
+                    if (typeof it.cantidad !== "number")
+                        throw new Error(`item[${i}].cantidad must be number`);
+                });
+                //
                 await saveOrderAndDecreaseStock({
                     userUID: currentUser.uid,
                     employerDocId: selectedEmployer.docId,
@@ -153,7 +182,7 @@ function CreatePedido() {
     const handleDelete = (item) => {
         // Eliminar el ítem de la lista de pedidos
         const updateList = listItem.filter((x) => x.docId !== item.docId);
-       // setListItem(updateList);
+        // setListItem(updateList);
 
         // Restaurar el producto seleccionado a su estado previo
         setCurrentSelectProduct(

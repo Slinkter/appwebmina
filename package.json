@@ -12,6 +12,7 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
+    "dataconnect-generated": "link:..\\..\\..\\AppData\\Local\\pnpm\\global\\5\\node_modules\\src\\dataconnect-generated",
     "firebase": "^9.9.0",
     "formik": "^2.2.9",
     "next": "^12.2.3",
@@ -48,5 +49,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "pnpm": {
+    "overrides": {
+      "dataconnect-generated": "link:..\\..\\..\\AppData\\Local\\pnpm\\global\\5\\node_modules\\src\\dataconnect-generated"
+    }
   }
 }

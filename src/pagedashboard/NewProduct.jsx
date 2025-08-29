@@ -165,7 +165,7 @@ function NewProduct() {
                                     type="number"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
-                                    value={formik.values.lastName}
+                                    value={formik.values.cantidad}
                                     variant="outlined"
                                 />
 

@@ -1,11 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-
-const initialState={
-    items:[],
-    status:'idle', //'idle' | 'loading' | 'succeeded' | 'failed'
-    error:null
-}
+const initialState = {
+    items: [],
+    status: "idle", //'idle' | 'loading' | 'succeeded' | 'failed'
+    error: null,
+};
 
 export const employerSlice = createSlice({
     name: "employers",
@@ -13,7 +12,7 @@ export const employerSlice = createSlice({
     reducers: {
         setEmployer: (state, action) => {
             state.items = action.payload;
-            state.status = "succeded";
+            state.status = "succeeded";
         },
         setEmployerLoading: (state, action) => {
             state.status = "loading";
@@ -25,7 +24,8 @@ export const employerSlice = createSlice({
     },
 });
 
-export const {setEmployer,setEmployerLoading,setEmployerError} = employerSlice.actions;
+export const { setEmployer, setEmployerLoading, setEmployerError } =
+    employerSlice.actions;
 export const selectEmployers = (state) => state.employers.items;
 export const selectEmployersStatus = (state) => state.employers.status;
 export const selectEmployersError = (state) => state.employers.error;

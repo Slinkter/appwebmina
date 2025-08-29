@@ -106,8 +106,38 @@ function CreateReport() {
                         <h1> dale click </h1>
                     ) : (
                         <div>
-                            {listOrder.map((item) => (
-                                <Box key={item.docId} sx={{ mt: 1, mb: 1 }}>
+                            {listOrder?.map((item) => {
+                                return <div>{item.docId}</div>;
+                            })}
+                        </div>
+                    )}
+                </>
+            </DashboardWrapper>
+        );
+    }
+
+    return (
+        <AuthProvider
+            currentPage={"DashboardView.js"}
+            onUserLoggedIn={handleUserLoggedIn}
+            onUserNotRegister={handleUserNotRegister}
+            onUserNotLoggedIn={handleUserNotLoggedIn}
+        >
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                minHeight="100vh"
+            >
+                <UILoading />
+                DashboardView
+            </Box>
+        </AuthProvider>
+    );
+}
+
+export default CreateReport;
+/*     <Box key={item.docId} sx={{ mt: 1, mb: 1 }}>
                                     <Card sx={{ height: "100%" }}>
                                         <CardContent>
                                             <div className="containerCR">
@@ -221,33 +251,4 @@ function CreateReport() {
                                             </div>
                                         </CardContent>
                                     </Card>
-                                </Box>
-                            ))}
-                        </div>
-                    )}
-                </>
-            </DashboardWrapper>
-        );
-    }
-
-    return (
-        <AuthProvider
-            currentPage={"DashboardView.js"}
-            onUserLoggedIn={handleUserLoggedIn}
-            onUserNotRegister={handleUserNotRegister}
-            onUserNotLoggedIn={handleUserNotLoggedIn}
-        >
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                minHeight="100vh"
-            >
-                <UILoading />
-                DashboardView
-            </Box>
-        </AuthProvider>
-    );
-}
-
-export default CreateReport;
+                                </Box> */

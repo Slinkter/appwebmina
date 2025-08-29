@@ -26,7 +26,12 @@ import {
     getDownloadURL,
     getBytes,
 } from "firebase/storage";
-// seguridad
+
+// =================================================================
+// 1. CONFIGURACIÓN DE FIREBASE
+// =================================================================
+
+// Carga las variables de entorno para una configuración segura.
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_APIKEY,
     authDomain: process.env.REACT_APP_AUTHDOMAIN,
@@ -37,137 +42,143 @@ const firebaseConfig = {
     measurementId: process.env.REACT_APP_MEASUREMENTID,
 };
 
-// Initialize Firebase
+// Inicializa y exporta los servicios de Firebase para su uso en toda la aplicación.
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app); // texto
-export const storage = getStorage(app); // archivos -imagenes
+export const db = getFirestore(app); // Para la base de datos de texto
+export const storage = getStorage(app); // Para el almacenamiento de archivos (imágenes)
 
-// funciones a exportar de manera asincrona
+// =================================================================
+// 2. FUNCIONES DE AUTENTICACIÓN Y DATOS DE USUARIO
+// =================================================================
 
 /**
- * Verifica si un usuario existe en la base de datos.
+ * Cierra la sesión del usuario actual.
+ * @async
+ */
+export async function logout() {
+    try {
+        await signOut(auth);
+    } catch (error) {
+        console.error("Error al cerrar sesión:", error);
+    }
+}
+
+/**
+ * Verifica si un usuario existe en la colección "users".
  * @param {string} uid - El UID del usuario a verificar.
- * @returns {Promise<boolean>} - Devuelve true si el usuario existe, de lo contrario false.
+ * @returns {Promise<boolean>} - True si el usuario existe, de lo contrario false.
  */
 export async function userExistes(uid) {
     const docRef = doc(db, "users", uid);
-    const res = await getDoc(docRef);
-    return res.exists();
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists();
 }
 
 /**
  * Verifica si un nombre de usuario ya existe en la base de datos.
- * @param {string} StringUsername - El nombre de usuario a verificar.
- * @returns {Promise<string|null>} - El UID del usuario si el nombre de usuario existe, de lo contrario null.
+ * @param {string} username - El nombre de usuario a verificar.
+ * @returns {Promise<string|null>} - El UID del usuario si existe, de lo contrario null.
  */
-export async function existsUsername(StringUsername) {
+export async function existsUsername(username) {
     try {
-        // Reference to the 'users' collection
-        const listRef = collection(db, "users");
-
-        // Create a query against the collection
-        const q = query(listRef, where("username", "==", StringUsername));
-
-        // Execute the query
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("username", "==", username));
         const querySnapshot = await getDocs(q);
 
-        // Extract user data from the query results
-        const users = [];
-        querySnapshot.forEach((doc) => {
-            users.push(doc.data());
-        });
-
-        // Return the UID of the first user found, or null if no users found
-        return users.length > 0 ? users[0].uid : null;
+        // Verifica si la consulta devolvió algún documento.
+        if (!querySnapshot.empty) {
+            // Devuelve el UID del primer documento encontrado.
+            return querySnapshot.docs[0].id;
+        }
+        return null;
     } catch (error) {
-        console.error("Error checking username existence:", error);
+        console.error("Error al verificar el nombre de usuario:", error);
         return null;
     }
 }
 
 /**
- * Registra un nuevo usuario en la colección "users".
- * @param {object} user - El objeto de usuario que contiene el UID y otros datos.
+ * Registra un nuevo usuario en la colección "users" usando su UID como ID de documento.
+ * @param {object} user - El objeto de usuario a registrar.
  */
 export async function registerNewUser(user) {
     try {
-        const collectionRef = collection(db, "users");
-        // Se usa setDoc para usar el UID de autenticación como ID del documento.
-        const docRef = doc(collectionRef, user.uid);
+        const docRef = doc(db, "users", user.uid);
         await setDoc(docRef, user);
     } catch (error) {
-        console.log(error);
+        console.error("Error al registrar el nuevo usuario:", error);
     }
 }
+
+/**
+ * Actualiza la información de un usuario en la colección "users".
+ * @param {object} user - El objeto de usuario con los datos actualizados.
+ */
 export async function updateUser(user) {
     try {
-        /**
-         * Actualiza la información de un usuario en la colección "users".
-         * @param {object} user - El objeto de usuario con los datos actualizados.
-         */
-        const collectionRef = collection(db, "users");
-        const docRef = doc(collectionRef, user.uid);
-        await setDoc(docRef, user);
+        const docRef = doc(db, "users", user.uid);
+        // setDoc con merge: true para actualizar solo los campos provistos.
+        await setDoc(docRef, user, { merge: true });
     } catch (error) {
-        console.log(error);
+        console.error("Error al actualizar el usuario:", error);
     }
 }
 
 /**
  * Obtiene la información de un usuario de la colección "users".
  * @param {string} uid - El UID del usuario.
- * @returns {Promise<object|undefined>} - Los datos del usuario o undefined si no se encuentra.
+ * @returns {Promise<object|null>} - Los datos del usuario o null si no se encuentra.
  */
 export async function getUserInfo(uid) {
     try {
         const docRef = doc(db, "users", uid);
-        const documento = await getDoc(docRef);
-        return documento.data();
+        const docSnap = await getDoc(docRef);
+        return docSnap.exists() ? docSnap.data() : null;
     } catch (error) {
-        console.log(error);
+        console.error("Error al obtener la información del usuario:", error);
+        return null;
     }
 }
 
+// =================================================================
+// 3. FUNCIONES PARA ENLACES (LINKS)
+// =================================================================
+
 /**
  * Inserta un nuevo enlace en la colección "links".
- * Firestore generará un ID de documento automáticamente.
  * @param {object} link - El objeto de enlace a insertar.
- * @returns {Promise<import("firebase/firestore").DocumentReference>} - Una referencia al documento recién creado.
+ * @returns {Promise<import("firebase/firestore").DocumentReference|null>} - Referencia al documento creado o null si falla.
  */
 export async function insertNewLink(link) {
     try {
         const docRef = collection(db, "links");
         const res = await addDoc(docRef, link);
-        console.log(docRef);
-        console.log(res);
         return res;
     } catch (error) {
-        console.log(error);
+        console.error("Error al insertar un nuevo enlace:", error);
+        return null;
     }
 }
 
 /**
  * Obtiene todos los enlaces de un usuario específico.
  * @param {string} uid - El UID del usuario.
- * @returns {Promise<Array<object>>} - Un array de objetos de enlace, cada uno con su docId.
+ * @returns {Promise<Array<object>>} - Un array de objetos de enlace con su docId.
  */
 export async function getLinks(uid) {
     const links = [];
-
     try {
         const collectionRef = collection(db, "links");
         const q = query(collectionRef, where("uid", "==", uid));
         const querySnapShot = await getDocs(q);
         querySnapShot.forEach((doc) => {
-            const link = { ...doc.data() };
-            link.docId = doc.id;
-            links.push(link);
+            links.push({ ...doc.data(), docId: doc.id });
         });
-
         return links;
     } catch (error) {
-        console.error(error);
+        console.error("Error al obtener los enlaces:", error);
+        return [];
     }
 }
 
@@ -179,9 +190,9 @@ export async function getLinks(uid) {
 export async function updateLink(docId, link) {
     try {
         const docRef = doc(db, "links", docId);
-        await setDoc(docRef, link);
+        await setDoc(docRef, link, { merge: true });
     } catch (error) {
-        console.error(error);
+        console.error("Error al actualizar el enlace:", error);
     }
 }
 
@@ -194,15 +205,19 @@ export async function deleteLink(docId) {
         const docRef = doc(db, "links", docId);
         await deleteDoc(docRef);
     } catch (error) {
-        console.error(error);
+        console.error("Error al eliminar el enlace:", error);
     }
 }
+
+// =================================================================
+// 4. FUNCIONES DE ALMACENAMIENTO (STORAGE)
+// =================================================================
 
 /**
  * Sube la foto de perfil de un usuario a Firebase Storage.
  * @param {string} uid - El UID del usuario para nombrar el archivo.
  * @param {File} file - El archivo de imagen a subir.
- * @returns {Promise<import("firebase/storage").UploadResult>} - El resultado de la subida.
+ * @returns {Promise<import("firebase/storage").UploadResult|null>} - El resultado de la subida o null si falla.
  */
 export async function setUserProfilePhoto(uid, file) {
     try {
@@ -210,107 +225,110 @@ export async function setUserProfilePhoto(uid, file) {
         const resUpload = await uploadBytes(imageRef, file);
         return resUpload;
     } catch (error) {
-        console.error(error);
+        console.error("Error al subir la foto de perfil:", error);
+        return null;
     }
 }
 
 /**
  * Obtiene la URL de descarga de una foto de perfil desde Firebase Storage.
  * @param {string} path - La ruta del archivo en Storage (ej. "images/uid").
- * @returns {Promise<string>} - La URL de descarga del archivo.
+ * @returns {Promise<string|null>} - La URL de descarga o null si no existe o falla.
  */
 export async function getProfilePhotoUrl(path) {
-    //
+    if (!path) {
+        return null;
+    }
     try {
         const imageRef = ref(storage, path);
         const url = await getDownloadURL(imageRef);
         return url;
     } catch (error) {
-        console.error(error);
+        console.warn("Error al obtener la URL de la foto de perfil:", error);
+        return null;
     }
 }
 
 /**
  * Obtiene el perfil público de un usuario, incluyendo su información y enlaces.
  * @param {string} uid - El UID del usuario.
- * @returns {Promise<{profileInfo: object, linksInfo: Array<object>}>} - Un objeto con la información del perfil y los enlaces.
+ * @returns {Promise<{profileInfo: object|null, linksInfo: Array<object>}>} - Un objeto con la información del perfil y los enlaces.
  */
 export async function getUserPublicProfileInfo(uid) {
     try {
         const profileInfo = await getUserInfo(uid);
         const linksInfo = await getLinks(uid);
-        return { profileInfo: profileInfo, linksInfo: linksInfo };
+        return { profileInfo, linksInfo };
     } catch (error) {
-        console.log(error);
+        console.error("Error al obtener el perfil público:", error);
+        return { profileInfo: null, linksInfo: [] };
     }
 }
 
-/**
- * Cierra la sesión del usuario actual y recarga la página.
- */
-export async function logout() {
-    await auth.signOut().then(() => {
-        window.location.reload(false);
-    });
-}
-
-////////////////////////////////////////////////////////////////////////
+// =================================================================
+// 5. FUNCIONES PARA EMPLEADOS, PRODUCTOS Y ÓRDENES
+// =================================================================
 
 /**
  * Añade un nuevo empleado a la colección "employers".
  * @param {object} employer - El objeto del empleado a añadir.
  */
 export async function addNewEmployer(employer) {
+    // 1. Crea una referencia a un nuevo documento.
+    // ***`collection(db, "employers")` se refiere a la colección 'employers'.
+    // ***`doc()` sin un ID específico se genere uno nuevo y único automáticamente.
+    // 2. Asigna el ID autogenerado al objeto 'employer'.
+    // ***`docRef.id` contiene el ID único que Firestore acaba de crear.
+
     try {
-        // Crea una referencia de documento con un ID autogenerado.
         const docRef = doc(collection(db, "employers"));
-        // Asigna el ID autogenerado al objeto del empleado.
         employer.docId = docRef.id;
-        // Guarda el empleado en la base de datos.
         await setDoc(docRef, employer);
     } catch (error) {
-        console.error(error);
+        console.error("Error al añadir un nuevo empleado:", error);
     }
 }
+
 /**
  * Añade un nuevo producto a la colección "products".
  * @param {object} product - El objeto del producto a añadir.
  */
 export async function addNewProduct(product) {
     try {
-        console.group("addNewProduct");
-        // Add a new document with a generated id
         const docRef = doc(collection(db, "products"));
-        console.log(docRef.id);
         product.docId = docRef.id;
         await setDoc(docRef, product);
-        console.groupEnd();
     } catch (error) {
-        console.log(error);
+        console.error("Error al añadir un nuevo producto:", error);
     }
 }
 
 /**
  * Incrementa el stock de un producto de forma atómica.
  * @param {string} docId - El ID del documento del producto.
- * @param {number} cantidad - La cantidad a sumar al stock (puede ser negativo para restar).
+ * @param {number} cantidad - La cantidad a sumar al stock.
  */
 export async function updatePlusStock(docId, cantidad) {
-    const docRef = doc(db, "products", docId);
-    await updateDoc(docRef, {
-        cantidad: increment(cantidad),
-    });
+    try {
+        const docRef = doc(db, "products", docId);
+        await updateDoc(docRef, { cantidad: increment(cantidad) });
+    } catch (error) {
+        console.error("Error al incrementar el stock:", error);
+    }
 }
 
 /**
  * Decrementa el stock de un producto de forma atómica.
  * @param {string} docId - El ID del documento del producto.
- * @param {number} cantidadADescontar - La cantidad a restar del stock.
+ * @param {number} cantidad - La cantidad a restar del stock.
  */
-export async function updateStock(docId, cantidadADescontar) {
-    const docRef = doc(db, "products", docId);
-    // Usamos un número negativo para restar de forma atómica.
-    await updateDoc(docRef, { cantidad: increment(-cantidadADescontar) });
+export async function updateStock(docId, cantidad) {
+    try {
+        const docRef = doc(db, "products", docId);
+        await updateDoc(docRef, { cantidad: increment(-cantidad) });
+    } catch (error) {
+        console.error("Error al actualizar el stock:", error);
+    }
 }
 
 /**
@@ -318,47 +336,55 @@ export async function updateStock(docId, cantidadADescontar) {
  * @returns {Promise<{employers: Array<object>, products: Array<object>}>}
  */
 export async function getDataForNewOrder() {
-    console.group("getDataForNewOrder");
     try {
         const employers = await getEmployers();
         const products = await getProducts();
         return { employers, products };
     } catch (error) {
-        console.log("Error fetching data for new order:", error);
+        console.error("Error al obtener datos para la nueva orden:", error);
+        return { employers: [], products: [] };
     }
-    console.groupEnd();
 }
 
 /**
- * Guarda una orden y actualiza el stock de productos en una sola transacción atómica.
+ * Guarda una orden y actualiza el stock de productos en una sola transacción atómica (batch).
  * @param {object} orderData - { userUID, employerDocId, items }
+ * @returns {Promise<string|null>} - El ID del documento de la orden creada o null si falla.
  */
 export async function saveOrderAndDecreaseStock(orderData) {
-    const batch = writeBatch(db);
+    try {
+        const batch = writeBatch(db);
+        const newOrderRef = doc(collection(db, "listOrden"));
 
-    // 1. Crear el nuevo documento de la orden
-    const newOrderRef = doc(collection(db, "listOrden"));
-    batch.set(newOrderRef, {
-        docId: newOrderRef.id,
-        userUID: orderData.userUID,
-        empleadoUID: orderData.employerDocId,
-        items: orderData.items,
-        createdAt: new Date().toLocaleString("sv"),
-    });
+        // 1. Crear el nuevo documento de la orden
+        batch.set(newOrderRef, {
+            docId: newOrderRef.id,
+            userUID: orderData.userUID,
+            empleadoUID: orderData.employerDocId,
+            items: orderData.items,
+            createdAt: new Date().toLocaleString("sv"),
+        });
 
-    // 2. Actualizar el stock para cada item en la orden
-    orderData.items.forEach((item) => {
-        const productRef = doc(db, "products", item.docId);
-        batch.update(productRef, { cantidad: increment(-item.cantidad) });
-    });
+        // 2. Actualizar el stock para cada item en la orden
+        orderData.items.forEach((item) => {
+            const productRef = doc(db, "products", item.docId);
+            batch.update(productRef, { cantidad: increment(-item.cantidad) });
+        });
 
-    // 3. Ejecutar todas las operaciones en el batch
-    await batch.commit();
-    return newOrderRef.id;
+        // 3. Ejecutar todas las operaciones en el batch
+        await batch.commit();
+        return newOrderRef.id;
+    } catch (error) {
+        console.error(
+            "Error al guardar la orden y actualizar el stock:",
+            error
+        );
+        return null;
+    }
 }
 
 // =================================================================
-// FUNCIONES DE ESCUCHA EN TIEMPO REAL (REAL-TIME LISTENERS)
+// 6. FUNCIONES DE LECTURA DE COLECCIONES (ONE-TIME READS)
 // =================================================================
 
 /**
@@ -372,12 +398,86 @@ export async function getEmployers() {
             ...doc.data(),
             docId: doc.id,
         }));
-
         return employers;
     } catch (error) {
-        console.error(error);
+        console.error("Error al obtener los empleados:", error);
+        return [];
     }
 }
+
+/**
+ * Obtiene una lista de todos los productos una sola vez.
+ * @returns {Promise<Array<object>>} - Un array de objetos de producto.
+ */
+export async function getProducts() {
+    try {
+        const list = await getDocs(collection(db, "products"));
+        const products = list.docs.map((doc) => ({
+            ...doc.data(),
+            docId: doc.id,
+        }));
+        return products;
+    } catch (error) {
+        console.error("Error al obtener los productos:", error);
+        return [];
+    }
+}
+
+/**
+ * Obtiene una lista de las últimas 30 órdenes de venta.
+ * @returns {Promise<Array<object>>} - Un array con los documentos de las órdenes.
+ */
+export async function getAllDocList() {
+    try {
+        const ref = collection(db, "listOrden");
+        const q = query(ref, orderBy("createdAt", "desc"), limit(30));
+        const querySnapshot = await getDocs(q);
+        const list = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            docId: doc.id,
+        }));
+        return list;
+    } catch (error) {
+        console.error("Error al obtener la lista de órdenes:", error);
+        return [];
+    }
+}
+
+/**
+ * Obtiene el nombre de un administrador (usuario) por su UID.
+ * @param {string} uid - El UID del usuario.
+ * @returns {Promise<string|null>} - El displayName del usuario o null si no se encuentra.
+ */
+export async function getNameAdminFirebase(uid) {
+    try {
+        const docRef = doc(db, "users", uid);
+        const res = await getDoc(docRef);
+        return res.exists() ? res.data().displayName : null;
+    } catch (error) {
+        console.error("Error al obtener el nombre del administrador:", error);
+        return null;
+    }
+}
+
+/**
+ * Obtiene el nombre de un empleado por su ID de documento.
+ * @param {string} docId - El ID del documento del empleado.
+ * @returns {Promise<string|null>} - El firstName del empleado o null si no se encuentra.
+ */
+export async function getNameEmployerFirebase(docId) {
+    try {
+        const docRef = doc(db, "employers", docId);
+        const res = await getDoc(docRef);
+        return res.exists() ? res.data().firstName : null;
+    } catch (error) {
+        console.error("Error al obtener el nombre del empleado:", error);
+        return null;
+    }
+}
+
+// =================================================================
+// 7. FUNCIONES DE ESCUCHA EN TIEMPO REAL (REAL-TIME LISTENERS)
+// =================================================================
 
 /**
  * Escucha cambios en la colección de empleados en tiempo real.
@@ -397,23 +497,6 @@ export function listenToEmployers(onDataChange) {
 }
 
 /**
- * Obtiene una lista de todos los productos una sola vez.
- * @returns {Promise<Array<object>>} - Un array de objetos de producto.
- */
-export async function getProducts() {
-    try {
-        const list = await getDocs(collection(db, "products"));
-        const products = list.docs.map((doc) => ({
-            ...doc.data(),
-            docId: doc.id,
-        }));
-        return products;
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-/**
  * Escucha cambios en la colección de productos en tiempo real.
  * @param {function} onDataChange - Callback que se ejecuta con la nueva lista de productos.
  * @returns {function} - Función para cancelar la suscripción (unsubscribe).
@@ -428,61 +511,4 @@ export function listenToProducts(onDataChange) {
         onDataChange(products);
     });
     return unsubscribe;
-}
-
-/**
- * Obtiene una lista de las últimas 30 órdenes de venta.
- * @returns {Promise<Array<object>>} - Un array con los documentos de las órdenes.
- */
-export async function getAllDocList() {
-    console.group("getAllDocList");
-
-    try {
-        const q = query(
-            collection(db, "listOrden"),
-            orderBy("createdAt", "desc"),
-            limit(30)
-        );
-        const querySnapshot = await getDocs(q);
-        const list = [];
-
-        querySnapshot.forEach((doc) => {
-            list.push(doc.data());
-        });
-
-        return list;
-    } catch (error) {
-        console.error(error);
-    }
-    console.groupEnd();
-}
-
-/**
- * Obtiene el nombre de un administrador (usuario) por su UID.
- * @param {string} uid - El UID del usuario.
- * @returns {Promise<string|undefined>} - El displayName del usuario.
- */
-export async function getNameAdminFirebase(uid) {
-    try {
-        const docRef = doc(db, "users", uid);
-        const res = await getDoc(docRef);
-        return res.data().displayName;
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-/**
- * Obtiene el nombre de un empleado por su ID de documento.
- * @param {string} uid - El ID del documento del empleado.
- * @returns {Promise<string|undefined>} - El firstName del empleado.
- */
-export async function getNameEmployerFirebase(uid) {
-    try {
-        const docRef = doc(db, "employers", uid);
-        const res = await getDoc(docRef);
-        return res.data().firstName;
-    } catch (error) {
-        console.error(error);
-    }
 }

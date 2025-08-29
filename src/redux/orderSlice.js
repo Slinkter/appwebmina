@@ -10,13 +10,15 @@ export const orderSlice = createSlice({
     initialState: initialState,
     reducers: {
         setOrderEmployer: (state, action) => {
-            state.selectedEmployer =action.payload
+            state.selectedEmployer = action.payload;
         },
         addItemToOrder: (state, action) => {
-            state.items.push(action.payload)
+            state.items.push(action.payload);
         },
         removeItemFromOrder: (state, action) => {
-            state.items = state.items.filter(item=> item.id !== action.payload.docId)
+            state.items = state.items.filter(
+                (item) => item.docId !== action.payload
+            );
         },
         clearOrder: (state, action) => {
             state.items = [];
@@ -25,7 +27,12 @@ export const orderSlice = createSlice({
     },
 });
 
-export const {setOrderEmployer,addItemToOrder,removeItemFromOrder,clearOrder} = orderSlice.actions;
+export const {
+    setOrderEmployer,
+    addItemToOrder,
+    removeItemFromOrder,
+    clearOrder,
+} = orderSlice.actions;
 
 export default orderSlice.reducer;
 

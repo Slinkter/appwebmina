@@ -56,8 +56,9 @@ function EditProfileView() {
                     const tmpUser = { ...currentUser };
                     tmpUser.profilePicture = res.metadata.fullPath;
                     await updateUser(tmpUser);
+                    //
                     const url = await getProfilePhotoUrl(
-                        currentUser.profilePicture
+                        tmpUser.profilePicture
                     );
                     setProfileUrl(url);
                     setCurrentUser(tmpUser);
