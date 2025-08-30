@@ -1,13 +1,14 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Box, Container } from "@mui/material";
-import DashboardWrapper from "../components/DashboardWrapper";
-import UILoading from "../components/UILoading";
-import CardDashBoard from "./CardDashBoard";
-import "../style/Dashboard.css";
-import { useSelector } from "react-redux";
-// Asumo que tienes selectores `selectUser` y `selectAuthStatus` en tu authSlice.
 import { selectCurrentUser, selectAuthStatus } from "../redux/authSlice";
+
+import DashboardWrapper from "../components/DashboardWrapper";
+import CardDashBoard from "./CardDashBoard";
+
+import UILoading from "../components/UILoading";
+import "../style/Dashboard.css";
 
 function DashboardView() {
     const navigate = useNavigate();

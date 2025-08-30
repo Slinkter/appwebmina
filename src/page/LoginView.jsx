@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -28,8 +28,6 @@ export default function LoginView() {
         const g_provider = new GoogleAuthProvider();
         try {
             await signInWithPopup(auth, g_provider);
-            // La redirección ocurrirá automáticamente por el listener en App.js
-            // y el useEffect de esta misma página.
         } catch (error) {
             console.error(
                 "Error durante el inicio de sesión con Google:",
@@ -67,12 +65,12 @@ export default function LoginView() {
                     demo
                 </Typography>
 
-                <Stack marginTop={4} width={"80%"} maxWidth={400}>
+                <Stack marginTop={2} width={"50%"} maxWidth={400}>
                     <Button
                         size="large"
                         variant="contained"
                         onClick={handleLogin}
-                        endIcon={<SendIcon />}
+                        startIcon={<SendIcon />}
                     >
                         Login with Google
                     </Button>
