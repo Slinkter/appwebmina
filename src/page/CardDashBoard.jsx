@@ -1,39 +1,65 @@
+// CardDashBoard.js
 import React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import CardActionArea from "@mui/material/CardActionArea";
 import { useNavigate } from "react-router-dom";
-import { red } from "@mui/material/colors";
+import { Box, SvgIcon } from "@mui/material";
 
-const CardDashBoard = ({ label, url }) => {
+// 💡 Nuevo prop: icon
+const CardDashBoard = ({
+    label,
+    url,
+    icon: IconComponent, // Renombramos el prop a IconComponent para que sea más claro
+    backgroundColor = "#1976d2",
+    hoverColor = "#0a2d50ff",
+    ...props
+}) => {
     const navigate = useNavigate();
 
     return (
         <Card
             sx={{
-                minWidth: 345,
+                minWidth: 200,
                 marginTop: 2,
-                background: "#1976d2",
+                backgroundColor: backgroundColor,
+                transition: "background-color 0.3s ease, box-shadow 0.3s ease",
                 "&:hover": {
-                    backgroundColor: "#0a2d50ff", // color al hacer hover
-                    boxShadow: 6, // sombra al hacer hover
+                    backgroundColor: hoverColor,
+                    boxShadow: 6,
                 },
             }}
             onClick={() => navigate(url)}
         >
-            <CardActionArea>
-                <CardContent>
-                    <Typography
-                        gutterBottom
-                        variant="h5"
-                        component="div"
-                        color={"white"}
-                    >
-                        {label}
-                    </Typography>
-                </CardContent>
+            <CardActionArea sx={{ padding: 3 }}>
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: 1,
+                    }}
+                >
+                    {/* 💡 Muestra el ícono si se proporciona */}
+                    {IconComponent && (
+                        <SvgIcon
+                            component={IconComponent}
+                            sx={{ fontSize: 60, color: "white" }}
+                        />
+                    )}
+                    <CardContent sx={{ p: 0 }}>
+                        <Typography
+                            gutterBottom
+                            variant="h6"
+                            component="div"
+                            color={"white"}
+                            align="center"
+                        >
+                            {label}
+                        </Typography>
+                    </CardContent>
+                </Box>
             </CardActionArea>
         </Card>
     );
