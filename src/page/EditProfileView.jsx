@@ -1,7 +1,7 @@
 import { async } from "@firebase/util";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthProvider from "../components/AuthProvider";
+//import AuthProvider from "../components/AuthProvider";
 import DashboardWrapper from "../components/DashboardWrapper";
 import {
     getProfilePhotoUrl,
@@ -65,18 +65,6 @@ function EditProfileView() {
                 }
             };
         }
-    }
-
-    if (state !== 2) {
-        return (
-            <AuthProvider
-                onUserLoggedIn={handleUserLoggedIn}
-                onUserNotRegister={handleUserNotRegister}
-                onUserNotLoggedIn={handleUserNotLoggedIn}
-            >
-                ...loading
-            </AuthProvider>
-        );
     }
 
     return (

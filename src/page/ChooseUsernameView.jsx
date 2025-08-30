@@ -1,7 +1,6 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import AuthProvider from "../components/AuthProvider";
+//import AuthProvider from "../components/AuthProvider";
 import { existsUsername, updateUser } from "../firebase/firebase";
 
 function ChooseUsernameView() {
@@ -34,20 +33,6 @@ function ChooseUsernameView() {
         }
     }
 
-    function handleUserLoggedIn(user) {
-        navigate("/dashboard");
-    }
-
-    function handleUserNotRegister(user) {
-        /*     navigate("/choose-username"); */
-        setCurrentState(3);
-        setCurrentUser(user);
-    }
-
-    function handleUserNotLoggedIn() {
-        navigate("/login");
-    }
-
     if (state === 3 || state === 5) {
         return (
             <React.Fragment>
@@ -64,26 +49,12 @@ function ChooseUsernameView() {
         );
     }
 
-    if (state === 6) {
-        return (
-            <React.Fragment>
-                <h1> Bienvenido {currentUser.username}</h1>
-                <p> usaurio correado </p>
-                <Link to="/dashboard"> Continuar </Link>
-            </React.Fragment>
-        );
-    }
-
     return (
-        <AuthProvider
-            onUserLoggedIn={handleUserLoggedIn}
-            onUserNotRegister={handleUserNotRegister}
-            onUserNotLoggedIn={handleUserNotLoggedIn}
-        >
-            <div>
-                <div>...Loading</div>
-            </div>
-        </AuthProvider>
+        <React.Fragment>
+            <h1> Bienvenido {currentUser.username}</h1>
+            <p> usaurio correado </p>
+            <Link to="/dashboard"> Continuar </Link>
+        </React.Fragment>
     );
 }
 

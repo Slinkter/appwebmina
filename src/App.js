@@ -3,7 +3,6 @@ import { useEffect, useRef } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { onAuthStateChanged } from "firebase/auth";
-
 import {
     auth,
     getUserInfo,
@@ -34,7 +33,7 @@ import PublicProfileView from "./page/PublicProfileView";
 import EditProfileView from "./page/EditProfileView";
 import SingOutView from "./page/SingOutView";
 
-const SESSION_TIMEOUT = 5 * 60 * 1000; // 5 MINUTOS en milisegundos
+const SESSION_TIMEOUT = 60 * 60 * 1000; // 60 MINUTOS en milisegundos
 
 function App() {
     const navigate = useNavigate();
@@ -43,7 +42,6 @@ function App() {
     const user = useSelector(selectCurrentUser);
     const dispatch = useDispatch();
     const timeoutRef = useRef(null);
-
     //
     const resetTimer = () => {
         if (timeoutRef.current) {
@@ -51,7 +49,7 @@ function App() {
         }
         timeoutRef.current = setTimeout(() => {
             logout();
-            navigate("/login");
+            navigate("/");
         }, SESSION_TIMEOUT);
     };
 
@@ -72,17 +70,19 @@ function App() {
                     // Si no existe, es un nuevo usuario. Lo registramos en Firestore.
                     const userRef = {
                         uid: user.uid,
-                        displayName: user.displayName || "Sin Nombre",
-                        username: user.displayName || "sin_username",
+                        displayName: user.displayName || "no_name",
+                        username: user.displayName || "no_nickname",
                         processCompleted: false,
                     };
                     await registerNewUser(userRef);
                     dispatch(setUser(userRef));
+                    resetTimer(); // Iniciamos el timer de sesión
                 } else {
                     // Si ya existe, obtenemos su información completa.
                     const userInfo = await getUserInfo(user.uid);
                     if (userInfo) {
                         dispatch(setUser(userInfo));
+                        resetTimer(); // Iniciamos el timer de sesión
                     }
                 }
             }
@@ -110,7 +110,6 @@ function App() {
             <Route path="dashboard/profile" element={<EditProfileView />} />
             <Route path="u/:username" element={<PublicProfileView />} />
             <Route path="signout" element={<SingOutView />} />
-            createemploye
             {/* Agrega aquí el resto de tus rutas */}
             <Route path="/createemploye" element={<NewEmployer />} />
             <Route path="/createproduct" element={<NewProduct />} />

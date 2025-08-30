@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
     Box,
@@ -13,12 +13,12 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import DashboardWrapper from "../components/DashboardWrapper";
-import AuthProvider from "../components/AuthProvider";
-import UILoading from "../components/UILoading";
+
 import FormField from "../components/FormField";
 
 import { addNewEmployer } from "../firebase/firebase";
-import { BorderAllRounded } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import { selectAuthStatus, selectCurrentUser } from "../redux/authSlice";
 
 const areas = [
     { value: "a1", label: "Area 1" },
@@ -35,7 +35,6 @@ const style = {
     bgcolor: "background.paper",
     border: "1px solid #000",
     boxShadow: 20,
-
     p: 4,
 };
 
@@ -61,13 +60,20 @@ const validationMessages = {
 
 function NewEmployer() {
     //
-    const [state, setState] = useState(0);
-    const [currentUser, setCurrentUser] = useState({});
+
+    const currentUser = useSelector(selectCurrentUser);
+    const authStatus = useSelector(selectAuthStatus);
     const navigate = useNavigate();
     //
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    React.useEffect(() => {
+        // Este console.log solo se ejecutará cuando el valor de currentUser cambie.
+        console.log("El estado de usuario de Redux ha cambiado:", currentUser);
+    }, [currentUser]); // La dependencia `currentUser` hace que se ejecute solo cuando el valor cambia.
+
     //
     const formik = useFormik({
         initialValues: newEmployer, // Set initial value for area
@@ -100,10 +106,8 @@ function NewEmployer() {
                 values.createdAt = new Date().toLocaleString("sv");
                 values.adminUid = currentUser.uid;
                 const rpta = await addNewEmployer(values);
-                console.log("rpta");
-                console.log(rpta);
-                console.log("json");
-                console.log(JSON.stringify(values, null, 2));
+                console.log("rpta ; ", rpta);
+                console.log("JSON : ", JSON.stringify(values, null, 2));
                 navigate("/dashboard");
             } catch (error) {
                 console.log(error);
@@ -114,57 +118,30 @@ function NewEmployer() {
         },
     });
 
-    function handleUserLoggedIn(user) {
-        setCurrentUser(user);
-        setState(2);
-    }
-
-    function handleUserNotRegister(user) {
-        navigate("/login");
-    }
-
-    function handleUserNotLoggedIn() {
-        navigate("/login");
-    }
-
-    if (state === 0) {
-        return (
-            <AuthProvider
-                onUserLoggedIn={handleUserLoggedIn}
-                onUserNotRegister={handleUserNotRegister}
-                onUserNotLoggedIn={handleUserNotLoggedIn}
-            >
-                <UILoading />
-            </AuthProvider>
-        );
-    }
-
     if (open) {
         return (
-            <>
-                <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Stack
+                    sx={style}
+                    alignItems="center"
+                    spacing={2}
+                    borderRadius={4}
                 >
-                    <Stack
-                        sx={style}
-                        alignItems="center"
-                        spacing={2}
-                        borderRadius={4}
+                    <Typography
+                        id="modal-modal-title"
+                        variant="h6"
+                        component="h2"
                     >
-                        <Typography
-                            id="modal-modal-title"
-                            variant="h6"
-                            component="h2"
-                        >
-                            Creando empleado...
-                        </Typography>
-                        <CircularProgress />
-                    </Stack>
-                </Modal>
-            </>
+                        Creando empleado...
+                    </Typography>
+                    <CircularProgress />
+                </Stack>
+            </Modal>
         );
     }
 

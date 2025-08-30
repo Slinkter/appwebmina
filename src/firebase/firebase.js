@@ -284,8 +284,10 @@ export async function addNewEmployer(employer) {
         const docRef = doc(collection(db, "employers"));
         employer.docId = docRef.id;
         await setDoc(docRef, employer);
+        return docRef.id;
     } catch (error) {
         console.error("Error al añadir un nuevo empleado:", error);
+        return null;
     }
 }
 
