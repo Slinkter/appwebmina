@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
     Box,
@@ -65,11 +65,11 @@ function NewEmployer() {
     const authStatus = useSelector(selectAuthStatus);
     const navigate = useNavigate();
     //
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         // Este console.log solo se ejecutará cuando el valor de currentUser cambie.
         console.log("El estado de usuario de Redux ha cambiado:", currentUser);
     }, [currentUser]); // La dependencia `currentUser` hace que se ejecute solo cuando el valor cambia.

@@ -106,16 +106,17 @@ function App() {
         <Routes>
             <Route path="/" element={<LoginView />} />
             <Route path="/dashboard" element={<DashboardView />} />
+            {/* Agrega aquí el resto de tus rutas */}
+            <Route path="/createemploye" element={<NewEmployer />} />
+            <Route path="/createproduct" element={<NewProduct />} />
+            <Route path="/updateproduct" element={<UpdateStock />} />
+            <Route path="/createreport" element={<CreateReport />} />
+            <Route path="/createorder" element={<CreatePedido />} />
+            {/* Ruta para errores 404 */}
             <Route path="/choose-username" element={<ChooseUsernameView />} />
             <Route path="dashboard/profile" element={<EditProfileView />} />
             <Route path="u/:username" element={<PublicProfileView />} />
             <Route path="signout" element={<SingOutView />} />
-            {/* Agrega aquí el resto de tus rutas */}
-            <Route path="/createemploye" element={<NewEmployer />} />
-            <Route path="/createproduct" element={<NewProduct />} />
-            <Route path="/updateproduct" element={<UpdateStock />} />{" "}
-            <Route path="/createreport" element={<CreateReport />} />
-            <Route path="/createorder" element={<CreatePedido />} />
             {/* Ruta para errores 404 */}
             <Route path="*" element={<ErrorView />} />
         </Routes>
