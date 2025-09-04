@@ -482,23 +482,6 @@ export async function getNameEmployerFirebase(docId) {
 // =================================================================
 
 /**
- * Escucha cambios en la colección de empleados en tiempo real.
- * @param {function} onDataChange - Callback que se ejecuta con la nueva lista de empleados.
- * @returns {function} - Función para cancelar la suscripción (unsubscribe).
- */
-export function listenToEmployers(onDataChange) {
-    const q = query(collection(db, "employers"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const employers = querySnapshot.docs.map((doc) => ({
-            ...doc.data(),
-            docId: doc.id,
-        }));
-        onDataChange(employers);
-    });
-    return unsubscribe;
-}
-
-/**
  * Escucha cambios en la colección de productos en tiempo real.
  * @param {function} onDataChange - Callback que se ejecuta con la nueva lista de productos.
  * @returns {function} - Función para cancelar la suscripción (unsubscribe).
@@ -511,6 +494,23 @@ export function listenToProducts(onDataChange) {
             docId: doc.id,
         }));
         onDataChange(products);
+    });
+    return unsubscribe;
+}
+
+/**
+ * Escucha cambios en la colección de empleados en tiempo real.
+ * @param {function} onDataChange - Callback que se ejecuta con la nueva lista de empleados.
+ * @returns {function} - Función para cancelar la suscripción (unsubscribe).
+ */
+export function listenToEmployers(onDataChange) {
+    const q = query(collection(db, "employers"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const employers = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            docId: doc.id,
+        }));
+        onDataChange(employers);
     });
     return unsubscribe;
 }

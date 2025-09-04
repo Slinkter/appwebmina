@@ -13,7 +13,15 @@ export const orderSlice = createSlice({
             state.selectedEmployer = action.payload;
         },
         addItemToOrder: (state, action) => {
-            state.items.push(action.payload);
+            const newItem = action.payload;
+            const isCheckItem = state.items.findIndex(
+                (item) => item.docId === newItem.docId
+            );
+            if (isCheckItem !== -1) {
+                state.items[isCheckItem].quantity += newItem.quantity;
+            } else {
+                state.items.push(newItem);
+            }
         },
         removeItemFromOrder: (state, action) => {
             state.items = state.items.filter(

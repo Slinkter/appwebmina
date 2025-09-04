@@ -27,9 +27,7 @@ function CreateReport() {
                 const newArray = await Promise.all(
                     array.map(async (item) => {
                         item.nameAdmin = await getNameAdmin(item.userUID);
-                        item.nameEmployer = await getNameEmployer(
-                            item.empleadoUID
-                        );
+                        item.nameEmployer = await getNameEmployer(item.empleadoUID);
                         return item;
                     })
                 );
